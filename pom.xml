@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.heartape</groupId>
+    <artifactId>live-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>0.0.1</version>
+    <modules>
+        <module>live-core</module>
+        <module>live-web</module>
+        <module>live-adapter</module>
+        <module>live-spring-boot-starter</module>
+    </modules>
+    <name>live parent</name>
+    <description>live parent</description>
+    <url>https://github.com/heartape/live</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>heartape</id>
+            <name>heartape</name>
+            <email>heartape@163.com</email>
+            <url>https://github.com/heartape</url>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+8</timezone>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/heartape/live.git</connection>
+        <url>https://github.com/heartape/live</url>
+    </scm>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-parent</artifactId>
+                <version>3.0.2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>2022.0.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.heartape</groupId>
+                <artifactId>live-core</artifactId>
+                <version>${version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.heartape</groupId>
+                <artifactId>live-web</artifactId>
+                <version>${version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.heartape</groupId>
+                <artifactId>live-adapter</artifactId>
+                <version>${version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <distributionManagement>
+        <repository>
+            <id>live-core</id>
+            <url>file:${basedir}/repo</url>
+        </repository>
+    </distributionManagement>
+
+</project>

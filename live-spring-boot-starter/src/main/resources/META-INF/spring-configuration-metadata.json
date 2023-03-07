@@ -1,0 +1,41 @@
+{
+  "groups": [
+    {
+      "name": "spring.live",
+      "type": "com.heartape.live.config.MediaProperties",
+      "sourceType": "com.heartape.live.config.MediaProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "spring.live.app",
+      "type": "java.lang.String",
+      "description": "流媒体推流路径",
+      "sourceType": "com.heartape.live.config.MediaProperties"
+    },
+    {
+      "name": "spring.live.host",
+      "type": "java.lang.String",
+      "description": "流媒体推流ip",
+      "sourceType": "com.heartape.live.config.MediaProperties"
+    },
+    {
+      "name": "spring.live.loadbalancer",
+      "type": "java.lang.Boolean",
+      "description": "在调用其他服务时开启负载均衡",
+      "sourceType": "com.heartape.live.config.MediaProperties"
+    },
+    {
+      "name": "spring.live.protocol",
+      "type": "java.lang.String",
+      "description": "允许的协议",
+      "sourceType": "com.heartape.live.config.MediaProperties"
+    },
+    {
+      "name": "spring.live.type",
+      "type": "com.heartape.live.MediaServerType",
+      "sourceType": "com.heartape.live.config.MediaProperties"
+    }
+  ],
+  "hints": []
+}
