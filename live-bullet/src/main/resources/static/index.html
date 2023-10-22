@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>xx直播弹幕</title>
+</head>
+<body>
+<br/>
+<label for="room-id-input"></label>
+rid:<input type="text" id="room-id-input">
+<label for="uid-input"></label>
+uid:<input type="text" id="uid-input">
+<button onclick="openSse()">开启连接</button>
+<button onclick="closeSse()">关闭连接</button>
+<div style="float: right">
+    <div id="message" style="overflow: scroll; overflow-x: hidden; height: 600px; width: 300px; border: 1px solid dimgray"></div>
+    <label for="message-input"></label>
+    <input type="text" id="message-input" style="width: 220px">
+    <button onclick="send()">发送弹幕</button>
+</div>
+</body>
+<script>
+    let source = null;
+    const roomIdInput = document.getElementById(`room-id-input`);
+    const uidInput = document.getElementById(`uid-input`);
+    // 开启Sse连接
+    function openSse() {
+        if (!!window.EventSource) {
+            const roomId = roomIdInput.value;
+            const userId = uidInput.value;
+            const url = new URL(`http://localhost:8080/chat/connection/sse`)
+            url.searchParams.set('uid', userId)
+            url.searchParams.set('roomId', roomId)
+
+            // 建立连接
+            source = new EventSource(url);
+
+            /**
+             * 连接一旦建立，就会触发open事件
+             * 另一种写法：source.onopen = function (event) {}
+             */
+            source.addEventListener('open', function (e) {
+                setMessageInnerHTML("弹幕已连接。。。");
+            }, false);
+
+            /**
+             * 客户端收到服务器发来的数据
+             * 另一种写法：source.onmessage = function (event) {}
+             */
+            source.addEventListener('message', function (e) {
+                const array = JSON.parse(e.data);
+                for (let chat of array) {
+                    setMessageInnerHTML(chat.uid + ':' + chat.content);
+                }
+            });
+
+            /**
+             * 如果发生通信错误（比如连接中断），就会触发error事件
+             * 或者：
+             * 另一种写法：source.onerror = function (event) {}
+             */
+            source.addEventListener('error', function (e) {
+                if (e.readyState === EventSource.CLOSED) {
+                    setMessageInnerHTML("弹幕连接关闭");
+                }
+            }, false);
+
+        } else {
+            setMessageInnerHTML("你的浏览器不支持SSE");
+        }
+    }
+
+    // 监听窗口关闭事件，主动去关闭sse连接，如果服务端设置永不过期，浏览器关闭后手动清理服务端数据
+    window.onbeforeunload = function () {
+        closeSse();
+    };
+
+    // 关闭Sse连接
+    function closeSse() {
+        const roomId = roomIdInput.value;
+        const userId = uidInput.value;
+        const httpRequest = new XMLHttpRequest();
+        const url = new URL(`http://localhost:8080/chat/connection`)
+        url.searchParams.set('roomId', roomId)
+        url.searchParams.set('uid', userId)
+        httpRequest.open('DELETE', url, true);
+        httpRequest.send();
+        source.close();
+    }
+
+    // 将消息显示在网页上
+    function setMessageInnerHTML(innerHTML) {
+        document.getElementById('message').innerHTML += innerHTML + '<br/>';
+    }
+
+    const message = document.getElementById(`message-input`);
+
+    function send() {
+        const httpRequest = new XMLHttpRequest();
+        const url = new URL(`http://localhost:8080/chat`)
+        const roomId = roomIdInput.value;
+        const userId = uidInput.value;
+        url.searchParams.set('uid', userId)
+        url.searchParams.set('roomId', roomId)
+        httpRequest.open('POST', url, true);
+        httpRequest.send(message.value);
+    }
+</script>
+</html>

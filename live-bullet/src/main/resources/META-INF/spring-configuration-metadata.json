@@ -1,0 +1,72 @@
+{
+  "groups": [
+    {
+      "name": "live.chat",
+      "type": "com.heartape.live.bullet.config.LiveBulletProperties",
+      "sourceType": "com.heartape.live.bullet.config.LiveBulletProperties"
+    },
+    {
+      "name": "live.chat.filter",
+      "type": "com.heartape.live.bullet.config.LiveBulletProperties$Filter",
+      "sourceType": "com.heartape.live.bullet.config.LiveBulletProperties"
+    },
+    {
+      "name": "live.chat.flow",
+      "type": "com.heartape.live.bullet.config.LiveBulletProperties$Flow",
+      "sourceType": "com.heartape.live.bullet.config.LiveBulletProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "live.chat.filter.max-long",
+      "type": "java.lang.Integer",
+      "description": "最大长连接数 @see com.heartape.filter.LiveRoomLoadFilter",
+      "sourceType": "com.heartape.live.bullet.config.LiveBulletProperties$Filter",
+      "defaultValue": 10000
+    },
+    {
+      "name": "live.chat.flow.init",
+      "type": "java.lang.Integer",
+      "description": "Flow初始数量",
+      "sourceType": "com.heartape.live.bullet.config.LiveBulletProperties$Flow",
+      "defaultValue": 2
+    },
+    {
+      "name": "live.chat.flow.max",
+      "type": "java.lang.Integer",
+      "description": "Flow最大数量",
+      "sourceType": "com.heartape.live.bullet.config.LiveBulletProperties$Flow",
+      "defaultValue": 6
+    },
+    {
+      "name": "live.chat.flow.size",
+      "type": "java.lang.Integer",
+      "description": "Flow数量",
+      "sourceType": "com.heartape.live.bullet.config.LiveBulletProperties$Flow"
+    },
+    {
+      "name": "live.chat.flow.time",
+      "type": "java.lang.Integer",
+      "description": "推送时间间隔",
+      "sourceType": "com.heartape.live.bullet.config.LiveBulletProperties$Flow",
+      "defaultValue": 1000
+    },
+    {
+      "name": "live.chat.filter.black",
+      "type": "java.util.List<java.lang.String>",
+      "description": "黑名单，仅用于测数 @see com.heartape.filter.MemoryBlackListFilter",
+      "sourceType": "com.heartape.live.bullet.config.LiveBulletProperties$Filter",
+      "deprecated": true,
+      "deprecation": {}
+    },
+    {
+      "name": "live.chat.filter.room",
+      "type": "java.util.List<java.lang.String>",
+      "description": "开启房间，仅用于测数 @see com.heartape.filter.LiveRoomStatusFilter",
+      "sourceType": "com.heartape.live.bullet.config.LiveBulletProperties$Filter",
+      "deprecated": true,
+      "deprecation": {}
+    }
+  ],
+  "hints": []
+}
