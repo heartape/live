@@ -10,7 +10,6 @@
     <packaging>pom</packaging>
     <version>${revision}</version>
     <modules>
-        <module>live-streaming</module>
         <module>live-bullet</module>
         <module>live-im</module>
         <module>live-gateway</module>
