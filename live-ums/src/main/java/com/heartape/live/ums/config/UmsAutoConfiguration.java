@@ -1,4 +1,4 @@
-package com.heartape.live.ums;
+package com.heartape.live.ums.config;
 
 import com.heartape.live.ums.user.CachedImageVerificationCodeFactory;
 import com.heartape.live.ums.user.RedisVerificationCodeManager;

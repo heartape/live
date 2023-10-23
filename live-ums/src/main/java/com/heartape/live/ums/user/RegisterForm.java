@@ -10,14 +10,11 @@ import lombok.Setter;
 @Setter
 public class RegisterForm {
 
+    /** 用户名 */
     private String username;
+    /** 密码 */
     private String password;
-    private String email;
-    private String emailCode;
-    private String phone;
-    private String phoneCode;
-
+    /** 验证码 */
     private String code;
-    private String codeId;
 
 }

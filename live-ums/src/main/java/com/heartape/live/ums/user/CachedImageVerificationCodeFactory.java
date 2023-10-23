@@ -15,12 +15,16 @@ public class CachedImageVerificationCodeFactory implements VerificationCodeFacto
     private final ImageVerificationCode[] codes = new ImageVerificationCode[1024];
     private final byte[] counts = new byte[1024];
 
+    /** 允许重复使用的次数 */
+    private final static int count = 5;
+
     private final Random random = new Random();
 
     private final DefaultKaptcha kaptchaProducer;
 
     public CachedImageVerificationCodeFactory() {
         this.kaptchaProducer = new DefaultKaptcha();
+        init();
     }
 
     private void init() {
@@ -37,9 +41,9 @@ public class CachedImageVerificationCodeFactory implements VerificationCodeFacto
     @Override
     public synchronized VerificationCode next() {
         int i = 0;
-        for (int j = 0; j < 5; j++) {
+        for (int j = 0; j < count; j++) {
             i = random.nextInt(1024);
-            if (counts[i] <= 5) {
+            if (counts[i] <= count) {
                 break;
             }
             codes[i] = null;

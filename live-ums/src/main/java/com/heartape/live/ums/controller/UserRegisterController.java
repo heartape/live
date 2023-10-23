@@ -1,28 +1,28 @@
 package com.heartape.live.ums.controller;
 
 import com.heartape.exception.SystemInnerException;
-import com.heartape.live.ums.user.ImageVerificationCode;
-import com.heartape.live.ums.user.PhoneRegisterForm;
-import com.heartape.live.ums.user.RegisterForm;
-import com.heartape.live.ums.user.VerificationCodeFactory;
+import com.heartape.live.ums.user.*;
 import com.heartape.result.Result;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @AllArgsConstructor
 @RestController
 @RequestMapping("/register")
-public class UserController {
+public class UserRegisterController {
 
     private final VerificationCodeFactory verificationCodeFactory;
+
+    private final VerificationCodeManager verificationCodeManager;
 
     @GetMapping("/code")
     public void getCode(HttpServletResponse response) {
         ImageVerificationCode imageVerificationCode = (ImageVerificationCode) verificationCodeFactory.next();
+        verificationCodeManager.save(imageVerificationCode);
         // 设置响应头，防止缓存
         response.setHeader("Cache-Control", "no-store, no-cache");
         response.setContentType("image/jpeg");
@@ -33,9 +33,19 @@ public class UserController {
         }
     }
 
+    @PostMapping("/code")
+    public Result<Boolean> checkCode(@RequestBody String text) {
+        boolean check = verificationCodeManager.check(text);
+        return Result.success(check);
+    }
+
     @PostMapping
-    public Result<?> register(@RequestBody RegisterForm registerForm) {
-        return Result.success();
+    public Result<Boolean> register(@RequestBody RegisterForm registerForm) {
+        boolean check = verificationCodeManager.check(registerForm.getCode());
+        if (check){
+
+        }
+        return Result.success(check);
     }
 
     @PostMapping("/phone")
