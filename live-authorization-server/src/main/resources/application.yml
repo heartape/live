@@ -6,6 +6,10 @@ logging:
 spring:
   application:
     name: oauth2-server-service
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://192.168.31.100:3306/live-authorization-server?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
 secret-key:
   rsa:
     private-key-pem: /rsa/rsa_private_key_pkcs8.pem

@@ -10,7 +10,10 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
@@ -38,7 +41,7 @@ public class SecurityConfig {
      * @return An instance of UserDetailsService for retrieving users to authenticate.
      */
     @Bean
-    public UserDetailsService userDetailsService() {
+    public UserDetailsService userDetailsService(DataSource dataSource) {
         UserDetails superDetails = User.withDefaultPasswordEncoder()
                 .username("1111")
                 .password("1111")
@@ -57,6 +60,11 @@ public class SecurityConfig {
                 .roles("USER")
                 .authorities("read")
                 .build();
-        return new InMemoryUserDetailsManager(userDetails, adminDetails, superDetails);
+
+        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
+        jdbcUserDetailsManager.createUser(superDetails);
+        jdbcUserDetailsManager.createUser(adminDetails);
+        jdbcUserDetailsManager.createUser(userDetails);
+        return jdbcUserDetailsManager;
     }
 }

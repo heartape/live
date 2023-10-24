@@ -70,7 +70,7 @@ public class SecretKeyUtils {
 
     @SuppressWarnings("UnusedAssignment")
     private static byte[] readKeyFile(String filename){
-        String dir = System.getProperty("user.dir");
+        String dir = System.getProperty("user.sql.dir");
         String path = dir + filename;
         StringBuilder stringBuilder = new StringBuilder();
         try(BufferedReader br = new BufferedReader(new FileReader(path))) {
