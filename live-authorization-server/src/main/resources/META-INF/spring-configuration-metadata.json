@@ -1,21 +1,46 @@
 {
   "groups": [
     {
-      "name": "secret-key.rsa",
-      "type": "com.heartape.config.Oauth2ServerSecretKeyProperties",
-      "sourceType": "com.heartape.config.Oauth2ServerSecretKeyProperties"
+      "name": "live.oauth",
+      "type": "com.heartape.config.Oauth2ServerProperties",
+      "sourceType": "com.heartape.config.Oauth2ServerProperties"
+    },
+    {
+      "name": "live.oauth.login",
+      "type": "com.heartape.config.Oauth2ServerProperties$Login",
+      "sourceType": "com.heartape.config.Oauth2ServerProperties"
+    },
+    {
+      "name": "live.oauth.rsa",
+      "type": "com.heartape.config.Oauth2ServerProperties$Rsa",
+      "sourceType": "com.heartape.config.Oauth2ServerProperties"
     }
   ],
   "properties": [
     {
-      "name": "secret-key.rsa.private-key-pem",
+      "name": "live.oauth.login.server",
       "type": "java.lang.String",
-      "sourceType": "com.heartape.config.Oauth2ServerSecretKeyProperties"
+      "sourceType": "com.heartape.config.Oauth2ServerProperties$Login"
     },
     {
-      "name": "secret-key.rsa.public-key-pem",
+      "name": "live.oauth.login.url",
       "type": "java.lang.String",
-      "sourceType": "com.heartape.config.Oauth2ServerSecretKeyProperties"
+      "sourceType": "com.heartape.config.Oauth2ServerProperties$Login"
+    },
+    {
+      "name": "live.oauth.login.username",
+      "type": "java.lang.String",
+      "sourceType": "com.heartape.config.Oauth2ServerProperties$Login"
+    },
+    {
+      "name": "live.oauth.rsa.private-key-pem",
+      "type": "java.lang.String",
+      "sourceType": "com.heartape.config.Oauth2ServerProperties$Rsa"
+    },
+    {
+      "name": "live.oauth.rsa.public-key-pem",
+      "type": "java.lang.String",
+      "sourceType": "com.heartape.config.Oauth2ServerProperties$Rsa"
     }
   ],
   "hints": []

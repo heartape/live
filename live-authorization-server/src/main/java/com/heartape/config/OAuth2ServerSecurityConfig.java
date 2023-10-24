@@ -7,6 +7,7 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -36,6 +37,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 
+@EnableConfigurationProperties(Oauth2ServerProperties.class)
 @Configuration
 @EnableWebSecurity
 public class OAuth2ServerSecurityConfig {
@@ -98,15 +100,10 @@ public class OAuth2ServerSecurityConfig {
         return new JdbcOAuth2AuthorizationService(jdbcOperations, registeredClientRepository);
     }
 
-    @Value("${secret-key.rsa.public-key-pem}")
-    private String PUB_KEY_PATH;
-    @Value("${secret-key.rsa.private-key-pem}")
-    private String PRI_KEY_PATH;
-
     @Bean
-    public JWKSource<SecurityContext> jwkSource() {
-        RSAPublicKey publicKey = SecretKeyUtils.getPublicKeyFromPem(PUB_KEY_PATH);
-        RSAPrivateKey privateKey = SecretKeyUtils.getPrivateKeyFromPem(PRI_KEY_PATH);
+    public JWKSource<SecurityContext> jwkSource(Oauth2ServerProperties oauth2ServerProperties) {
+        RSAPublicKey publicKey = SecretKeyUtils.getPublicKeyFromPem(oauth2ServerProperties.getRsa().getPublicKeyPem());
+        RSAPrivateKey privateKey = SecretKeyUtils.getPrivateKeyFromPem(oauth2ServerProperties.getRsa().getPrivateKeyPem());
         RSAKey rsaKey = new RSAKey
                 .Builder(publicKey)
                 .privateKey(privateKey)

@@ -6,14 +6,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
-import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
@@ -31,6 +26,7 @@ public class SecurityConfig {
                 )
                 // Form login handles the redirect to the login page from the
                 // authorization server filter chain
+                .httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults());
 
         return http.build();
@@ -41,30 +37,12 @@ public class SecurityConfig {
      * @return An instance of UserDetailsService for retrieving users to authenticate.
      */
     @Bean
-    public UserDetailsService userDetailsService(DataSource dataSource) {
-        UserDetails superDetails = User.withDefaultPasswordEncoder()
-                .username("1111")
-                .password("1111")
-                .roles("SUPER")
-                .authorities("read", "write")
-                .build();
-        UserDetails adminDetails = User.withDefaultPasswordEncoder()
-                .username("2222")
-                .password("2222")
-                .roles("ADMIN")
-                .authorities("read", "write")
-                .build();
-        UserDetails userDetails = User.withDefaultPasswordEncoder()
-                .username("3333")
-                .password("3333")
-                .roles("USER")
-                .authorities("read")
-                .build();
+    public UserDetailsService userDetailsService(RpcUserService rpcUserService) {
+        return new RpcUserDetailsService(rpcUserService);
+    }
 
-        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
-        jdbcUserDetailsManager.createUser(superDetails);
-        jdbcUserDetailsManager.createUser(adminDetails);
-        jdbcUserDetailsManager.createUser(userDetails);
-        return jdbcUserDetailsManager;
+    @Bean
+    public SmsCodeAuthenticationSecurityConfig smsCodeAuthenticationSecurityConfig(RpcUserService rpcUserService){
+        return new SmsCodeAuthenticationSecurityConfig(new SmsUserDetailsService(rpcUserService));
     }
 }

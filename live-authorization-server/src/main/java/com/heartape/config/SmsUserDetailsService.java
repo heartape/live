@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  * @see UserDetailsService
  */
 @AllArgsConstructor
-public class RpcUserDetailsService implements UserDetailsService {
+public class SmsUserDetailsService implements UserDetailsService {
 
     /**
      * ums服务调用
@@ -20,7 +20,7 @@ public class RpcUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = rpcUserService.loadUserByUsername(username);
+        User user = rpcUserService.loadUserByPhone(username);
         if (user == null) {
             throw new UsernameNotFoundException("not found user");
         }
