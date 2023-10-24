@@ -3,6 +3,7 @@ package com.heartape.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,7 +20,7 @@ public class SecurityConfig {
      */
     @Bean
     @Order(2)
-    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http, RpcUserService rpcUserService) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .anyRequest().authenticated()
@@ -27,7 +28,10 @@ public class SecurityConfig {
                 // Form login handles the redirect to the login page from the
                 // authorization server filter chain
                 .httpBasic(Customizer.withDefaults())
-                .formLogin(Customizer.withDefaults());
+                .formLogin(Customizer.withDefaults())
+                // .formLogin(customizer -> customizer.successHandler().failureHandler())
+                .authenticationProvider(new DaoAuthenticationProvider())
+                .authenticationProvider(new SmsCodeAuthenticationProvider(new SmsUserDetailsService(rpcUserService)));
 
         return http.build();
     }
@@ -39,10 +43,5 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(RpcUserService rpcUserService) {
         return new RpcUserDetailsService(rpcUserService);
-    }
-
-    @Bean
-    public SmsCodeAuthenticationSecurityConfig smsCodeAuthenticationSecurityConfig(RpcUserService rpcUserService){
-        return new SmsCodeAuthenticationSecurityConfig(new SmsUserDetailsService(rpcUserService));
     }
 }
