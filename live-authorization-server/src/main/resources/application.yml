@@ -20,6 +20,6 @@ live:
       private-key-pem: /rsa/rsa_private_key_pkcs8.pem
       public-key-pem: /rsa/rsa_public_key_pkcs8.pem
     login:
-      server: ums
+      server: ums/user
       username: /username
       phone: /phone

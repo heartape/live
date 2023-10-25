@@ -15,13 +15,18 @@ public class RedisVerificationCodeManager implements VerificationCodeManager {
     private final RedisTemplate<String, String> redisTemplate;
 
     @Override
-    public void save(ImageVerificationCode imageVerificationCode) {
-        redisTemplate.opsForValue().set("uid", imageVerificationCode.getText(), imageVerificationCode.getExpireTime(), TimeUnit.SECONDS);
+    public void save(String id, ImageVerificationCode imageVerificationCode) {
+        redisTemplate.opsForValue().set(id, imageVerificationCode.getText(), imageVerificationCode.getExpireTime(), TimeUnit.SECONDS);
     }
 
     @Override
-    public boolean check(String text) {
-        String textStored = redisTemplate.opsForValue().get("uid");
+    public boolean check(String id, String text) {
+        String textStored = redisTemplate.opsForValue().get(id);
         return Objects.equals(textStored, text);
+    }
+
+    @Override
+    public String query(String id) {
+        return redisTemplate.opsForValue().get(id);
     }
 }

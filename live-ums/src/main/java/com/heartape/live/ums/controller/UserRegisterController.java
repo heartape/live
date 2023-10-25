@@ -5,6 +5,8 @@ import com.heartape.live.ums.user.*;
 import com.heartape.result.Result;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
@@ -19,13 +21,15 @@ public class UserRegisterController {
 
     private final VerificationCodeManager verificationCodeManager;
 
+    private final UserRepository userRepository;
+
     @GetMapping("/code")
-    public void getCode(HttpServletResponse response) {
+    public void getCode(@RequestParam String id, HttpServletResponse response) {
         ImageVerificationCode imageVerificationCode = (ImageVerificationCode) verificationCodeFactory.next();
-        verificationCodeManager.save(imageVerificationCode);
+        verificationCodeManager.save(id, imageVerificationCode);
         // 设置响应头，防止缓存
-        response.setHeader("Cache-Control", "no-store, no-cache");
-        response.setContentType("image/jpeg");
+        response.setHeader(HttpHeaders.CACHE_CONTROL, "no-store, no-cache");
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
         try {
             ImageIO.write(imageVerificationCode.getImage(), "jpg", response.getOutputStream());
         } catch (IOException e) {
@@ -34,22 +38,28 @@ public class UserRegisterController {
     }
 
     @PostMapping("/code")
-    public Result<Boolean> checkCode(@RequestBody String text) {
-        boolean check = verificationCodeManager.check(text);
+    public Result<Boolean> checkCode(@RequestParam String id, @RequestBody String text) {
+        boolean check = verificationCodeManager.check(id, text);
         return Result.success(check);
     }
 
     @PostMapping
-    public Result<Boolean> register(@RequestBody RegisterForm registerForm) {
-        boolean check = verificationCodeManager.check(registerForm.getCode());
-        if (check){
-
+    public Result<Void> register(@RequestBody RegisterForm registerForm) {
+        boolean check = verificationCodeManager.check(registerForm.getId(), registerForm.getCode());
+        if (!check){
+            throw new IllegalArgumentException("验证码错误");
         }
-        return Result.success(check);
+        userRepository.save(registerForm.toUser());
+        return Result.success();
     }
 
     @PostMapping("/phone")
-    public Result<?> registerByPhone(@RequestBody PhoneRegisterForm phoneRegisterForm) {
+    public Result<Void> registerByPhone(@RequestBody PhoneRegisterForm phoneRegisterForm) {
+        boolean check = verificationCodeManager.check(phoneRegisterForm.getId(), phoneRegisterForm.getCode());
+        if (!check){
+            throw new IllegalArgumentException("验证码错误");
+        }
+        userRepository.save(phoneRegisterForm.toUser());
         return Result.success();
     }
 
