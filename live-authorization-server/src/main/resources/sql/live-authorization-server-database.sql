@@ -1,5 +1,7 @@
 CREATE DATABASE `live-authorization-server` CHARACTER SET 'utf8mb4';
 
+USE `live-authorization-server`;
+
 CREATE TABLE oauth2_authorization (
                                       id varchar(100) NOT NULL,
                                       registered_client_id varchar(100) NOT NULL,

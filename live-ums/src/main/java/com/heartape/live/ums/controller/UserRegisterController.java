@@ -24,17 +24,10 @@ public class UserRegisterController {
     private final UserRepository userRepository;
 
     @GetMapping("/code")
-    public void getCode(@RequestParam String id, HttpServletResponse response) {
+    public ImageVerificationCode getCode() {
         ImageVerificationCode imageVerificationCode = (ImageVerificationCode) verificationCodeFactory.next();
-        verificationCodeManager.save(id, imageVerificationCode);
-        // 设置响应头，防止缓存
-        response.setHeader(HttpHeaders.CACHE_CONTROL, "no-store, no-cache");
-        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
-        try {
-            ImageIO.write(imageVerificationCode.getImage(), "jpg", response.getOutputStream());
-        } catch (IOException e) {
-            throw new SystemInnerException();
-        }
+        verificationCodeManager.save(imageVerificationCode);
+        return imageVerificationCode;
     }
 
     @PostMapping("/code")

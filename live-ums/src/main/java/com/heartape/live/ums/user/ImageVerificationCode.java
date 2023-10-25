@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 @AllArgsConstructor
 public class ImageVerificationCode implements VerificationCode {
 
+    private String id;
     private String text;
     private BufferedImage image;
     private long expireTime;

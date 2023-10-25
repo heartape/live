@@ -9,7 +9,7 @@ public interface VerificationCodeManager {
     /**
      * 保存验证码
      */
-    void save(String id, ImageVerificationCode imageVerificationCode);
+    void save(ImageVerificationCode imageVerificationCode);
 
     /**
      * 校验验证码

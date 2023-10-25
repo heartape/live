@@ -1,8 +1,6 @@
 package com.heartape.live.ums.user;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,9 +32,12 @@ public class User {
     private String phone;
     private String email;
 
+    @Column(name = "phone_verified")
     private Boolean isPhoneVerified;
+    @Column(name = "email_verified")
     private Boolean isEmailVerified;
 
+    @Convert(converter = UserStatusConverter.class)
     private UserStatus status;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;

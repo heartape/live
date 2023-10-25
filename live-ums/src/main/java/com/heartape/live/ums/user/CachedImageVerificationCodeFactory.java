@@ -6,6 +6,7 @@ import com.google.code.kaptcha.util.Config;
 import java.awt.image.BufferedImage;
 import java.util.Properties;
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * 由于验证码的生成比较耗时，所以将其缓存起来。在被使用了一定次数后清理。
@@ -61,10 +62,11 @@ public class CachedImageVerificationCodeFactory implements VerificationCodeFacto
     }
 
     private ImageVerificationCode generate() {
+        String id = UUID.randomUUID().toString();
         // 生成文字验证码
         String text = kaptchaProducer.createText();
         // 生成图片验证码
         BufferedImage image = kaptchaProducer.createImage(text);
-        return new ImageVerificationCode(text, image, 60);
+        return new ImageVerificationCode(id, text, image, 60);
     }
 }

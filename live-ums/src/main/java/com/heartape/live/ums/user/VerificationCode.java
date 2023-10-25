@@ -4,6 +4,11 @@ package com.heartape.live.ums.user;
 public interface VerificationCode {
 
     /**
+     * @return id
+     */
+    String getId();
+
+    /**
      * @return 验证码文字
      */
     String getText();

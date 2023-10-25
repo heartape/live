@@ -1,5 +1,7 @@
 CREATE DATABASE `live-ums` CHARACTER SET 'utf8mb4';
 
+USE `live-ums`;
+
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user`  (
                          `id` bigint NOT NULL COMMENT '主键',

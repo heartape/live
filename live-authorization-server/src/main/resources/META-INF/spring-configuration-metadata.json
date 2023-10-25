@@ -18,6 +18,16 @@
   ],
   "properties": [
     {
+      "name": "live.oauth.login.path",
+      "type": "java.lang.String",
+      "sourceType": "com.heartape.config.Oauth2ServerProperties$Login"
+    },
+    {
+      "name": "live.oauth.login.phone",
+      "type": "java.lang.String",
+      "sourceType": "com.heartape.config.Oauth2ServerProperties$Login"
+    },
+    {
       "name": "live.oauth.login.server",
       "type": "java.lang.String",
       "sourceType": "com.heartape.config.Oauth2ServerProperties$Login"

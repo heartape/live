@@ -15,8 +15,8 @@ public class RedisVerificationCodeManager implements VerificationCodeManager {
     private final RedisTemplate<String, String> redisTemplate;
 
     @Override
-    public void save(String id, ImageVerificationCode imageVerificationCode) {
-        redisTemplate.opsForValue().set(id, imageVerificationCode.getText(), imageVerificationCode.getExpireTime(), TimeUnit.SECONDS);
+    public void save(ImageVerificationCode imageVerificationCode) {
+        redisTemplate.opsForValue().set(imageVerificationCode.getId(), imageVerificationCode.getText(), imageVerificationCode.getExpireTime(), TimeUnit.SECONDS);
     }
 
     @Override

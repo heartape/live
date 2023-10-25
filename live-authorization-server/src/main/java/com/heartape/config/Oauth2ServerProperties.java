@@ -25,7 +25,7 @@ public class Oauth2ServerProperties {
     @Getter
     @Setter
     public static class Login {
-        private String server;
+        private String path;
         private String username;
         private String phone;
     }
