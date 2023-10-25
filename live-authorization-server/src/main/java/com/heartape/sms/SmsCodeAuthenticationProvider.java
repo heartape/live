@@ -1,4 +1,4 @@
-package com.heartape.config;
+package com.heartape.sms;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
