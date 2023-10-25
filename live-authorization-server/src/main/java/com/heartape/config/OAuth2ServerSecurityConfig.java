@@ -60,34 +60,7 @@ public class OAuth2ServerSecurityConfig {
 
     @Bean
     public RegisteredClientRepository registeredClientRepository(JdbcOperations jdbcOperations) {
-        ClientSettings clientSettings = ClientSettings
-                .builder()
-                .requireAuthorizationConsent(true)
-                .build();
-
-        TokenSettings tokenSettings = TokenSettings
-                .builder()
-                .accessTokenTimeToLive(Duration.ofDays(7))
-                .build();
-
-        RegisteredClient registeredClient = RegisteredClient
-                .withId(UUID.randomUUID().toString())
-                .clientId("111")
-                .clientSecret("{noop}222")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("http://127.0.0.1/login/oauth2/code/oauth2-server")
-                .scope(OidcScopes.OPENID)
-                .scope(OidcScopes.PROFILE)
-                .scope(OidcScopes.PHONE)
-                .scope(OidcScopes.EMAIL)
-                .clientSettings(clientSettings)
-                .tokenSettings(tokenSettings)
-                .build();
-        JdbcRegisteredClientRepository jdbcRegisteredClientRepository = new JdbcRegisteredClientRepository(jdbcOperations);
-        jdbcRegisteredClientRepository.save(registeredClient);
-        return jdbcRegisteredClientRepository;
+        return new JdbcRegisteredClientRepository(jdbcOperations);
     }
 
     @Bean
