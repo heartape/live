@@ -9,7 +9,7 @@ import java.util.Random;
 import java.util.UUID;
 
 /**
- * 由于验证码的生成比较耗时，所以将其缓存起来。在被使用了一定次数后清理。
+ * 图片验证码生成工厂。由于验证码的生成比较耗时，所以将其缓存起来。在被使用了一定次数后清理。
  */
 public class CachedImageVerificationCodeFactory implements VerificationCodeFactory {
 
@@ -59,6 +59,11 @@ public class CachedImageVerificationCodeFactory implements VerificationCodeFacto
         }
         counts[i]++;
         return codes[i];
+    }
+
+    @Override
+    public VerificationCode next(String text) {
+        return null;
     }
 
     private ImageVerificationCode generate() {

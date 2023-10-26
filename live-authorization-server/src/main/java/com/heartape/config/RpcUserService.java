@@ -15,13 +15,13 @@ public interface RpcUserService {
     /**
      * 通过username获取 {@link User}
      */
-    @GetMapping(value = "${live.oauth.login.username}", produces = MediaType.APPLICATION_JSON_VALUE)
-    User loadUserByUsername(@RequestParam String username);
+    @GetMapping(value = "${live.oauth.login.username}")
+    UserLoginInfo loadUserByUsername(@RequestParam String username);
 
     /**
      * 通过phone获取 {@link User}
      */
     @GetMapping(value = "${live.oauth.login.phone}", produces = MediaType.APPLICATION_JSON_VALUE)
-    User loadUserByPhone(@RequestParam String phone);
+    PhoneLoginInfo loadUserByPhone(@RequestParam String phone);
 
 }

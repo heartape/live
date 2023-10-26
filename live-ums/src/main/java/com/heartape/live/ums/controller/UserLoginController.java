@@ -1,62 +1,59 @@
 package com.heartape.live.ums.controller;
 
-import com.heartape.exception.SystemInnerException;
 import com.heartape.live.ums.user.*;
-import lombok.AllArgsConstructor;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 
-@AllArgsConstructor
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/login")
 public class UserLoginController {
 
     private final UserRepository userRepository;
 
+    private final VerificationCodeFactory verificationCodeFactory;
+
     private final VerificationCodeManager verificationCodeManager;
 
+    public UserLoginController(UserRepository userRepository, VerificationCodeFactory phoneVerificationCodeFactory, VerificationCodeManager verificationCodeManager) {
+        this.userRepository = userRepository;
+        this.verificationCodeFactory = phoneVerificationCodeFactory;
+        this.verificationCodeManager = verificationCodeManager;
+    }
+
     @GetMapping("/username")
-    public User username(@RequestParam String username) {
+    public UserLoginInfo username(@RequestParam String username) {
         QUser qUser = QUser.user;
-        Optional<com.heartape.live.ums.user.User> optional = userRepository.findOne(qUser.username.eq(username));
+        Optional<User> optional = userRepository.findOne(qUser.username.eq(username));
         if (optional.isEmpty()) {
             return null;
         }
-        com.heartape.live.ums.user.User user = optional.get();
-        UserStatus userStatus = user.getStatus();
-        if (userStatus == UserStatus.NORMAL) {
-            return new User(user.getUsername(), user.getPassword(), new ArrayList<>());
-        } else if (userStatus == UserStatus.LOCKED) {
-            return new User(user.getUsername(), user.getPassword(), false, true, true, false, new ArrayList<>());
-        } else if (userStatus == UserStatus.DISABLED) {
-            return new User(user.getUsername(), user.getPassword(), false, false, true, true, new ArrayList<>());
-        } else {
-            throw new SystemInnerException();
-        }
+        User user = optional.get();
+        return new UserLoginInfo(user.getUsername(), user.getPassword(), user.getStatus(), new HashSet<>());
+    }
+
+    @PostMapping("/phone")
+    public VerificationCode createCode(@RequestParam String phone) {
+        VerificationCode verificationCode = verificationCodeFactory.next(phone);
+        verificationCodeManager.save(verificationCode);
+        return verificationCode;
     }
 
     @GetMapping("/phone")
-    public User checkCode(@RequestParam String phone) {
-        String query = verificationCodeManager.query(phone);
+    public PhoneLoginInfo checkCode(@RequestParam String phone) {
         QUser qUser = QUser.user;
-        Optional<com.heartape.live.ums.user.User> optional = userRepository.findOne(qUser.phone.eq(phone));
+        Optional<User> optional = userRepository.findOne(qUser.phone.eq(phone));
         if (optional.isEmpty()) {
             return null;
         }
-        com.heartape.live.ums.user.User user = optional.get();
-        UserStatus userStatus = user.getStatus();
-        if (userStatus == UserStatus.NORMAL) {
-            return new User(user.getPhone(), query, new ArrayList<>());
-        } else if (userStatus == UserStatus.LOCKED) {
-            return new User(user.getPhone(), query, false, true, true, false, new ArrayList<>());
-        } else if (userStatus == UserStatus.DISABLED) {
-            return new User(user.getPhone(), query, false, false, true, true, new ArrayList<>());
-        } else {
-            throw new SystemInnerException();
+        User user = optional.get();
+        String code = verificationCodeManager.query(phone);
+        if (!StringUtils.hasText(code)) {
+            return null;
         }
+        return new PhoneLoginInfo(phone, code, user.getStatus(), new HashSet<>());
     }
 
 }

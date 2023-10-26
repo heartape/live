@@ -13,6 +13,8 @@ public interface VerificationCode {
      */
     String getText();
 
+    String getTag();
+
     /**
      * 获取过期时间, 单位: 秒
      * @return 过期时间

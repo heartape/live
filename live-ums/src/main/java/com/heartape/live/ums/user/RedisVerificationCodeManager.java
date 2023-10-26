@@ -2,7 +2,9 @@ package com.heartape.live.ums.user;
 
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.util.StringUtils;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -15,8 +17,14 @@ public class RedisVerificationCodeManager implements VerificationCodeManager {
     private final RedisTemplate<String, String> redisTemplate;
 
     @Override
-    public void save(ImageVerificationCode imageVerificationCode) {
-        redisTemplate.opsForValue().set(imageVerificationCode.getId(), imageVerificationCode.getText(), imageVerificationCode.getExpireTime(), TimeUnit.SECONDS);
+    public void save(VerificationCode verificationCode) {
+        if (StringUtils.hasText(verificationCode.getTag())){
+            Map<String, String> verificationCodeMap = Map.of("tag", verificationCode.getTag(), "text", verificationCode.getText());
+            redisTemplate.opsForHash().putAll(verificationCode.getId(), verificationCodeMap);
+            redisTemplate.expire(verificationCode.getId(), verificationCode.getExpireTime(), TimeUnit.SECONDS);
+        } else {
+            redisTemplate.opsForValue().set(verificationCode.getId(), verificationCode.getText(), verificationCode.getExpireTime(), TimeUnit.SECONDS);
+        }
     }
 
     @Override

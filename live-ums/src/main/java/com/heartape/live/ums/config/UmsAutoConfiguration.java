@@ -1,9 +1,6 @@
 package com.heartape.live.ums.config;
 
-import com.heartape.live.ums.user.CachedImageVerificationCodeFactory;
-import com.heartape.live.ums.user.RedisVerificationCodeManager;
-import com.heartape.live.ums.user.VerificationCodeFactory;
-import com.heartape.live.ums.user.VerificationCodeManager;
+import com.heartape.live.ums.user.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -11,9 +8,14 @@ import org.springframework.data.redis.core.RedisTemplate;
 @Configuration
 public class UmsAutoConfiguration {
 
-    @Bean
-    public VerificationCodeFactory verificationCodeFactory() {
+    @Bean("imageVerificationCodeFactory")
+    public VerificationCodeFactory imageVerificationCodeFactory() {
         return new CachedImageVerificationCodeFactory();
+    }
+
+    @Bean("phoneVerificationCodeFactory")
+    public VerificationCodeFactory phoneVerificationCodeFactory() {
+        return new PhoneVerificationCodeFactory();
     }
 
     @Bean

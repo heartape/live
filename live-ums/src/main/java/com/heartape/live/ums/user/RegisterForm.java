@@ -1,5 +1,6 @@
 package com.heartape.live.ums.user;
 
+import com.heartape.user.UserStatus;
 import lombok.Getter;
 import lombok.Setter;
 

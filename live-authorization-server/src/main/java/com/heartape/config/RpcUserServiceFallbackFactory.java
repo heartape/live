@@ -12,13 +12,13 @@ public class RpcUserServiceFallbackFactory implements FallbackFactory<RpcUserSer
     public RpcUserService create(Throwable cause) {
         return new RpcUserService() {
             @Override
-            public User loadUserByUsername(String username) {
-                log.error("调用远程服务失败");
+            public UserLoginInfo loadUserByUsername(String username) {
+                log.error("调用远程服务失败", cause);
                 return null;
             }
 
             @Override
-            public User loadUserByPhone(String phone) {
+            public PhoneLoginInfo loadUserByPhone(String phone) {
                 log.error("调用远程服务失败");
                 return null;
             }

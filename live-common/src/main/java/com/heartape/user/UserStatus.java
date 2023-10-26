@@ -1,9 +1,9 @@
-package com.heartape.live.ums.user;
+package com.heartape.user;
 
 public enum UserStatus {
 
     NORMAL,
     LOCKED,
-    DISABLED;
+    DISABLED,
 
 }

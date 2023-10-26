@@ -9,7 +9,7 @@ public interface VerificationCodeManager {
     /**
      * 保存验证码
      */
-    void save(ImageVerificationCode imageVerificationCode);
+    void save(VerificationCode verificationCode);
 
     /**
      * 校验验证码
@@ -17,7 +17,7 @@ public interface VerificationCodeManager {
     boolean check(String key, String text);
 
     /**
-     * 校验验证码
+     * 获取验证码
      */
     String query(String key);
 

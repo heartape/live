@@ -39,8 +39,9 @@ public class SecurityConfig {
                 // Form login handles the redirect to the login page from the
                 // authorization server filter chain
                 // .httpBasic(Customizer.withDefaults())
-                .formLogin(Customizer.withDefaults())
-                // .formLogin(customizer -> customizer.successHandler().failureHandler())
+                // .formLogin(Customizer.withDefaults())
+                .formLogin(customizer -> customizer.successForwardUrl("/"))
+                // .logout(customizer -> customizer.logoutSuccessUrl("/"))
                 .addFilterAfter(smsAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

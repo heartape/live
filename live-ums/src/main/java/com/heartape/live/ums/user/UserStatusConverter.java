@@ -1,5 +1,6 @@
 package com.heartape.live.ums.user;
 
+import com.heartape.user.UserStatus;
 import jakarta.persistence.AttributeConverter;
 
 public class UserStatusConverter implements AttributeConverter<UserStatus, String> {

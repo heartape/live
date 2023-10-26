@@ -1,5 +1,6 @@
 package com.heartape.live.ums.user;
 
+import com.heartape.user.UserStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

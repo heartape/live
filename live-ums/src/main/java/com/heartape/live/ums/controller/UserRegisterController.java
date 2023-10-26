@@ -1,18 +1,10 @@
 package com.heartape.live.ums.controller;
 
-import com.heartape.exception.SystemInnerException;
 import com.heartape.live.ums.user.*;
 import com.heartape.result.Result;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.web.bind.annotation.*;
 
-import javax.imageio.ImageIO;
-import java.io.IOException;
-
-@AllArgsConstructor
 @RestController
 @RequestMapping("/register")
 public class UserRegisterController {
@@ -22,6 +14,12 @@ public class UserRegisterController {
     private final VerificationCodeManager verificationCodeManager;
 
     private final UserRepository userRepository;
+
+    public UserRegisterController(VerificationCodeFactory imageVerificationCodeFactory, VerificationCodeManager verificationCodeManager, UserRepository userRepository) {
+        this.verificationCodeFactory = imageVerificationCodeFactory;
+        this.verificationCodeManager = verificationCodeManager;
+        this.userRepository = userRepository;
+    }
 
     @GetMapping("/code")
     public ImageVerificationCode getCode() {
@@ -42,7 +40,10 @@ public class UserRegisterController {
         if (!check){
             throw new IllegalArgumentException("验证码错误");
         }
-        userRepository.save(registerForm.toUser());
+        User user = registerForm.toUser();
+        String password = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(user.getPassword());
+        user.setPassword(password);
+        userRepository.save(user);
         return Result.success();
     }
 
