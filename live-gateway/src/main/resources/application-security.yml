@@ -7,7 +7,7 @@ spring:
             provider: oauth2
             client-name: Sign in with oauth2-server
             client-id: 111
-            client-secret: 222
+            client-secret: 111
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
             redirect-uri: http://127.0.0.1/login/oauth2/code/{registrationId}

@@ -4,4 +4,4 @@ spring:
   profiles:
     include: security
   application:
-    name: gateway-client-service
+    name: live-gateway

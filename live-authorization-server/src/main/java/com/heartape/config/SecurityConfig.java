@@ -35,14 +35,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .anyRequest().authenticated()
                 )
-                .csrf(AbstractHttpConfigurer::disable)
                 // Form login handles the redirect to the login page from the
                 // authorization server filter chain
                 // .httpBasic(Customizer.withDefaults())
-                // .formLogin(Customizer.withDefaults())
-                .formLogin(customizer -> customizer.successForwardUrl("/"))
+                .formLogin(Customizer.withDefaults());
+                // .formLogin(customizer -> customizer.successForwardUrl("/"))
                 // .logout(customizer -> customizer.logoutSuccessUrl("/"))
-                .addFilterAfter(smsAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                // .addFilterAfter(smsAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
