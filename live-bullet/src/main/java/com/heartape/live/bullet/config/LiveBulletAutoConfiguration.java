@@ -32,12 +32,12 @@ public class LiveBulletAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public BulletManager bulletChatManager(@Qualifier("bulletConnectionManager") ConnectionManager<Bullet> connectionManager,
-                                           @Qualifier("bulletChatFlowManager") FlowManager flowManager,
+    public BulletManager bulletManager(@Qualifier("bulletConnectionManager") ConnectionManager<Bullet> connectionManager,
+                                           @Qualifier("bulletFlowManager") FlowManager flowManager,
                                            BulletRepository bulletRepository,
-                                           @Qualifier("bulletChatFilterChain") FilterChain<Bullet> filterChain){
+                                           @Qualifier("bulletFilterChain") FilterChain<Bullet> filterChain){
         return DefaultBulletManager.builder()
-                .bulletChatRepository(bulletRepository)
+                .bulletRepository(bulletRepository)
                 .flowManager(flowManager)
                 .connectionManager(connectionManager)
                 .filterChain(filterChain)
@@ -48,9 +48,9 @@ public class LiveBulletAutoConfiguration {
      * 弹幕配置
      */
     @Configuration
-    protected static class BulletChatConfigurer {
+    protected static class BulletConfigurer {
 
-        @Bean("bulletChatFlowManager")
+        @Bean("bulletFlowManager")
         @ConditionalOnMissingBean
         public FlowManager flowManager(@Qualifier("bulletConnectionManager") ConnectionManager<Bullet> connectionManager,
                                        BulletRepository bulletRepository,
@@ -71,19 +71,18 @@ public class LiveBulletAutoConfiguration {
         }
 
         @SuppressWarnings("deprecation")
-        @Bean("bulletChatFilterChain")
+        @Bean("bulletFilterChain")
         @ConditionalOnMissingBean
         public FilterChain<Bullet> filterChain(LiveBulletProperties liveBulletProperties,
                                                @Qualifier("bulletConnectionManager") ConnectionManager<Bullet> connectionManager,
                                                LiveRoomStatusRepository liveRoomStatusRepository){
-            List<String> black;
             LiveBulletProperties.Filter filter = liveBulletProperties.getFilter();
             if (filter == null){
                 return SimpleSerialFilterChain.builder().build();
             }
 
             List<String> authBlack = filter.getBlack();
-            black = Objects.requireNonNullElseGet(authBlack, ArrayList::new);
+            List<String> black = Objects.requireNonNullElseGet(authBlack, ArrayList::new);
             List<String> rooms = filter.getRoom();
             if (rooms != null && !rooms.isEmpty()){
                 for (String room : rooms) {

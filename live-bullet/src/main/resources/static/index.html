@@ -28,7 +28,7 @@ uid:<input type="text" id="uid-input">
         if (!!window.EventSource) {
             const roomId = roomIdInput.value;
             const userId = uidInput.value;
-            const url = new URL(`http://localhost:8080/chat/connection/sse`)
+            const url = new URL(`http://localhost:8002/bullet/connection/sse`)
             url.searchParams.set('uid', userId)
             url.searchParams.set('roomId', roomId)
 
@@ -49,8 +49,8 @@ uid:<input type="text" id="uid-input">
              */
             source.addEventListener('message', function (e) {
                 const array = JSON.parse(e.data);
-                for (let chat of array) {
-                    setMessageInnerHTML(chat.uid + ':' + chat.content);
+                for (let bullet of array) {
+                    setMessageInnerHTML(bullet.uid + ':' + bullet.content);
                 }
             });
 
@@ -80,7 +80,7 @@ uid:<input type="text" id="uid-input">
         const roomId = roomIdInput.value;
         const userId = uidInput.value;
         const httpRequest = new XMLHttpRequest();
-        const url = new URL(`http://localhost:8080/chat/connection`)
+        const url = new URL(`http://localhost:8002/bullet/connection`)
         url.searchParams.set('roomId', roomId)
         url.searchParams.set('uid', userId)
         httpRequest.open('DELETE', url, true);
@@ -97,7 +97,7 @@ uid:<input type="text" id="uid-input">
 
     function send() {
         const httpRequest = new XMLHttpRequest();
-        const url = new URL(`http://localhost:8080/chat`)
+        const url = new URL(`http://localhost:8002/bullet`)
         const roomId = roomIdInput.value;
         const userId = uidInput.value;
         url.searchParams.set('uid', userId)

@@ -36,13 +36,13 @@ public class RedisBulletRepository implements BulletRepository {
         if (bullets != null && !bullets.isEmpty()){
             ZSetOperations<String, Bullet> opsForZSet = redisTemplate.opsForZSet();
 
-            Map<String, Set<ZSetOperations.TypedTuple<Bullet>>> bulletChatMap = bullets
+            Map<String, Set<ZSetOperations.TypedTuple<Bullet>>> bulletMap = bullets
                     .stream()
                     .collect(Collectors.groupingBy(Bullet::getRoomId,
-                            Collectors.mapping(bulletChat -> (ZSetOperations.TypedTuple<Bullet>)new DefaultTypedTuple<>(bulletChat, (double) bulletChat.getTimestamp()),
+                            Collectors.mapping(bullet -> (ZSetOperations.TypedTuple<Bullet>)new DefaultTypedTuple<>(bullet, (double) bullet.getTimestamp()),
                                     Collectors.toSet())));
 
-            bulletChatMap.forEach(opsForZSet::add);
+            bulletMap.forEach(opsForZSet::add);
         }
     }
 

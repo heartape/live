@@ -22,6 +22,6 @@ public interface BulletManager {
     /**
      * 短连接拉取:对于长连接的补充，在网络环境恶劣的情况下避免长连接持续重试
      */
-    List<Bullet> pull();
+    List<Bullet> pull(String roomId);
 
 }

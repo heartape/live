@@ -1,0 +1,4 @@
+POST localhost:8002/bullet?roomId=114514&uid=1111
+Content-Type: application/json
+
+"测试弹幕"

@@ -44,13 +44,18 @@ public class DefaultBulletManager implements BulletManager {
     @Override
     public void push(Bullet bullet) {
         if (bullet != null && this.filterChain.permit(bullet)){
-            String roomId = bullet.getRoomId();
-            int seat = this.connectionManager.seat(roomId, this.flowManager.getFlowSize());
-            // 唤醒
-            Flow flow = this.flowManager.getFlow(seat);
-            flow.next();
             this.bulletRepository.insert(bullet);
+            next(bullet.getRoomId());
         }
+    }
+
+    /**
+     * 唤醒
+     */
+    private void next(String roomId){
+        int seat = this.connectionManager.seat(roomId, this.flowManager.getFlowSize());
+        Flow flow = this.flowManager.getFlow(seat);
+        flow.next();
     }
 
     @Override
@@ -59,39 +64,44 @@ public class DefaultBulletManager implements BulletManager {
                 .filter(this.filterChain::permit)
                 .collect(Collectors.toList());
         this.bulletRepository.insert(list);
+        bullets.stream()
+                .map(Bullet::getRoomId)
+                .collect(Collectors.toSet())
+                .forEach(this::next);
     }
 
     @Override
-    public List<Bullet> pull() {
-        return null;
+    public List<Bullet> pull(String roomId) {
+        long l = System.currentTimeMillis();
+        return this.bulletRepository.select(roomId, l - 1000, l);
     }
 
-    public static DefaultBulletChatManagerBuilder builder() {
-        return new DefaultBulletChatManagerBuilder();
+    public static DefaultBulletManagerBuilder builder() {
+        return new DefaultBulletManagerBuilder();
     }
 
-    public static class DefaultBulletChatManagerBuilder {
+    public static class DefaultBulletManagerBuilder {
         private ConnectionManager<Bullet> connectionManager;
         private FlowManager flowManager;
         private BulletRepository bulletRepository;
         private FilterChain<Bullet> filterChain;
 
-        public DefaultBulletChatManagerBuilder connectionManager(ConnectionManager<Bullet> connectionManager) {
+        public DefaultBulletManagerBuilder connectionManager(ConnectionManager<Bullet> connectionManager) {
             this.connectionManager = connectionManager;
             return this;
         }
 
-        public DefaultBulletChatManagerBuilder flowManager(FlowManager flowManager) {
+        public DefaultBulletManagerBuilder flowManager(FlowManager flowManager) {
             this.flowManager = flowManager;
             return this;
         }
 
-        public DefaultBulletChatManagerBuilder bulletChatRepository(BulletRepository bulletRepository) {
+        public DefaultBulletManagerBuilder bulletRepository(BulletRepository bulletRepository) {
             this.bulletRepository = bulletRepository;
             return this;
         }
 
-        public DefaultBulletChatManagerBuilder filterChain(FilterChain<Bullet> filterChain) {
+        public DefaultBulletManagerBuilder filterChain(FilterChain<Bullet> filterChain) {
             this.filterChain = filterChain;
             return this;
         }

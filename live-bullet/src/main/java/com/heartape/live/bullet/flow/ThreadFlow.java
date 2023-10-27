@@ -6,6 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.locks.LockSupport;
 
+/**
+ * 以线程作为流的载体
+ * @see Flow
+ */
 @Slf4j
 @AllArgsConstructor
 public class ThreadFlow implements Flow {
@@ -20,6 +24,7 @@ public class ThreadFlow implements Flow {
 
     private final static int RUN = 1;
 
+    /** 暂停 */
     private final static int IDLE = 2;
 
     private final static int SLEEP = 3;
@@ -37,8 +42,9 @@ public class ThreadFlow implements Flow {
     }
 
     public void start() {
-        log.debug("Thread:{} start", this.thread.getId());
         this.thread.start();
+        this.status = RUN;
+        log.debug("Thread:{} start", this.thread.getId());
     }
 
     @Override
@@ -51,8 +57,8 @@ public class ThreadFlow implements Flow {
         if (this.status != RUN && this.status != SLEEP){
             throw new FlowStatusException("flow status error, can not sleep");
         }
-        log.debug("Thread:{} sleep", this.thread.getId());
         this.status = SLEEP;
+        log.debug("Thread:{} sleep", this.thread.getId());
     }
 
     @Override
@@ -62,8 +68,8 @@ public class ThreadFlow implements Flow {
 
     @Override
     public void activate() {
-        log.debug("Thread:{} activate", this.thread.getId());
         this.status = RUN;
+        log.debug("Thread:{} activate", this.thread.getId());
     }
 
     /**
@@ -71,15 +77,15 @@ public class ThreadFlow implements Flow {
      */
     @Override
     public void idle(int time) {
-        log.debug("Thread:{} idle", this.thread.getId());
         this.status = IDLE;
-        LockSupport.parkNanos((long) time * 1000 * 1000);
+        LockSupport.parkNanos((long) time * 1000 * 1000 * 5);
+        log.debug("Thread:{} idle", this.thread.getId());
     }
 
     @Override
     public void next() {
-        log.debug("Thread:{} next", this.thread.getId());
         LockSupport.unpark(this.thread);
+        log.debug("Thread:{} next", this.thread.getId());
     }
 
     @Override
@@ -89,8 +95,8 @@ public class ThreadFlow implements Flow {
 
     @Override
     public void setLastFrame(long frame) {
-        log.debug("Thread:{} set frame", this.thread.getId());
         this.frame = frame;
+        log.debug("Thread:{} set frame", this.thread.getId());
     }
 
     public void stop() {

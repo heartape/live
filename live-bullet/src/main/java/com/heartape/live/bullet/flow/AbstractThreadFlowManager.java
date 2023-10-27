@@ -26,10 +26,8 @@ public abstract class AbstractThreadFlowManager extends AbstractFlowManager {
         while (!flow.isStopped()){
             long frame = flow.getLastFrame();
             long end = System.currentTimeMillis();
-            long timeTarget = end - (long) this.time;
-            long start = Math.max(frame, timeTarget);
             flow.setLastFrame(end);
-            if (this.doTaskCore(seat, getFlowSize(), start, end)){
+            if (this.doTaskCore(seat, getFlowSize(), frame + 1, end)){
                 flow.idle(this.time);
             }
         }

@@ -45,15 +45,15 @@ public class BulletThreadFlowManager extends AbstractThreadFlowManager {
                 log.debug("room:{} is Empty", roomId);
                 return;
             }
-            connectionMap.forEach((uid, longConnection) -> {
-                if (longConnection == null) {
+            connectionMap.forEach((uid, connection) -> {
+                if (connection == null) {
                     connectionMap.remove(uid);
-                } else if (longConnection.isCompleted()){
+                } else if (connection.isCompleted()){
                     this.connectionManager.logout(roomId, uid);
                     connectionMap.remove(uid);
                 } else {
                     try {
-                        longConnection.send(bullets, end);
+                        connection.send(bullets, end);
                     } catch (IOException e) {
                         this.connectionManager.logout(roomId, uid);
                     }

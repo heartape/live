@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @Setter
 @Data
-@ConfigurationProperties("live.chat")
+@ConfigurationProperties("live.bullet")
 public class LiveBulletProperties {
 
     private Flow flow;

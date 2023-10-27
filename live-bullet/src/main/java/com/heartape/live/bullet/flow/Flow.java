@@ -31,7 +31,7 @@ public interface Flow {
     boolean isSleeping();
 
     /**
-     * 唤醒被停用的流
+     * 唤醒被睡眠或停用的流
      */
     void activate();
 
@@ -42,7 +42,7 @@ public interface Flow {
     void idle(int time);
 
     /**
-     * 激活空闲状态的flow进行下一波流推送
+     * 激活暂停状态的flow进行下一波流推送
      */
     void next();
 
