@@ -3,10 +3,28 @@ server:
 logging:
   level:
     org.springframework.web.servlet.DispatcherServlet: debug
+    org.springframework.jdbc.core.JdbcTemplate: debug
 spring:
   application:
     name: oauth2-server-service
-secret-key:
-  rsa:
-    private-key-pem: /rsa/rsa_private_key_pkcs8.pem
-    public-key-pem: /rsa/rsa_public_key_pkcs8.pem
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://192.168.31.100:3306/live-authorization-server?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+    nacos:
+      discovery:
+        server-addr: http://192.168.31.100:8848
+        namespace: 72f9a09a-7b6b-46c7-81fa-20db037e98ff
+live:
+  oauth:
+    rsa:
+      private-key-pem: /rsa/rsa_private_key_pkcs8.pem
+      public-key-pem: /rsa/rsa_public_key_pkcs8.pem
+    login:
+      path: /login
+      username: /username
+      phone: /phone

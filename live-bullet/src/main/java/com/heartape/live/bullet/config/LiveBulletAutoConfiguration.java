@@ -1,7 +1,7 @@
 package com.heartape.live.bullet.config;
 
 import com.heartape.live.bullet.connect.ConnectionManager;
-import com.heartape.live.bullet.flow.BulletThreadFlowManager;
+import com.heartape.live.bullet.flow.ConnectionThreadFlowManager;
 import com.heartape.live.bullet.manager.BulletManager;
 import com.heartape.live.bullet.manager.DefaultBulletManager;
 import com.heartape.live.bullet.connect.MemoryConnectionManager;
@@ -32,12 +32,12 @@ public class LiveBulletAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public BulletManager bulletChatManager(@Qualifier("bulletConnectionManager") ConnectionManager<Bullet> connectionManager,
-                                           @Qualifier("bulletChatFlowManager") FlowManager flowManager,
-                                           BulletRepository bulletRepository,
-                                           @Qualifier("bulletChatFilterChain") FilterChain<Bullet> filterChain){
+    public BulletManager bulletManager(ConnectionManager connectionManager,
+                                       FlowManager flowManager,
+                                       BulletRepository bulletRepository,
+                                       @Qualifier("bulletFilterChain") FilterChain<Bullet> filterChain){
         return DefaultBulletManager.builder()
-                .bulletChatRepository(bulletRepository)
+                .bulletRepository(bulletRepository)
                 .flowManager(flowManager)
                 .connectionManager(connectionManager)
                 .filterChain(filterChain)
@@ -48,21 +48,19 @@ public class LiveBulletAutoConfiguration {
      * 弹幕配置
      */
     @Configuration
-    protected static class BulletChatConfigurer {
+    protected static class BulletConfigurer {
 
-        @Bean("bulletChatFlowManager")
+        @Bean
         @ConditionalOnMissingBean
-        public FlowManager flowManager(@Qualifier("bulletConnectionManager") ConnectionManager<Bullet> connectionManager,
-                                       BulletRepository bulletRepository,
-                                       LiveBulletProperties liveBulletProperties){
-            LiveBulletProperties.Flow flow = liveBulletProperties.getFlow();
-            return new BulletThreadFlowManager(connectionManager, bulletRepository, flow.getTime(), flow.getMax(), flow.getInit());
+        public ConnectionManager connectionManager(){
+            return new MemoryConnectionManager();
         }
 
-        @Bean("bulletConnectionManager")
+        @Bean
         @ConditionalOnMissingBean
-        public ConnectionManager<Bullet> connectionManager(){
-            return new MemoryConnectionManager<>();
+        public FlowManager flowManager(ConnectionManager connectionManager, LiveBulletProperties liveBulletProperties){
+            LiveBulletProperties.Flow flow = liveBulletProperties.getFlow();
+            return new ConnectionThreadFlowManager(flow.getMax(), flow.getInit(), connectionManager);
         }
 
         @Bean
@@ -71,23 +69,23 @@ public class LiveBulletAutoConfiguration {
         }
 
         @SuppressWarnings("deprecation")
-        @Bean("bulletChatFilterChain")
+        @Bean("bulletFilterChain")
         @ConditionalOnMissingBean
         public FilterChain<Bullet> filterChain(LiveBulletProperties liveBulletProperties,
-                                               @Qualifier("bulletConnectionManager") ConnectionManager<Bullet> connectionManager,
+                                               ConnectionManager connectionManager,
                                                LiveRoomStatusRepository liveRoomStatusRepository){
-            List<String> black;
             LiveBulletProperties.Filter filter = liveBulletProperties.getFilter();
             if (filter == null){
                 return SimpleSerialFilterChain.builder().build();
             }
 
             List<String> authBlack = filter.getBlack();
-            black = Objects.requireNonNullElseGet(authBlack, ArrayList::new);
+            List<String> black = Objects.requireNonNullElseGet(authBlack, ArrayList::new);
             List<String> rooms = filter.getRoom();
             if (rooms != null && !rooms.isEmpty()){
                 for (String room : rooms) {
                     liveRoomStatusRepository.insert(room);
+                    connectionManager.register(room);
                 }
             }
 

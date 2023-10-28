@@ -1,0 +1,26 @@
+server:
+  port: 8001
+spring:
+  application:
+    name: live-ums
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://192.168.31.100:3306/live-ums?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+  jpa:
+    show-sql: true
+  cloud:
+    nacos:
+      discovery:
+        server-addr: http://192.168.31.100:8848
+        namespace: 72f9a09a-7b6b-46c7-81fa-20db037e98ff
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8888
+          jwk-set-uri: http://localhost:8888/oauth2/jwks
+  data:
+    redis:
+      host: 192.168.31.100
+      port: 6379

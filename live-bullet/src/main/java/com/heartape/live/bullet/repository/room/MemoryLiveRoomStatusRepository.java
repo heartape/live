@@ -26,7 +26,7 @@ public class MemoryLiveRoomStatusRepository implements LiveRoomStatusRepository 
     }
 
     @Override
-    public boolean select(String id, Status status) {
+    public boolean exist(String id, Status status) {
         return this.liveRoomStatusMap.get(id) == status;
     }
 }

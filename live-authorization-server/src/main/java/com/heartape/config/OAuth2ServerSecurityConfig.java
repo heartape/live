@@ -7,9 +7,11 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,7 +20,7 @@ import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.*;
-import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
+import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
@@ -35,6 +37,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 
+@EnableConfigurationProperties(Oauth2ServerProperties.class)
 @Configuration
 @EnableWebSecurity
 public class OAuth2ServerSecurityConfig {
@@ -55,56 +58,25 @@ public class OAuth2ServerSecurityConfig {
                 .build();
     }
 
-
     @Bean
-    public OAuth2AuthorizationConsentService authorizationConsentService() {
-        return new InMemoryOAuth2AuthorizationConsentService();
+    public RegisteredClientRepository registeredClientRepository(JdbcOperations jdbcOperations) {
+        return new JdbcRegisteredClientRepository(jdbcOperations);
     }
 
     @Bean
-    public OAuth2AuthorizationService authorizationService() {
-        return new InMemoryOAuth2AuthorizationService();
+    public OAuth2AuthorizationConsentService authorizationConsentService(JdbcOperations jdbcOperations, RegisteredClientRepository registeredClientRepository) {
+        return new JdbcOAuth2AuthorizationConsentService(jdbcOperations, registeredClientRepository);
     }
 
     @Bean
-    public RegisteredClientRepository registeredClientRepository() {
-        ClientSettings clientSettings = ClientSettings
-                .builder()
-                .requireAuthorizationConsent(true)
-                .build();
-
-        TokenSettings tokenSettings = TokenSettings
-                .builder()
-                .accessTokenTimeToLive(Duration.ofDays(7))
-                .build();
-
-        RegisteredClient registeredClient = RegisteredClient
-                .withId(UUID.randomUUID().toString())
-                .clientId("111")
-                .clientSecret("{noop}222")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("http://127.0.0.1/login/oauth2/code/oauth2-server")
-                .scope(OidcScopes.OPENID)
-                .scope(OidcScopes.PROFILE)
-                .scope(OidcScopes.PHONE)
-                .scope(OidcScopes.EMAIL)
-                .clientSettings(clientSettings)
-                .tokenSettings(tokenSettings)
-                .build();
-        return new InMemoryRegisteredClientRepository(registeredClient);
+    public OAuth2AuthorizationService authorizationService(JdbcOperations jdbcOperations, RegisteredClientRepository registeredClientRepository) {
+        return new JdbcOAuth2AuthorizationService(jdbcOperations, registeredClientRepository);
     }
 
-    @Value("${secret-key.rsa.public-key-pem}")
-    private String PUB_KEY_PATH;
-    @Value("${secret-key.rsa.private-key-pem}")
-    private String PRI_KEY_PATH;
-
     @Bean
-    public JWKSource<SecurityContext> jwkSource() {
-        RSAPublicKey publicKey = SecretKeyUtils.getPublicKeyFromPem(PUB_KEY_PATH);
-        RSAPrivateKey privateKey = SecretKeyUtils.getPrivateKeyFromPem(PRI_KEY_PATH);
+    public JWKSource<SecurityContext> jwkSource(Oauth2ServerProperties oauth2ServerProperties) {
+        RSAPublicKey publicKey = SecretKeyUtils.getPublicKeyFromPem(oauth2ServerProperties.getRsa().getPublicKeyPem());
+        RSAPrivateKey privateKey = SecretKeyUtils.getPrivateKeyFromPem(oauth2ServerProperties.getRsa().getPrivateKeyPem());
         RSAKey rsaKey = new RSAKey
                 .Builder(publicKey)
                 .privateKey(privateKey)

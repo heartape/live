@@ -2,6 +2,7 @@ package com.heartape.live.bullet.listener;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.heartape.live.bullet.constant.KafkaConstant;
 import com.heartape.live.bullet.manager.BulletManager;
 import com.heartape.live.bullet.repository.bullet.Bullet;
 import lombok.AllArgsConstructor;
@@ -22,19 +23,20 @@ public class MyKafkaListener {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @KafkaListener(
-            id = "live-chat",
-            clientIdPrefix = "live-chat-consumer",
+            id = "live-bullet",
+            clientIdPrefix = "live-bullet-consumer",
             groupId = "live-group",
-            topics = "live-chat",
+            topics = KafkaConstant.TOPIC,
             batch = "true"
     )
-    public void batch(List<String> bulletChatStrList) {
-        if (bulletChatStrList != null && !bulletChatStrList.isEmpty()){
+    public void batch(List<String> bulletStrList) {
+        if (bulletStrList != null && !bulletStrList.isEmpty()){
             List<Bullet> bullets = new ArrayList<>();
-            for (String bulletChatStr : bulletChatStrList) {
+            for (String bulletStr : bulletStrList) {
+                log.debug("消息数据{}", bulletStr);
                 Bullet bullet;
                 try {
-                    bullet = objectMapper.readValue(bulletChatStr, Bullet.class);
+                    bullet = objectMapper.readValue(bulletStr, Bullet.class);
                     bullets.add(bullet);
                 } catch (JsonProcessingException ignore) {}
             }

@@ -1,5 +1,7 @@
 package com.heartape.live.bullet.repository.bullet;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.heartape.live.bullet.flow.FlowElement;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,14 +10,11 @@ import lombok.Setter;
 import java.io.Serial;
 import java.io.Serializable;
 
-/**
- * todo:抽象出来，并且将这个目录拆分，readme完善
- */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Bullet implements Serializable {
+public class Bullet implements Serializable, FlowElement {
     @Serial
     private static final long serialVersionUID = -6020546094258938952L;
     private String id;
@@ -27,4 +26,10 @@ public class Bullet implements Serializable {
     /** 样式 */
     private String type;
     private Long timestamp;
+
+    @JsonIgnore
+    @Override
+    public String getDestination() {
+        return roomId;
+    }
 }

@@ -16,6 +16,16 @@ public interface Flow {
     void start();
 
     /**
+     * 推送
+     */
+    void push(FlowElement element);
+
+    /**
+     * 是否为空
+     */
+    boolean isEmpty();
+
+    /**
      * @return 是否在运行
      */
     boolean isRunning();
@@ -31,30 +41,14 @@ public interface Flow {
     boolean isSleeping();
 
     /**
-     * 唤醒被停用的流
+     * 唤醒被睡眠或停用的流
      */
     void activate();
 
     /**
-     * 空闲flow会暂停一段时间
-     * @param time 暂停时间，单位毫秒
-     */
-    void idle(int time);
-
-    /**
-     * 激活空闲状态的flow进行下一波流推送
+     * 激活暂停状态的flow进行下一波流推送
      */
     void next();
-
-    /**
-     * 获取流的上一帧
-     */
-    long getLastFrame();
-
-    /**
-     * 设置流的上一帧
-     */
-    void setLastFrame(long frame);
 
     /**
      * 停止

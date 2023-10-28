@@ -14,7 +14,7 @@ public class LiveRoomStatusFilter implements Filter<Bullet> {
 
     @Override
     public boolean permit(Bullet bullet) {
-        return liveRoomStatusRepository.select(bullet.getRoomId(), LiveRoomStatusRepository.Status.NORMAL);
+        return liveRoomStatusRepository.exist(bullet.getRoomId(), LiveRoomStatusRepository.Status.NORMAL);
     }
 
 }

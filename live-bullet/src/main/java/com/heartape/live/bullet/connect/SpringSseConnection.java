@@ -4,10 +4,14 @@ import lombok.Getter;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.util.List;
 
+/**
+ * Spring sse 长连接
+ * @see Connection
+ * @see SseEmitter
+ */
 @Getter
-public class SpringSseConnection<T> implements Connection<T> {
+public class SpringSseConnection implements Connection {
     private final String uid;
     private final String roomId;
     private final SseEmitter sseEmitter;
@@ -24,12 +28,17 @@ public class SpringSseConnection<T> implements Connection<T> {
     }
 
     @Override
-    public void send(List<T> list, long timestamp) throws IOException {
+    public void send(Object o, long timestamp) {
         String timestampStr = Long.toString(timestamp);
-        sseEmitter.send(SseEmitter.event()
-                .id(timestampStr)
-                .data(list)
-        );
+        try {
+            sseEmitter.send(SseEmitter.event()
+                    .id(timestampStr)
+                    .data(o)
+            );
+        } catch (IOException ignored) {
+            // 不再发送消息，直接断开连接。
+            disconnect();
+        }
     }
     @Override
     public void disconnect() {

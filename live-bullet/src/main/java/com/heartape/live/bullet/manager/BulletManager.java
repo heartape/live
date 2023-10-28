@@ -7,11 +7,16 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * 弹幕管理，整合各个组件，暴露给外部使用
+ * 弹幕管理推拉结合:
+ * <ul>
+ *     <li>长连接推送
+ *     <li>持久化
+ *     <li>长连接不稳定会降级为短链接，主动拉流
+ * </ul>
  */
 public interface BulletManager {
 
-    void register(Connection<Bullet> connection);
+    void register(Connection connection);
 
     void logout(String roomId, String uid);
 
@@ -22,6 +27,6 @@ public interface BulletManager {
     /**
      * 短连接拉取:对于长连接的补充，在网络环境恶劣的情况下避免长连接持续重试
      */
-    List<Bullet> pull();
+    List<Bullet> pull(String roomId);
 
 }

@@ -15,14 +15,14 @@ public class LiveRoomLoadFilter implements Filter<Bullet> {
      */
     private final int max;
 
-    private final ConnectionManager<Bullet> longConnectionManager;
+    private final ConnectionManager connectionManager;
 
     @Override
     public boolean permit(Bullet bullet) {
-        int count = this.longConnectionManager.count();
+        int count = this.connectionManager.count();
         String uid = bullet.getUid();
         String roomId = bullet.getRoomId();
-        return this.longConnectionManager.registered(roomId, uid) || count < this.max;
+        return this.connectionManager.registered(roomId, uid) || count < this.max;
     }
 
 }

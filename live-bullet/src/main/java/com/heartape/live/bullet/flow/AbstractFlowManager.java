@@ -1,9 +1,7 @@
 package com.heartape.live.bullet.flow;
 
+import com.heartape.live.bullet.exception.FlowStatusException;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 仅负责flow管理。
@@ -12,15 +10,13 @@ import java.util.Map;
 public abstract class AbstractFlowManager implements FlowManager {
 
     /**
-     * 推送间隔,单位毫秒
-     */
-    protected final int time;
-
-    /**
      * 最大流的数量
      */
     private final int maxFlowSize;
 
+    /**
+     * 核心流的数量
+     */
     private final int coreFlowSize;
 
     /**
@@ -30,12 +26,9 @@ public abstract class AbstractFlowManager implements FlowManager {
 
     private final Flow[] flowArray;
 
-    private final Map<Long, Integer> flowSeatMap = new HashMap<>();
+    // CyclicBarrier
 
-    private int current = -1;
-
-    public AbstractFlowManager(int time, int maxFlowSizePow, int coreFlowSizePow) {
-        this.time = time;
+    public AbstractFlowManager(int maxFlowSizePow, int coreFlowSizePow) {
         this.maxFlowSize = 1 << maxFlowSizePow;
         this.coreFlowSize = 1 << coreFlowSizePow;
         this.flowArray = new Flow[this.maxFlowSize];
@@ -46,6 +39,21 @@ public abstract class AbstractFlowManager implements FlowManager {
         return flowArray[seat];
     }
 
+    /**
+     * @param element FlowElement
+     */
+    @Override
+    public void push(FlowElement element) {
+        String destination = element.getDestination();
+        int seat = seat(destination);
+        Flow flow = flowArray[seat];
+        flow.push(element);
+    }
+
+    protected int seat(String destination) {
+        return destination.hashCode() & getFlowSize() - 1;
+    }
+
     @Override
     public int getFlowSize(){
         return this.flowSize;
@@ -53,70 +61,55 @@ public abstract class AbstractFlowManager implements FlowManager {
 
     @Override
     public void setFlowSize(int flowSizePow){
-        if (flowSizePow > maxFlowSize) {
-            log.warn("The number of Flow({}) exceeds the maximum number !", flowSizePow);
+        int flowSize = 1 << flowSizePow;
+        if (flowSize > maxFlowSize || flowSize < coreFlowSize) {
+            log.warn("The number of Flow({}) is out of range !", flowSize);
         } else {
-            reset(1 << flowSizePow);
+            reset(flowSize);
         }
     }
 
     /**
-     * 创建Flow
-     * @param task 任务
+     * 创建流
      * @return Flow
      */
-    protected abstract Flow create(Runnable task);
+    protected abstract Flow create();
 
     private void reset(int flowSize){
         synchronized (this.flowArray) {
-            if (this.current < flowSize - 1){
-                while (this.current < flowSize - 1) {
-                    Flow flow = this.flowArray[this.current + 1];
+            if (this.flowSize < flowSize){
+                for (int i = 0; i < flowSize - this.flowSize; i++) {
+                    Flow flow = this.flowArray[this.flowSize + i];
                     if (flow == null){
-                        flow = create(this::task);
-                        this.flowArray[++this.current] = flow;
-                        long id = flow.getId();
-                        this.flowSeatMap.put(id, this.current);
+                        flow = create();
+                        this.flowArray[this.flowSize + i] = flow;
                         flow.start();
-                    } else if (flow.isSleeping()){
+                    } else {
+                        if (!flow.isSleeping()){
+                            throw new FlowStatusException("flow status error, can not activate");
+                        }
                         flow.activate();
                     }
                 }
                 // 等Flow全部创建完成再修改
                 this.flowSize = flowSize;
             } else {
+                int count = this.flowSize - flowSize;
                 // 先修改再睡眠Flow
                 this.flowSize = flowSize;
-                while (this.current >= flowSize) {
-                    Flow flow = this.flowArray[this.current];
-                    long id = flow.getId();
-                    flow.stop();
-                    this.flowSeatMap.remove(id);
-                    this.flowArray[this.current--].sleep();
+                for (int i = 0; i < count; i++) {
+                    this.flowArray[this.flowSize + i].sleep();
                 }
             }
         }
     }
 
-    /**
-     * flow任务
-     */
-    protected abstract void task();
-
-    /**
-     * @return 当前Flow id
-     */
-    protected abstract long getId();
-
-    /**
-     * @return 当前Flow次序或位置
-     */
-    protected int getSeat(){
-        return this.flowSeatMap.get(getId());
-    }
-
     @Override
     public void stop() {
-        reset(0);
+        synchronized (this.flowArray) {
+            for (Flow flow : this.flowArray) {
+                flow.stop();
+            }
+        }
     }
 }

@@ -1,9 +1,15 @@
-
+server:
+  port: 8002
 spring:
   application:
-    name: live-chat-service
+    name: live-bullet
+  cloud:
+    nacos:
+      discovery:
+        server-addr: http://192.168.31.100:8848
+        namespace: 72f9a09a-7b6b-46c7-81fa-20db037e98ff
   kafka:
-    client-id: live-chat-client
+    client-id: live-bullet-client
     bootstrap-servers:
       - 192.168.31.101:9092
       - 192.168.31.102:9092
@@ -37,14 +43,11 @@ logging:
       heartape: debug
 
 live:
-  chat:
+  bullet:
     flow:
       max: 6
       init: 2
-      time: 2000
     filter:
-      black: 4
+      black: 3333
       room: 666, 114514
       max-long: 1000
-server:
-  port: 8081
