@@ -16,7 +16,7 @@ public abstract class ThreadFlow implements Flow {
 
     private final Thread thread;
 
-    private volatile long frame;
+    private final static long idleNanos = 1000 * 1000 * 1000 * 2;
 
     private volatile int status = INIT;
 
@@ -42,7 +42,6 @@ public abstract class ThreadFlow implements Flow {
 
     public ThreadFlow(BiConsumer<String, Object> callback) {
         this.thread = new Thread(task());
-        this.frame = System.currentTimeMillis();
         this.callback = callback;
     }
 
@@ -91,6 +90,9 @@ public abstract class ThreadFlow implements Flow {
 
     @Override
     public void activate() {
+        if (this.status != SLEEP){
+            throw new FlowStatusException("flow status error, can not activate");
+        }
         this.status = RUN;
         log.debug("Thread:{} activate", this.thread.getId());
     }
@@ -100,7 +102,7 @@ public abstract class ThreadFlow implements Flow {
      */
     protected void idle() {
         this.status = IDLE;
-        LockSupport.parkNanos((long) 1000 * 1000 * 1000 * 2);
+        LockSupport.parkNanos(idleNanos);
         log.debug("Thread:{} idle", this.thread.getId());
     }
 
@@ -109,17 +111,6 @@ public abstract class ThreadFlow implements Flow {
         this.status = RUN;
         LockSupport.unpark(this.thread);
         log.debug("Thread:{} next", this.thread.getId());
-    }
-
-    @Override
-    public long getLastFrame() {
-        return this.frame;
-    }
-
-    @Override
-    public void setLastFrame(long frame) {
-        this.frame = frame;
-        log.debug("Thread:{} set frame", this.thread.getId());
     }
 
     public void stop() {

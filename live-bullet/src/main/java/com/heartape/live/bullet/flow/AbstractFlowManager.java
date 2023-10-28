@@ -1,5 +1,6 @@
 package com.heartape.live.bullet.flow;
 
+import com.heartape.live.bullet.exception.FlowStatusException;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -7,11 +8,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public abstract class AbstractFlowManager implements FlowManager {
-
-    /**
-     * 推送间隔,单位毫秒
-     */
-    protected final int time;
 
     /**
      * 最大流的数量
@@ -30,13 +26,9 @@ public abstract class AbstractFlowManager implements FlowManager {
 
     private final Flow[] flowArray;
 
-    // AtomicReferenceArray<AtomicReferenceArray<FlowElement>> cacheArray = new AtomicReferenceArray<>(16);
     // CyclicBarrier
 
-    private int current = -1;
-
-    public AbstractFlowManager(int time, int maxFlowSizePow, int coreFlowSizePow) {
-        this.time = time;
+    public AbstractFlowManager(int maxFlowSizePow, int coreFlowSizePow) {
         this.maxFlowSize = 1 << maxFlowSizePow;
         this.coreFlowSize = 1 << coreFlowSizePow;
         this.flowArray = new Flow[this.maxFlowSize];
@@ -48,7 +40,6 @@ public abstract class AbstractFlowManager implements FlowManager {
     }
 
     /**
-     * todo:建立一个可以缓存并批量推送的cache，考虑如何线程安全地将元素放入cache中，cache应该采用什么样的形式
      * @param element FlowElement
      */
     @Override
@@ -70,10 +61,11 @@ public abstract class AbstractFlowManager implements FlowManager {
 
     @Override
     public void setFlowSize(int flowSizePow){
-        if (flowSizePow > maxFlowSize) {
-            log.warn("The number of Flow({}) exceeds the maximum number !", flowSizePow);
+        int flowSize = 1 << flowSizePow;
+        if (flowSize > maxFlowSize || flowSize < coreFlowSize) {
+            log.warn("The number of Flow({}) is out of range !", flowSize);
         } else {
-            reset(1 << flowSizePow);
+            reset(flowSize);
         }
     }
 
@@ -85,35 +77,39 @@ public abstract class AbstractFlowManager implements FlowManager {
 
     private void reset(int flowSize){
         synchronized (this.flowArray) {
-            if (this.current < flowSize - 1){
-                while (this.current < flowSize - 1) {
-                    Flow flow = this.flowArray[this.current + 1];
+            if (this.flowSize < flowSize){
+                for (int i = 0; i < flowSize - this.flowSize; i++) {
+                    Flow flow = this.flowArray[this.flowSize + i];
                     if (flow == null){
                         flow = create();
-                        this.flowArray[++this.current] = flow;
+                        this.flowArray[this.flowSize + i] = flow;
                         flow.start();
-                    } else if (flow.isSleeping()){
+                    } else {
+                        if (!flow.isSleeping()){
+                            throw new FlowStatusException("flow status error, can not activate");
+                        }
                         flow.activate();
                     }
                 }
                 // 等Flow全部创建完成再修改
                 this.flowSize = flowSize;
             } else {
+                int count = this.flowSize - flowSize;
                 // 先修改再睡眠Flow
                 this.flowSize = flowSize;
-                while (this.current >= flowSize) {
-                    Flow flow = this.flowArray[this.current];
-                    flow.stop();
-                    this.flowArray[this.current--].sleep();
+                for (int i = 0; i < count; i++) {
+                    this.flowArray[this.flowSize + i].sleep();
                 }
             }
         }
     }
 
     @Override
-    public synchronized void stop() {
-        for (Flow flow : this.flowArray) {
-            flow.stop();
+    public void stop() {
+        synchronized (this.flowArray) {
+            for (Flow flow : this.flowArray) {
+                flow.stop();
+            }
         }
     }
 }

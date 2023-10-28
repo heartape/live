@@ -26,7 +26,7 @@ public interface LiveRoomStatusRepository {
     /**
      * 检查状态
      */
-    boolean select(String id, Status status);
+    boolean exist(String id, Status status);
 
     enum Status {
         NORMAL,

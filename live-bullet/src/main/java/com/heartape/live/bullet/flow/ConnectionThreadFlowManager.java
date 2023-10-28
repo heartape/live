@@ -9,8 +9,8 @@ public class ConnectionThreadFlowManager extends AbstractFlowManager {
 
     private final ConnectionManager connectionManager;
 
-    public ConnectionThreadFlowManager(int time, int maxFlowSizePow, int coreFlowSizePow, ConnectionManager connectionManager) {
-        super(time, maxFlowSizePow, coreFlowSizePow);
+    public ConnectionThreadFlowManager(int maxFlowSizePow, int coreFlowSizePow, ConnectionManager connectionManager) {
+        super(maxFlowSizePow, coreFlowSizePow);
         this.connectionManager = connectionManager;
         setFlowSize(coreFlowSizePow);
     }

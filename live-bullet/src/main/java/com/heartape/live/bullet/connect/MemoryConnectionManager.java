@@ -58,7 +58,13 @@ public class MemoryConnectionManager implements ConnectionManager {
         long timestamp = System.currentTimeMillis();
         Map<String, Connection> userMap = this.roomMap.get(roomId);
         if (!CollectionUtils.isEmpty(userMap)){
-            userMap.values().forEach(connection -> connection.send(o, timestamp));
+            for (Connection connection : userMap.values()) {
+                if (connection.isCompleted()){
+                    this.roomMap.remove(connection.getUid());
+                } else {
+                    connection.send(o, timestamp);
+                }
+            }
         }
     }
 
@@ -86,6 +92,6 @@ public class MemoryConnectionManager implements ConnectionManager {
 
     @Override
     public void logout(Connection connection) {
-
+        logout(connection.getRoomId(), connection.getUid());
     }
 }

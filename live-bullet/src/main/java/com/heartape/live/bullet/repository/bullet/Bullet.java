@@ -10,9 +10,6 @@ import lombok.Setter;
 import java.io.Serial;
 import java.io.Serializable;
 
-/**
- * todo:抽象出来，并且将这个目录拆分，readme完善
- */
 @Getter
 @Setter
 @NoArgsConstructor

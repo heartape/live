@@ -15,7 +15,6 @@ import com.heartape.live.bullet.repository.room.LiveRoomStatusRepository;
 import com.heartape.live.bullet.repository.room.MemoryLiveRoomRepository;
 import com.heartape.live.bullet.repository.room.MemoryLiveRoomStatusRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -61,7 +60,7 @@ public class LiveBulletAutoConfiguration {
         @ConditionalOnMissingBean
         public FlowManager flowManager(ConnectionManager connectionManager, LiveBulletProperties liveBulletProperties){
             LiveBulletProperties.Flow flow = liveBulletProperties.getFlow();
-            return new ConnectionThreadFlowManager(flow.getTime(), flow.getMax(), flow.getInit(), connectionManager);
+            return new ConnectionThreadFlowManager(flow.getMax(), flow.getInit(), connectionManager);
         }
 
         @Bean

@@ -47,7 +47,6 @@ live:
     flow:
       max: 6
       init: 2
-      time: 2000
     filter:
       black: 3333
       room: 666, 114514

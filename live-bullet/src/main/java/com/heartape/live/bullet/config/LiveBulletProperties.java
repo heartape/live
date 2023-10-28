@@ -35,10 +35,6 @@ public class LiveBulletProperties {
          * Flow最大数量
          */
         private Integer max = 6;
-        /**
-         * 推送时间间隔
-         */
-        private Integer time = 1000;
     }
 
     @Getter

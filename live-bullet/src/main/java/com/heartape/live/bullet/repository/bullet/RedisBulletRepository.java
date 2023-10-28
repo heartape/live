@@ -42,6 +42,7 @@ public class RedisBulletRepository implements BulletRepository {
                             Collectors.mapping(bullet -> (ZSetOperations.TypedTuple<Bullet>)new DefaultTypedTuple<>(bullet, (double) bullet.getTimestamp()),
                                     Collectors.toSet())));
 
+            //noinspection ConstantConditions
             bulletMap.forEach(opsForZSet::add);
         }
     }

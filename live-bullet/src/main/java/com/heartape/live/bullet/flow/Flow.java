@@ -51,16 +51,6 @@ public interface Flow {
     void next();
 
     /**
-     * 获取流的上一帧
-     */
-    long getLastFrame();
-
-    /**
-     * 设置流的上一帧
-     */
-    void setLastFrame(long frame);
-
-    /**
      * 停止
      */
     void stop();
