@@ -16,7 +16,7 @@ public class BulletConnectionController {
     @GetMapping("/sse")
     public SseEmitter create(@RequestParam String roomId, @RequestParam String uid){
         SseEmitter sseEmitter = new SseEmitter(300000L);
-        this.bulletManager.register(new SpringSseConnection<>(uid, roomId, sseEmitter));
+        this.bulletManager.register(new SpringSseConnection(uid, roomId, sseEmitter));
         return sseEmitter;
     }
 

@@ -1,7 +1,7 @@
 package com.heartape.live.bullet.config;
 
 import com.heartape.live.bullet.connect.ConnectionManager;
-import com.heartape.live.bullet.flow.BulletThreadFlowManager;
+import com.heartape.live.bullet.flow.ConnectionThreadFlowManager;
 import com.heartape.live.bullet.manager.BulletManager;
 import com.heartape.live.bullet.manager.DefaultBulletManager;
 import com.heartape.live.bullet.connect.MemoryConnectionManager;
@@ -15,6 +15,7 @@ import com.heartape.live.bullet.repository.room.LiveRoomStatusRepository;
 import com.heartape.live.bullet.repository.room.MemoryLiveRoomRepository;
 import com.heartape.live.bullet.repository.room.MemoryLiveRoomStatusRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -32,10 +33,10 @@ public class LiveBulletAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public BulletManager bulletManager(@Qualifier("bulletConnectionManager") ConnectionManager<Bullet> connectionManager,
-                                           @Qualifier("bulletFlowManager") FlowManager flowManager,
-                                           BulletRepository bulletRepository,
-                                           @Qualifier("bulletFilterChain") FilterChain<Bullet> filterChain){
+    public BulletManager bulletManager(ConnectionManager connectionManager,
+                                       FlowManager flowManager,
+                                       BulletRepository bulletRepository,
+                                       @Qualifier("bulletFilterChain") FilterChain<Bullet> filterChain){
         return DefaultBulletManager.builder()
                 .bulletRepository(bulletRepository)
                 .flowManager(flowManager)
@@ -50,19 +51,17 @@ public class LiveBulletAutoConfiguration {
     @Configuration
     protected static class BulletConfigurer {
 
-        @Bean("bulletFlowManager")
+        @Bean
         @ConditionalOnMissingBean
-        public FlowManager flowManager(@Qualifier("bulletConnectionManager") ConnectionManager<Bullet> connectionManager,
-                                       BulletRepository bulletRepository,
-                                       LiveBulletProperties liveBulletProperties){
-            LiveBulletProperties.Flow flow = liveBulletProperties.getFlow();
-            return new BulletThreadFlowManager(connectionManager, bulletRepository, flow.getTime(), flow.getMax(), flow.getInit());
+        public ConnectionManager connectionManager(){
+            return new MemoryConnectionManager();
         }
 
-        @Bean("bulletConnectionManager")
+        @Bean
         @ConditionalOnMissingBean
-        public ConnectionManager<Bullet> connectionManager(){
-            return new MemoryConnectionManager<>();
+        public FlowManager flowManager(ConnectionManager connectionManager, LiveBulletProperties liveBulletProperties){
+            LiveBulletProperties.Flow flow = liveBulletProperties.getFlow();
+            return new ConnectionThreadFlowManager(flow.getTime(), flow.getMax(), flow.getInit(), connectionManager);
         }
 
         @Bean
@@ -74,7 +73,7 @@ public class LiveBulletAutoConfiguration {
         @Bean("bulletFilterChain")
         @ConditionalOnMissingBean
         public FilterChain<Bullet> filterChain(LiveBulletProperties liveBulletProperties,
-                                               @Qualifier("bulletConnectionManager") ConnectionManager<Bullet> connectionManager,
+                                               ConnectionManager connectionManager,
                                                LiveRoomStatusRepository liveRoomStatusRepository){
             LiveBulletProperties.Filter filter = liveBulletProperties.getFilter();
             if (filter == null){
@@ -87,6 +86,7 @@ public class LiveBulletAutoConfiguration {
             if (rooms != null && !rooms.isEmpty()){
                 for (String room : rooms) {
                     liveRoomStatusRepository.insert(room);
+                    connectionManager.register(room);
                 }
             }
 

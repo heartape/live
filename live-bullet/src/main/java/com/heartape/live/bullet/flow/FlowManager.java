@@ -1,12 +1,7 @@
 package com.heartape.live.bullet.flow;
 
 /**
- * 流管理器推拉结合:
- * <ul>
- *     <li>长连接推送
- *     <li>持久化
- *     <li>长连接不稳定会降级为短链接，主动拉流
- * </ul>
+ * 流管理器,用以管理流的生命周期
  */
 public interface FlowManager {
 
@@ -15,6 +10,11 @@ public interface FlowManager {
      * @return Flow
      */
     Flow getFlow(int seat);
+
+    /**
+     * 推送
+     */
+    void push(FlowElement element);
 
     /**
      * @return 流的数量
@@ -28,7 +28,7 @@ public interface FlowManager {
     void setFlowSize(int flowSize);
 
     /**
-     * 停止全部
+     * 优雅停机
      */
     void stop();
 }

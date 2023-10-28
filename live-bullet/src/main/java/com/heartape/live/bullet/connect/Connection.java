@@ -6,18 +6,17 @@ import java.util.List;
 /**
  * 连接基类
  */
-public interface Connection<T> {
+public interface Connection {
 
     String getUid();
     String getRoomId();
 
     /**
      * 推送
-     * @param list 推送内容
+     * @param o 推送内容
      * @param timestamp 时间戳
-     * @throws IOException 推送时io异常
      */
-    void send(List<T> list, long timestamp) throws IOException;
+    void send(Object o, long timestamp);
 
     /**
      * 断开连接

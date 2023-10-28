@@ -3,7 +3,6 @@ package com.heartape.live.bullet.manager;
 import com.heartape.live.bullet.connect.Connection;
 import com.heartape.live.bullet.connect.ConnectionManager;
 import com.heartape.live.bullet.filter.FilterChain;
-import com.heartape.live.bullet.flow.Flow;
 import com.heartape.live.bullet.flow.FlowManager;
 import com.heartape.live.bullet.repository.bullet.Bullet;
 import com.heartape.live.bullet.repository.bullet.BulletRepository;
@@ -11,12 +10,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class DefaultBulletManager implements BulletManager {
 
-    private final ConnectionManager<Bullet> connectionManager;
+    private final ConnectionManager connectionManager;
 
     private final FlowManager flowManager;
 
@@ -24,7 +22,7 @@ public class DefaultBulletManager implements BulletManager {
 
     private final FilterChain<Bullet> filterChain;
 
-    public DefaultBulletManager(ConnectionManager<Bullet> connectionManager, FlowManager flowManager, BulletRepository bulletRepository, FilterChain<Bullet> filterChain) {
+    public DefaultBulletManager(ConnectionManager connectionManager, FlowManager flowManager, BulletRepository bulletRepository, FilterChain<Bullet> filterChain) {
         this.connectionManager = connectionManager;
         this.flowManager = flowManager;
         this.bulletRepository = bulletRepository;
@@ -32,7 +30,7 @@ public class DefaultBulletManager implements BulletManager {
     }
 
     @Override
-    public void register(Connection<Bullet> connection) {
+    public void register(Connection connection) {
         this.connectionManager.register(connection);
     }
 
@@ -43,31 +41,16 @@ public class DefaultBulletManager implements BulletManager {
 
     @Override
     public void push(Bullet bullet) {
-        if (bullet != null && this.filterChain.permit(bullet)){
-            this.bulletRepository.insert(bullet);
-            next(bullet.getRoomId());
+        if (bullet == null || !this.filterChain.permit(bullet)){
+            return;
         }
-    }
-
-    /**
-     * 唤醒
-     */
-    private void next(String roomId){
-        int seat = this.connectionManager.seat(roomId, this.flowManager.getFlowSize());
-        Flow flow = this.flowManager.getFlow(seat);
-        flow.next();
+        this.flowManager.push(bullet);
+        this.bulletRepository.insert(bullet);
     }
 
     @Override
     public void push(Collection<Bullet> bullets) {
-        List<Bullet> list = bullets.stream()
-                .filter(this.filterChain::permit)
-                .collect(Collectors.toList());
-        this.bulletRepository.insert(list);
-        bullets.stream()
-                .map(Bullet::getRoomId)
-                .collect(Collectors.toSet())
-                .forEach(this::next);
+        bullets.forEach(this::push);
     }
 
     @Override
@@ -81,12 +64,12 @@ public class DefaultBulletManager implements BulletManager {
     }
 
     public static class DefaultBulletManagerBuilder {
-        private ConnectionManager<Bullet> connectionManager;
+        private ConnectionManager connectionManager;
         private FlowManager flowManager;
         private BulletRepository bulletRepository;
         private FilterChain<Bullet> filterChain;
 
-        public DefaultBulletManagerBuilder connectionManager(ConnectionManager<Bullet> connectionManager) {
+        public DefaultBulletManagerBuilder connectionManager(ConnectionManager connectionManager) {
             this.connectionManager = connectionManager;
             return this;
         }

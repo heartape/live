@@ -2,9 +2,6 @@ package com.heartape.live.bullet.flow;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * 仅负责flow管理。
  */
@@ -21,6 +18,9 @@ public abstract class AbstractFlowManager implements FlowManager {
      */
     private final int maxFlowSize;
 
+    /**
+     * 核心流的数量
+     */
     private final int coreFlowSize;
 
     /**
@@ -30,7 +30,8 @@ public abstract class AbstractFlowManager implements FlowManager {
 
     private final Flow[] flowArray;
 
-    private final Map<Long, Integer> flowSeatMap = new HashMap<>();
+    // AtomicReferenceArray<AtomicReferenceArray<FlowElement>> cacheArray = new AtomicReferenceArray<>(16);
+    // CyclicBarrier
 
     private int current = -1;
 
@@ -44,6 +45,22 @@ public abstract class AbstractFlowManager implements FlowManager {
     @Override
     public Flow getFlow(int seat) {
         return flowArray[seat];
+    }
+
+    /**
+     * todo:建立一个可以缓存并批量推送的cache，考虑如何线程安全地将元素放入cache中，cache应该采用什么样的形式
+     * @param element FlowElement
+     */
+    @Override
+    public void push(FlowElement element) {
+        String destination = element.getDestination();
+        int seat = seat(destination);
+        Flow flow = flowArray[seat];
+        flow.push(element);
+    }
+
+    protected int seat(String destination) {
+        return destination.hashCode() & getFlowSize() - 1;
     }
 
     @Override
@@ -61,11 +78,10 @@ public abstract class AbstractFlowManager implements FlowManager {
     }
 
     /**
-     * 创建Flow
-     * @param task 任务
+     * 创建流
      * @return Flow
      */
-    protected abstract Flow create(Runnable task);
+    protected abstract Flow create();
 
     private void reset(int flowSize){
         synchronized (this.flowArray) {
@@ -73,10 +89,8 @@ public abstract class AbstractFlowManager implements FlowManager {
                 while (this.current < flowSize - 1) {
                     Flow flow = this.flowArray[this.current + 1];
                     if (flow == null){
-                        flow = create(this::task);
+                        flow = create();
                         this.flowArray[++this.current] = flow;
-                        long id = flow.getId();
-                        this.flowSeatMap.put(id, this.current);
                         flow.start();
                     } else if (flow.isSleeping()){
                         flow.activate();
@@ -89,34 +103,17 @@ public abstract class AbstractFlowManager implements FlowManager {
                 this.flowSize = flowSize;
                 while (this.current >= flowSize) {
                     Flow flow = this.flowArray[this.current];
-                    long id = flow.getId();
                     flow.stop();
-                    this.flowSeatMap.remove(id);
                     this.flowArray[this.current--].sleep();
                 }
             }
         }
     }
 
-    /**
-     * flow任务
-     */
-    protected abstract void task();
-
-    /**
-     * @return 当前Flow id
-     */
-    protected abstract long getId();
-
-    /**
-     * @return 当前Flow次序或位置
-     */
-    protected int getSeat(){
-        return this.flowSeatMap.get(getId());
-    }
-
     @Override
-    public void stop() {
-        reset(0);
+    public synchronized void stop() {
+        for (Flow flow : this.flowArray) {
+            flow.stop();
+        }
     }
 }

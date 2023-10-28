@@ -1,11 +1,9 @@
 package com.heartape.live.bullet.connect;
 
-import java.util.Map;
-
 /**
  * 连接管理
  */
-public interface ConnectionManager<T> {
+public interface ConnectionManager {
 
     /**
      * 已注册连接数量
@@ -23,37 +21,21 @@ public interface ConnectionManager<T> {
     int count(String roomId);
 
     /**
+     * 注册房间
+     */
+    void register(String roomId);
+
+    /**
      * 注册连接
      */
-    void register(Connection<T> connection);
+    void register(Connection connection);
 
     /**
      * 已注册连接
      */
     boolean registered(String roomId, String uid);
 
-    /**
-     * 通过uid获取连接
-     */
-    Connection<T> pick(String roomId, String uid);
-
-    /**
-     * 获取直播间的所有连接
-     */
-    Map<String, Connection<T>> pickRoom(String roomId);
-
-    /**
-     * 根据hash取key
-     * @param seat 当前需要的位置
-     * @param range 取模范围
-     * @return 符合的key
-     */
-    Map<String, Map<String, Connection<T>>> pickRoom(int seat, int range);
-
-    /**
-     * 根据hash取seat
-     */
-    int seat(String roomId, int range);
+    void push(String roomId, Object o);
 
     /**
      * 将连接升级
@@ -77,5 +59,5 @@ public interface ConnectionManager<T> {
      * 将连接真正地中断
      * @param connection 连接
      */
-    void logout(Connection<T> connection);
+    void logout(Connection connection);
 }

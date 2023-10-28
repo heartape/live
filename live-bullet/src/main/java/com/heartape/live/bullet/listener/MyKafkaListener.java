@@ -33,6 +33,7 @@ public class MyKafkaListener {
         if (bulletStrList != null && !bulletStrList.isEmpty()){
             List<Bullet> bullets = new ArrayList<>();
             for (String bulletStr : bulletStrList) {
+                log.debug("消息数据{}", bulletStr);
                 Bullet bullet;
                 try {
                     bullet = objectMapper.readValue(bulletStr, Bullet.class);

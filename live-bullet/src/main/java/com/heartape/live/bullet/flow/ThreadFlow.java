@@ -1,18 +1,18 @@
 package com.heartape.live.bullet.flow;
 
 import com.heartape.live.bullet.exception.FlowStatusException;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.*;
 import java.util.concurrent.locks.LockSupport;
+import java.util.function.BiConsumer;
 
 /**
  * 以线程作为流的载体
  * @see Flow
  */
 @Slf4j
-@AllArgsConstructor
-public class ThreadFlow implements Flow {
+public abstract class ThreadFlow implements Flow {
 
     private final Thread thread;
 
@@ -31,10 +31,22 @@ public class ThreadFlow implements Flow {
 
     private final static int STOP = 4;
 
-    public ThreadFlow(Runnable task) {
-        this.thread = new Thread(task);
+    /**
+     * destination -> [FlowElement]
+     */
+    protected final Map<String, List<FlowElement>> elements = new HashMap<>();
+
+    protected final Queue<FlowElement> cache = new LinkedList<>();
+
+    protected final BiConsumer<String, Object> callback;
+
+    public ThreadFlow(BiConsumer<String, Object> callback) {
+        this.thread = new Thread(task());
         this.frame = System.currentTimeMillis();
+        this.callback = callback;
     }
+
+    protected abstract Runnable task();
 
     @Override
     public long getId() {
@@ -45,6 +57,17 @@ public class ThreadFlow implements Flow {
         this.thread.start();
         this.status = RUN;
         log.debug("Thread:{} start", this.thread.getId());
+    }
+
+    @Override
+    public void push(FlowElement element) {
+        cache.add(element);
+        next();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return elements.isEmpty();
     }
 
     @Override
@@ -73,17 +96,17 @@ public class ThreadFlow implements Flow {
     }
 
     /**
-     * 该方法仅可以在当前流所在的线程中调用
+     * 空闲flow会暂停一段时间
      */
-    @Override
-    public void idle(int time) {
+    protected void idle() {
         this.status = IDLE;
-        LockSupport.parkNanos((long) time * 1000 * 1000 * 5);
+        LockSupport.parkNanos((long) 1000 * 1000 * 1000 * 2);
         log.debug("Thread:{} idle", this.thread.getId());
     }
 
     @Override
     public void next() {
+        this.status = RUN;
         LockSupport.unpark(this.thread);
         log.debug("Thread:{} next", this.thread.getId());
     }
