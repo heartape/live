@@ -33,8 +33,8 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(new GroupTextWebSocketHandler(gateway), "/ws/group")
-                .addHandler(new PersonTextWebSocketHandler(gateway), "/ws/friend")
-                .addInterceptors(new HttpSessionHandshakeInterceptor())
+                .addHandler(new PersonTextWebSocketHandler(gateway), "/ws/person")
+                .addInterceptors(new CookieAuthHttpSessionHandshakeInterceptor())
                 .setAllowedOriginPatterns("*");
     }
 

@@ -12,12 +12,18 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.security.Principal;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 @SuppressWarnings("NullableProblems")
 @Slf4j
 @AllArgsConstructor
 public class GroupTextWebSocketHandler extends TextWebSocketHandler {
 
     private final Gateway gateway;
+
+    private final Map<String, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -38,10 +44,13 @@ public class GroupTextWebSocketHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         session.sendMessage(new TextMessage("hello world!"));
+        Principal principal = session.getPrincipal();
+        // sessionMap.put("uid", session);
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         session.sendMessage(new TextMessage("good bye!"));
+        // sessionMap.put("uid", session);
     }
 }

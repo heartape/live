@@ -1,4 +1,4 @@
-package com.heartape.live.im.config;
+package com.heartape.live.bullet.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,7 +18,6 @@ public class OAuth2ResourceConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requestMatcherRegistry -> requestMatcherRegistry
-                        .requestMatchers(HttpMethod.GET, "/message/cookie").authenticated()
                         .anyRequest().permitAll()
                 )
                 .oauth2ResourceServer(httpSecurityOAuth2ResourceServerConfigurer -> httpSecurityOAuth2ResourceServerConfigurer.jwt(Customizer.withDefaults()))

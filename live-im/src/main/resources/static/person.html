@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>私聊</title>
-    <script src="js/stomp.min.js"></script>
 </head>
 <body>
 <div id="app" style="width: 610px; height: 500px; margin: 50px auto">
@@ -24,32 +23,32 @@
     const message = document.getElementById(`message`);
     const token = localStorage.getItem('X-Token');
 
-    const client = Stomp.client("ws://127.0.0.1:8082/im");
+    //创建一个webSocket实例，执行后，客户端就会与服务端连接
+    const ws = new WebSocket("ws://localhost:8003/ws/person");
 
-    let id;
-    client.connect({'Authorization': 'Bearer ' + token}, function(flame){
-        id = flame.headers['user-name'];
-        const path ='/user/' + id;
-        client.subscribe(path , function(flame) {
-            setMessageInnerHTML(flame.body);
-        }, {'Authorization': 'Bearer ' + token,
-            id
-        })
-    }, function (error) {})
+    //当WebSocket创建成功时，触发onopen事件
+    ws.onopen = function(){
+        console.log("open");
+    }
 
     function send() {
-        const path ='/server/user/' + userInput.value;
-        const body = {
-            'type': 'TEXT',
-            'content': {
-                'text': messageInput.value
-            }
-        };
-        messageInput.value = null;
-        client.send(path, {
-            'Authorization': 'Bearer ' + token,
-            id
-        }, JSON.stringify(body));
+        let text = messageInput.value;
+        ws.send(text);
+    }
+
+    //当客户端收到服务端发来的消息时，触发onmessage事件
+    ws.onmessage = function(e){
+        setMessageInnerHTML(e.data)
+    }
+
+    //当客户端收到服务端发送的关闭连接请求时，触发onclose事件
+    ws.onclose = function(){
+        console.log("close");
+    }
+
+    //如果出现连接、处理、接收、发送数据失败的时候触发onerror事件
+    ws.onerror = function(e){
+        console.log(e);
     }
 
     function setMessageInnerHTML(innerHTML) {

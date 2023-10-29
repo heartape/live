@@ -12,6 +12,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.security.Principal;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -42,11 +43,18 @@ public class PersonTextWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        Principal principal = session.getPrincipal();
+        if (principal == null){
+            session.close();
+            return;
+        }
+        String id = principal.getName();
+        sessionMap.put(id, session);
         session.sendMessage(new TextMessage("hello world!"));
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        session.sendMessage(new TextMessage("good bye!"));
+
     }
 }

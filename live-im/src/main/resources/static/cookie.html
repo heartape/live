@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Websocket</title>
+    <script src="js/axios.min.js"></script>
 </head>
 <body>
     <div id="app" style="width: 700px; height: 500px; margin: 50px auto">
@@ -12,10 +13,19 @@
     </div>
 </body>
 <script>
+    const host = window.location.host
     const token = document.getElementById(`token`);
 
     function setToken() {
-        localStorage.setItem('X-Token', token.value);
+        axios.get('/message/cookie', {
+            headers: {
+                'Authorization': 'Bearer ' + token.value
+            }
+        })
+            .then(function (response) {
+            })
+            .catch(function (error) {
+            });
     }
 </script>
 </html>

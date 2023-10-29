@@ -4,8 +4,8 @@ import com.heartape.live.bullet.exception.FlowStatusException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.LockSupport;
-import java.util.function.BiConsumer;
 
 /**
  * 以线程作为流的载体
@@ -36,13 +36,10 @@ public abstract class ThreadFlow implements Flow {
      */
     protected final Map<String, List<FlowElement>> elements = new HashMap<>();
 
-    protected final Queue<FlowElement> cache = new LinkedList<>();
+    protected final Queue<FlowElement> cache = new ConcurrentLinkedQueue<>();
 
-    protected final BiConsumer<String, Object> callback;
-
-    public ThreadFlow(BiConsumer<String, Object> callback) {
+    public ThreadFlow() {
         this.thread = new Thread(task());
-        this.callback = callback;
     }
 
     protected abstract Runnable task();
