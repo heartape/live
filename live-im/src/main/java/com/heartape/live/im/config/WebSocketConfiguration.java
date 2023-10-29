@@ -34,7 +34,8 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
         registry.addHandler(new GroupTextWebSocketHandler(gateway), "/ws/group")
                 .addHandler(new PersonTextWebSocketHandler(gateway), "/ws/person")
-                .addInterceptors(new CookieAuthHttpSessionHandshakeInterceptor())
+                .addInterceptors(new HttpSessionHandshakeInterceptor())
+                .setHandshakeHandler(new AuthenticationToSessionHandshakeHandler())
                 .setAllowedOriginPatterns("*");
     }
 

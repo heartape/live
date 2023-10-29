@@ -1,6 +1,5 @@
 package com.heartape.live.im.controller;
 
-import com.heartape.live.im.config.CookieAuthHttpSessionHandshakeInterceptor;
 import com.heartape.live.im.config.LiveImAutoConfiguration;
 import com.heartape.live.im.message.base.BaseMessage;
 import com.heartape.live.im.message.center.CenterMessageRepository;
@@ -8,6 +7,7 @@ import com.heartape.live.im.util.Page;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,7 +33,7 @@ public class MessageController {
      */
     @GetMapping("/cookie")
     public void cookie(HttpSession session, Authentication authentication){
-        session.setAttribute(CookieAuthHttpSessionHandshakeInterceptor.WS_IM_TOKEN, authentication);
+        session.setAttribute("LIVE_" + HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, authentication);
     }
 
     @GetMapping("/sync/user")

@@ -6,18 +6,19 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.StringUtils;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import java.util.Enumeration;
 import java.util.Map;
 
+/**
+ * 如果只需要设置Authentication，{@link AuthenticationToSessionHandshakeHandler} 可以实现
+ */
+@Deprecated
 public class CookieAuthHttpSessionHandshakeInterceptor extends HttpSessionHandshakeInterceptor {
-
-    public final static String WS_IM_TOKEN = "ws-im-token";
 
     @SuppressWarnings("NullableProblems")
     @Override
@@ -25,7 +26,7 @@ public class CookieAuthHttpSessionHandshakeInterceptor extends HttpSessionHandsh
                                    Map<String, Object> attributes) {
         HttpSession session = getSession(request);
         if (session != null) {
-            Authentication authentication = (Authentication)session.getAttribute(WS_IM_TOKEN);
+            Authentication authentication = (Authentication)session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
             if (authentication == null || !authentication.isAuthenticated()){
                 return false;
             }
