@@ -40,11 +40,11 @@ public class ManageController {
         List<GroupChatSimpleInfo> groupChatList = this.groupChatService.getGroupChatList("1111");
 
         GroupChatSimpleInfo groupChatSimpleInfo0 = groupChatList.get(0);
-        Long id0 = groupChatSimpleInfo0.getId();
+        String id0 = groupChatSimpleInfo0.getId();
         log.debug("init group id0: {}", id0);
 
         GroupChatSimpleInfo groupChatSimpleInfo1 = groupChatList.get(1);
-        Long id1 = groupChatSimpleInfo1.getId();
+        String id1 = groupChatSimpleInfo1.getId();
         log.debug("init group id1: {}", id1);
 
         this.groupChatService.applyJoinGroupChat("2222", id0);

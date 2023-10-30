@@ -17,7 +17,7 @@ public class GroupChatMember {
     /**
      * id
      */
-    private Long id;
+    private String id;
 
     /**
      * uid
@@ -27,7 +27,7 @@ public class GroupChatMember {
     /**
      * 群聊id
      */
-    private Long groupId;
+    private String groupId;
 
     /**
      * 角色

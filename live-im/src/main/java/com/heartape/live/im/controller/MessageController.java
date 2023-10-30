@@ -37,7 +37,7 @@ public class MessageController {
     }
 
     @GetMapping("/sync/user")
-    public Page<BaseMessage> syncUser(@RequestParam(required = false) Long id,
+    public Page<BaseMessage> syncUser(@RequestParam(required = false) String id,
                                       @RequestParam String uid,
                                       @RequestParam String userId,
                                       @RequestParam Integer page){
@@ -48,7 +48,7 @@ public class MessageController {
     }
 
     @GetMapping("/sync/group")
-    public Page<BaseMessage> syncGroup(@RequestParam(required = false) Long id,
+    public Page<BaseMessage> syncGroup(@RequestParam(required = false) String id,
                                        @RequestParam String uid,
                                        @RequestParam String groupId,
                                        @RequestParam Integer page){

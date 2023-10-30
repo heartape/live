@@ -40,7 +40,7 @@ public class MemoryTextCenterRepository extends AbstractCenterBaseRepository<Tex
     }
 
     @Override
-    public TextMessage findById(Long id, String uid) {
+    public TextMessage findById(String id, String uid) {
         BaseMessage baseMessage = this.centerMessageRepository.findById(id, uid);
         if (baseMessage != null){
             if (baseMessage instanceof TextMessage textMessage){
@@ -56,7 +56,7 @@ public class MemoryTextCenterRepository extends AbstractCenterBaseRepository<Tex
     }
 
     @Override
-    public Page<TextMessage> findByStartId(Long id, String uid, String purposeId, int page, int size) {
+    public Page<TextMessage> findByStartId(String id, String uid, String purposeId, int page, int size) {
         return super.findByStartId(id, uid, purposeId, MessageType.TEXT, page, size);
     }
 
@@ -66,7 +66,7 @@ public class MemoryTextCenterRepository extends AbstractCenterBaseRepository<Tex
     }
 
     @Override
-    public Page<TextMessage> findRoamingByStartId(Long id, String uid, String purposeId, int page, int size) {
+    public Page<TextMessage> findRoamingByStartId(String id, String uid, String purposeId, int page, int size) {
         return super.findRoamingByStartId(id, uid, purposeId, MessageType.TEXT, page, size);
     }
 }

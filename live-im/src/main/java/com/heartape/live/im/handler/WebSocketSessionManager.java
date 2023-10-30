@@ -8,6 +8,11 @@ import org.springframework.web.socket.WebSocketSession;
  */
 public interface WebSocketSessionManager {
 
+    /**
+     * 注册
+     * @param uid 推送的用户id
+     * @param session WebSocketSession
+     */
     void register(String uid, WebSocketSession session);
 
     /**
@@ -16,8 +21,12 @@ public interface WebSocketSessionManager {
      * @return 是否推送成功
      * @throws Exception 异常
      */
-    boolean push(String uid, @Nonnull String data) throws Exception;
+    boolean push(String uid, @Nonnull String data);
 
+    /**
+     * 移除
+     * @param uid 推送的用户id
+     */
     void remove(String uid);
 
 }

@@ -15,12 +15,12 @@ public class Friendship {
     /**
      * id
      */
-    private Long id;
+    private String id;
 
     /**
      * 分组id
      */
-    private Long groupId;
+    private String groupId;
 
     /**
      * 用户id

@@ -10,7 +10,7 @@ public interface Message {
     /**
      * get id
      */
-    Long getId();
+    String getId();
 
     /**
      * get uid

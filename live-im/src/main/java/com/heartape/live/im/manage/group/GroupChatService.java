@@ -22,7 +22,7 @@ public interface GroupChatService {
      * @param groupId 群聊id
      * @return 是否成员
      */
-    boolean isMember(String uid, Long groupId);
+    boolean isMember(String uid, String groupId);
 
     /**
      * 获取群聊列表
@@ -34,7 +34,7 @@ public interface GroupChatService {
     /**
      * 获取群聊成员列表
      */
-    List<GroupChatMemberInfo> getGroupChatMemberList(Long groupChatId);
+    List<GroupChatMemberInfo> getGroupChatMemberList(String groupChatId);
 
     /**
      * 根据名称搜索群聊
@@ -49,12 +49,12 @@ public interface GroupChatService {
     /**
      * 查看主页详情
      */
-    GroupChat getGroupChatMainInfo(Long groupChatId);
+    GroupChat getGroupChatMainInfo(String groupChatId);
 
     /**
      * 申请加入群聊
      */
-    void applyJoinGroupChat(String uid, Long groupChatId);
+    void applyJoinGroupChat(String uid, String groupChatId);
 
     /**
      * 查看群聊加入申请
@@ -64,11 +64,11 @@ public interface GroupChatService {
     /**
      * 同意群聊加入申请
      */
-    void agreeJoinGroupChat(String uid, Long groupChatApplyId);
+    void agreeJoinGroupChat(String uid, String groupChatApplyId);
 
     /**
      * 拒绝群聊加入申请
      */
-    void rejectJoinGroupChat(String uid, Long groupChatApplyId);
+    void rejectJoinGroupChat(String uid, String groupChatApplyId);
 
 }

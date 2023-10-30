@@ -14,14 +14,14 @@ public interface FriendshipRepository {
      * @param groupId 分组
      * @param friendGroupId 好友分组
      */
-    void insert(String uid, String friendId, Long groupId, Long friendGroupId);
+    void insert(String uid, String friendId, String groupId, String friendGroupId);
 
     /**
      * 根据id查询
      * @param id id
      * @return 好友
      */
-    Friendship selectById(Long id);
+    Friendship selectById(String id);
 
     /**
      * 查询所有好友
@@ -35,7 +35,7 @@ public interface FriendshipRepository {
      * @param groupId groupId
      * @return 好友列表
      */
-    List<Friendship> selectListByGroup(Long groupId);
+    List<Friendship> selectListByGroup(String groupId);
 
     /**
      * 是否好友
@@ -50,7 +50,7 @@ public interface FriendshipRepository {
      * @param friendId friendId
      * @param groupId groupId
      */
-    void update(String uid, String friendId, Long groupId);
+    void update(String uid, String friendId, String groupId);
 
     /**
      * 更改好友关系类型

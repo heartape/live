@@ -15,7 +15,7 @@ public interface GroupChatApplyRepository {
     /**
      * 根据id查询
      */
-    GroupChatApply findById(Long id);
+    GroupChatApply findById(String id);
 
     /**
      * 根据uid查询
@@ -25,16 +25,16 @@ public interface GroupChatApplyRepository {
     /**
      * 根据GroupId查询
      */
-    List<GroupChatApply> findByGroupId(Long groupId);
+    List<GroupChatApply> findByGroupId(String groupId);
 
     /**
      * 修改申请结果
      */
-    boolean changeApplySuccess(Long applyId);
+    boolean changeApplySuccess(String applyId);
 
     /**
      * 修改申请结果失败
      */
-    boolean changeApplyFail(Long applyId);
+    boolean changeApplyFail(String applyId);
 
 }

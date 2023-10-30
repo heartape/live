@@ -18,7 +18,7 @@ public class MemoryGroupChatApplyRepository implements GroupChatApplyRepository 
     /**
      * 内存存储
      */
-    private final Map<Long, GroupChatApply> groupChatApplyMap;
+    private final Map<String, GroupChatApply> groupChatApplyMap;
 
     // 结果
     private final static Integer SUCCESS = 1;
@@ -33,14 +33,14 @@ public class MemoryGroupChatApplyRepository implements GroupChatApplyRepository 
 
     @Override
     public void save(GroupChatApply groupChatApply) {
-        Long id = this.identifierGenerator.nextId();
+        String id = this.identifierGenerator.nextId().toString();
         groupChatApply.setId(id);
         groupChatApply.setResult(INIT);
         this.groupChatApplyMap.put(id, groupChatApply);
     }
 
     @Override
-    public GroupChatApply findById(Long id) {
+    public GroupChatApply findById(String id) {
         return this.groupChatApplyMap.get(id);
     }
 
@@ -53,7 +53,7 @@ public class MemoryGroupChatApplyRepository implements GroupChatApplyRepository 
     }
 
     @Override
-    public List<GroupChatApply> findByGroupId(Long groupId) {
+    public List<GroupChatApply> findByGroupId(String groupId) {
         return this.groupChatApplyMap.values()
                 .stream()
                 .filter(groupChatApply -> Objects.equals(groupChatApply.getGroupId(), groupId))
@@ -61,7 +61,7 @@ public class MemoryGroupChatApplyRepository implements GroupChatApplyRepository 
     }
 
     @Override
-    public boolean changeApplySuccess(Long applyId) {
+    public boolean changeApplySuccess(String applyId) {
         GroupChatApply groupChatApply = this.groupChatApplyMap.get(applyId);
         if (groupChatApply == null || !Objects.equals(groupChatApply.getResult(), INIT)) {
             return false;
@@ -71,7 +71,7 @@ public class MemoryGroupChatApplyRepository implements GroupChatApplyRepository 
     }
 
     @Override
-    public boolean changeApplyFail(Long applyId) {
+    public boolean changeApplyFail(String applyId) {
         GroupChatApply groupChatApply = this.groupChatApplyMap.get(applyId);
         if (groupChatApply == null || !Objects.equals(groupChatApply.getResult(), INIT)) {
             return false;

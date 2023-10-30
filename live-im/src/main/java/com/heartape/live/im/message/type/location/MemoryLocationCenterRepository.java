@@ -29,7 +29,7 @@ public class MemoryLocationCenterRepository extends AbstractCenterBaseRepository
     }
 
     @Override
-    public LocationMessage findById(Long id, String uid) {
+    public LocationMessage findById(String id, String uid) {
         BaseMessage baseMessage = this.centerMessageRepository.findById(id, uid);
         if (baseMessage != null){
             if (baseMessage instanceof LocationMessage locationMessage){
@@ -45,7 +45,7 @@ public class MemoryLocationCenterRepository extends AbstractCenterBaseRepository
     }
 
     @Override
-    public Page<LocationMessage> findByStartId(Long id, String uid, String purposeId, int page, int size) {
+    public Page<LocationMessage> findByStartId(String id, String uid, String purposeId, int page, int size) {
         return super.findByStartId(id, uid, purposeId, MessageType.LOCATION, page, size);
     }
 
@@ -55,7 +55,7 @@ public class MemoryLocationCenterRepository extends AbstractCenterBaseRepository
     }
 
     @Override
-    public Page<LocationMessage> findRoamingByStartId(Long id, String uid, String purposeId, int page, int size) {
+    public Page<LocationMessage> findRoamingByStartId(String id, String uid, String purposeId, int page, int size) {
         return super.findRoamingByStartId(id, uid, purposeId, MessageType.LOCATION, page, size);
     }
 

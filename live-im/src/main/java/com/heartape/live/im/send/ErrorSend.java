@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 public class ErrorSend implements Send {
 
-    private final String sendType;
+    private final String type;
 
     private final String reason;
 
@@ -18,8 +18,8 @@ public class ErrorSend implements Send {
         this(SendType.ERROR, reason);
     }
 
-    public ErrorSend(String sendType, String reason) {
-        this.sendType = sendType;
+    public ErrorSend(String type, String reason) {
+        this.type = type;
         this.reason = reason;
     }
 }

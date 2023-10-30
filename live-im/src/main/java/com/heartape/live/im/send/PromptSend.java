@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 public class PromptSend implements Send {
 
-    private final String sendType;
+    private final String type;
 
     /**
      * 目标
@@ -38,8 +38,8 @@ public class PromptSend implements Send {
         this(SendType.PROMPT, purpose, purposeType, promptType,prompt);
     }
 
-    public PromptSend(String sendType, String purpose, String purposeType, String promptType, Prompt prompt) {
-        this.sendType = sendType;
+    public PromptSend(String type, String purpose, String purposeType, String promptType, Prompt prompt) {
+        this.type = type;
         this.purpose = purpose;
         this.purposeType = purposeType;
         this.promptType = promptType;

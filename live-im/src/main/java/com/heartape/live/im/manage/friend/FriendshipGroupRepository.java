@@ -18,7 +18,7 @@ public interface FriendshipGroupRepository {
      * @param id id
      * @return 好友分组
      */
-    FriendshipGroup selectById(Long id);
+    FriendshipGroup selectById(String id);
 
     /**
      * 查询所有好友分组
@@ -27,12 +27,12 @@ public interface FriendshipGroupRepository {
      */
     List<FriendshipGroup> selectList(String uid);
 
-    boolean update(Long id, String uid, String name);
+    boolean update(String id, String uid, String name);
 
     /**
      * 删除好友分组
      * @param id id
      */
-    boolean delete(Long id, String uid);
+    boolean delete(String id, String uid);
 
 }

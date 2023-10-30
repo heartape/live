@@ -30,8 +30,7 @@ public class MemoryGroupMemberInterceptor implements Interceptor<MessageContext>
     public Send preSend(MessageContext messageContext) {
         String purposeType = messageContext.getPurposeType();
         if (PurposeType.GROUP.equals(purposeType)){
-            String groupStringId = messageContext.getPurpose();
-            Long groupId = Long.decode(groupStringId);
+            String groupId = messageContext.getPurpose();
             String uid = messageContext.getUid();
             boolean member = groupChatService.isMember(uid, groupId);
             if (!member){

@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 public class MessageSend implements Send {
 
-    private final String sendType;
+    private final String type;
 
     private final Message message;
 
@@ -19,8 +19,8 @@ public class MessageSend implements Send {
         this(SendType.MESSAGE, message);
     }
 
-    public MessageSend(String sendType, Message message) {
-        this.sendType = sendType;
+    public MessageSend(String type, Message message) {
+        this.type = type;
         this.message = message;
     }
 }

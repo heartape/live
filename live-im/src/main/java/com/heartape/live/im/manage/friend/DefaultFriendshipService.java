@@ -18,23 +18,23 @@ public class DefaultFriendshipService implements FriendshipService {
 
     @Override
     public void addGroup(String uid, String name) {
-        Long id = this.identifierGenerator.nextId();
+        String id = this.identifierGenerator.nextId().toString();
         FriendshipGroup friendshipGroup = new FriendshipGroup(id, uid, name);
         this.friendshipGroupRepository.insert(friendshipGroup);
     }
 
     @Override
-    public void removeGroup(String uid, Long groupId) {
+    public void removeGroup(String uid, String groupId) {
         this.friendshipGroupRepository.delete(groupId, uid);
     }
 
     @Override
-    public void renameGroup(Long groupId, String uid, String name) {
+    public void renameGroup(String groupId, String uid, String name) {
         this.friendshipGroupRepository.update(groupId, name, uid);
     }
 
     @Override
-    public void addFriend(String uid, String friendId, Long groupId, Long friendGroupId) {
+    public void addFriend(String uid, String friendId, String groupId, String friendGroupId) {
         this.friendshipRepository.insert(uid, friendId, groupId, friendGroupId);
     }
 
@@ -44,7 +44,7 @@ public class DefaultFriendshipService implements FriendshipService {
     }
 
     @Override
-    public void updateFriendGroup(String uid, String friendId, Long groupId) {
+    public void updateFriendGroup(String uid, String friendId, String groupId) {
         this.friendshipRepository.update(uid, friendId, groupId);
     }
 

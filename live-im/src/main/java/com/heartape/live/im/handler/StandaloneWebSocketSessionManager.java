@@ -1,14 +1,17 @@
 package com.heartape.live.im.handler;
 
+import com.heartape.exception.SystemInnerException;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 本地 websocket session管理
  */
+@SuppressWarnings("resource")
 public class StandaloneWebSocketSessionManager implements WebSocketSessionManager {
 
     private final static Map<String, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
@@ -19,13 +22,17 @@ public class StandaloneWebSocketSessionManager implements WebSocketSessionManage
     }
 
     @Override
-    public boolean push(String uid, String data) throws Exception {
+    public boolean push(String uid, String data) {
         WebSocketSession webSocketSession = sessionMap.get(uid);
         if (webSocketSession == null || !webSocketSession.isOpen()){
             sessionMap.remove(uid);
             return false;
         }
-        webSocketSession.sendMessage(new TextMessage(data));
+        try {
+            webSocketSession.sendMessage(new TextMessage(data));
+        } catch (IOException e) {
+            throw new SystemInnerException();
+        }
         return true;
     }
 

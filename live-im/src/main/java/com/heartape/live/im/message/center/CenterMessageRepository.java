@@ -30,7 +30,7 @@ public interface CenterMessageRepository {
      * @param uid 用户id
      * @return 消息
      */
-    BaseMessage findById(Long id, String uid);
+    BaseMessage findById(String id, String uid);
 
     /**
      * 根据消息发送对象拉取（全量）
@@ -48,7 +48,7 @@ public interface CenterMessageRepository {
      * @param size 分页宽度
      * @return 消息
      */
-    Page<BaseMessage> findByStartId(Long id, String uid, String purposeId, int page, int size);
+    Page<BaseMessage> findByStartId(String id, String uid, String purposeId, int page, int size);
 
     /**
      * 根据消息发送对象拉取用户发送的消息（全量）（消息漫游）
@@ -66,7 +66,7 @@ public interface CenterMessageRepository {
      * @param size 分页宽度
      * @return 消息
      */
-    Page<BaseMessage> findRoamingByStartId(Long id, String uid, String purposeId, int page, int size);
+    Page<BaseMessage> findRoamingByStartId(String id, String uid, String purposeId, int page, int size);
 
     /**
      * 根据消息发送对象拉取某一类型的消息（全量）
@@ -85,7 +85,7 @@ public interface CenterMessageRepository {
      * @param size 分页宽度
      * @return 消息
      */
-    Page<BaseMessage> findByStartIdAndType(Long id, String uid, String purposeId, String messageType, int page, int size);
+    Page<BaseMessage> findByStartIdAndType(String id, String uid, String purposeId, String messageType, int page, int size);
 
     /**
      * 根据消息发送对象拉取用户发送的消息（全量）（消息漫游）
@@ -103,27 +103,27 @@ public interface CenterMessageRepository {
      * @param size 分页宽度
      * @return 消息
      */
-    Page<BaseMessage> findRoamingByStartIdAndType(Long id, String uid, String purposeId, String messageType, int page, int size);
+    Page<BaseMessage> findRoamingByStartIdAndType(String id, String uid, String purposeId, String messageType, int page, int size);
 
     /**
      * 已读回执
      * @param id 消息id
      * @param uid 用户id
      */
-    void receipt(Long id, String uid);
+    void receipt(String id, String uid);
 
     /**
      * 撤回，超过一定时间后无法撤回
      * @param id 消息id
      * @param uid 用户id
      */
-    void recall(Long id, String uid);
+    void recall(String id, String uid);
 
     /**
      * 删除
      * @param id 消息id
      * @param uid 用户id
      */
-    void remove(Long id, String uid);
+    void remove(String id, String uid);
 
 }

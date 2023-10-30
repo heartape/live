@@ -29,7 +29,7 @@ public class MemoryVideoCenterRepository extends AbstractCenterBaseRepository<Vi
     }
 
     @Override
-    public VideoMessage findById(Long id, String uid) {
+    public VideoMessage findById(String id, String uid) {
         BaseMessage baseMessage = this.centerMessageRepository.findById(id, uid);
         if (baseMessage != null){
             if (baseMessage instanceof VideoMessage videoMessage){
@@ -45,7 +45,7 @@ public class MemoryVideoCenterRepository extends AbstractCenterBaseRepository<Vi
     }
 
     @Override
-    public Page<VideoMessage> findByStartId(Long id, String uid, String purposeId, int page, int size) {
+    public Page<VideoMessage> findByStartId(String id, String uid, String purposeId, int page, int size) {
         return super.findByStartId(id, uid, purposeId, MessageType.VIDEO, page, size);
     }
 
@@ -55,7 +55,7 @@ public class MemoryVideoCenterRepository extends AbstractCenterBaseRepository<Vi
     }
 
     @Override
-    public Page<VideoMessage> findRoamingByStartId(Long id, String uid, String purposeId, int page, int size) {
+    public Page<VideoMessage> findRoamingByStartId(String id, String uid, String purposeId, int page, int size) {
         return super.findRoamingByStartId(id, uid, purposeId, MessageType.VIDEO, page, size);
     }
 

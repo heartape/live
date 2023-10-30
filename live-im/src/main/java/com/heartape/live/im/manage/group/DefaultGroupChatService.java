@@ -33,14 +33,14 @@ public class DefaultGroupChatService implements GroupChatService {
     }
 
     @Override
-    public boolean isMember(String uid, Long groupChatId) {
+    public boolean isMember(String uid, String groupChatId) {
         return this.groupChatMemberRepository.findByUidAndGroupId(uid, groupChatId) != null;
     }
 
     @Override
     public List<GroupChatSimpleInfo> getGroupChatList(String uid) {
         List<GroupChatMember> groupChatMembers = this.groupChatMemberRepository.findByUid(uid);
-        List<Long> groupIds = groupChatMembers
+        List<String> groupIds = groupChatMembers
                 .stream()
                 .map(GroupChatMember::getGroupId)
                 .toList();
@@ -51,7 +51,7 @@ public class DefaultGroupChatService implements GroupChatService {
     }
 
     @Override
-    public List<GroupChatMemberInfo> getGroupChatMemberList(Long groupChatId) {
+    public List<GroupChatMemberInfo> getGroupChatMemberList(String groupChatId) {
         return this.groupChatMemberRepository.findByGroupId(groupChatId)
                 .stream()
                 .map(groupChatMember -> new GroupChatMemberInfo(groupChatMember.getUid(), groupChatMember.getRole()))
@@ -69,12 +69,12 @@ public class DefaultGroupChatService implements GroupChatService {
     }
 
     @Override
-    public GroupChat getGroupChatMainInfo(Long groupChatId) {
+    public GroupChat getGroupChatMainInfo(String groupChatId) {
         return this.groupChatRepository.findById(groupChatId);
     }
 
     @Override
-    public void applyJoinGroupChat(String uid, Long groupChatId) {
+    public void applyJoinGroupChat(String uid, String groupChatId) {
         GroupChatApply groupChatApply = new GroupChatApply(null, uid, groupChatId, LocalDateTime.now(), null);
         this.groupChatApplyRepository.save(groupChatApply);
     }
@@ -91,7 +91,7 @@ public class DefaultGroupChatService implements GroupChatService {
     }
 
     @Override
-    public void agreeJoinGroupChat(String uid, Long groupChatApplyId) {
+    public void agreeJoinGroupChat(String uid, String groupChatApplyId) {
         GroupChatApply groupChatApply = this.groupChatApplyRepository.findById(groupChatApplyId);
         GroupChatMember groupChatMember = new GroupChatMember(null, groupChatApply.getUid(), groupChatApply.getGroupId(), null, null);
         this.groupChatMemberRepository.save(groupChatMember);
@@ -99,7 +99,7 @@ public class DefaultGroupChatService implements GroupChatService {
     }
 
     @Override
-    public void rejectJoinGroupChat(String uid, Long groupChatApplyId) {
+    public void rejectJoinGroupChat(String uid, String groupChatApplyId) {
         GroupChatApply groupChatApply = this.groupChatApplyRepository.findById(groupChatApplyId);
         if (!Objects.equals(groupChatApply.getUid(), uid)){
             throw new PermissionDeniedException();

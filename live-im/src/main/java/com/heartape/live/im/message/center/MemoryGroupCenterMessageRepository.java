@@ -24,7 +24,7 @@ public class MemoryGroupCenterMessageRepository implements CenterMessageReposito
     /**
      * 消息存储到内存
      */
-    private final Map<Long, BaseMessage> map = new ConcurrentHashMap<>();
+    private final Map<String, BaseMessage> map = new ConcurrentHashMap<>();
 
     @Override
     public String purposeType() {
@@ -37,7 +37,7 @@ public class MemoryGroupCenterMessageRepository implements CenterMessageReposito
     }
 
     @Override
-    public BaseMessage findById(Long id, String uid) {
+    public BaseMessage findById(String id, String uid) {
         return map.get(id);
     }
 
@@ -60,19 +60,19 @@ public class MemoryGroupCenterMessageRepository implements CenterMessageReposito
     }
 
     @Override
-    public Page<BaseMessage> findByStartId(Long id, String uid, String purposeId, int page, int size) {
+    public Page<BaseMessage> findByStartId(String id, String uid, String purposeId, int page, int size) {
         long total = map.values()
                 .stream()
                 .filter(message -> Objects.equals(message.getPurpose(), purposeId) && purposeType().equals(message.getPurposeType()))
                 .sorted(Comparator.comparing(Message::getId))
-                .dropWhile(message -> message.getId() >= id)
+                .dropWhile(message -> Long.parseLong(message.getId()) >= Long.parseLong(id))
                 .count();
 
         List<BaseMessage> list = map.values()
                 .stream()
                 .filter(message -> Objects.equals(message.getPurpose(), purposeId) && purposeType().equals(message.getPurposeType()))
                 .sorted(Comparator.comparing(Message::getId))
-                .dropWhile(message -> message.getId() >= id)
+                .dropWhile(message -> Long.parseLong(message.getId()) >= Long.parseLong(id))
                 .skip((long) (page - 1) * size)
                 .limit(size)
                 .toList();
@@ -99,19 +99,19 @@ public class MemoryGroupCenterMessageRepository implements CenterMessageReposito
     }
 
     @Override
-    public Page<BaseMessage> findRoamingByStartId(Long id, String uid, String purposeId, int page, int size) {
+    public Page<BaseMessage> findRoamingByStartId(String id, String uid, String purposeId, int page, int size) {
         long total = map.values()
                 .stream()
                 .filter(message -> Objects.equals(message.getPurpose(), purposeId) && purposeType().equals(message.getPurposeType()) && Objects.equals(message.getUid(), uid))
                 .sorted(Comparator.comparing(Message::getId))
-                .dropWhile(message -> message.getId() >= id)
+                .dropWhile(message -> Long.parseLong(message.getId()) >= Long.parseLong(id))
                 .count();
 
         List<BaseMessage> list = map.values()
                 .stream()
                 .filter(message -> Objects.equals(message.getPurpose(), purposeId) && purposeType().equals(message.getPurposeType()) && Objects.equals(message.getUid(), uid))
                 .sorted(Comparator.comparing(Message::getId))
-                .dropWhile(message -> message.getId() >= id)
+                .dropWhile(message -> Long.parseLong(message.getId()) >= Long.parseLong(id))
                 .skip((long) (page - 1) * size)
                 .limit(size)
                 .toList();
@@ -120,17 +120,17 @@ public class MemoryGroupCenterMessageRepository implements CenterMessageReposito
     }
 
     @Override
-    public void receipt(Long id, String uid) {
+    public void receipt(String id, String uid) {
 
     }
 
     @Override
-    public void recall(Long id, String uid) {
+    public void recall(String id, String uid) {
 
     }
 
     @Override
-    public void remove(Long id, String uid) {
+    public void remove(String id, String uid) {
 
     }
 
@@ -155,13 +155,13 @@ public class MemoryGroupCenterMessageRepository implements CenterMessageReposito
     }
 
     @Override
-    public Page<BaseMessage> findByStartIdAndType(Long id, String uid, String purposeId, String messageType, int page, int size) {
+    public Page<BaseMessage> findByStartIdAndType(String id, String uid, String purposeId, String messageType, int page, int size) {
         long total = map.values()
                 .stream()
                 .filter(baseMessage -> Objects.equals(baseMessage.getType(), messageType))
                 .filter(message -> Objects.equals(message.getPurpose(), purposeId) && purposeType().equals(message.getPurposeType()))
                 .sorted(Comparator.comparing(Message::getId))
-                .dropWhile(message -> message.getId() >= id)
+                .dropWhile(message -> Long.parseLong(message.getId()) >= Long.parseLong(id))
                 .count();
 
         List<BaseMessage> list = map.values()
@@ -169,7 +169,7 @@ public class MemoryGroupCenterMessageRepository implements CenterMessageReposito
                 .filter(baseMessage -> Objects.equals(baseMessage.getType(), messageType))
                 .filter(message -> Objects.equals(message.getPurpose(), purposeId) && purposeType().equals(message.getPurposeType()))
                 .sorted(Comparator.comparing(Message::getId))
-                .dropWhile(message -> message.getId() >= id)
+                .dropWhile(message -> Long.parseLong(message.getId()) >= Long.parseLong(id))
                 .skip((long) (page - 1) * size)
                 .limit(size)
                 .toList();
@@ -198,13 +198,13 @@ public class MemoryGroupCenterMessageRepository implements CenterMessageReposito
     }
 
     @Override
-    public Page<BaseMessage> findRoamingByStartIdAndType(Long id, String uid, String purposeId, String messageType, int page, int size) {
+    public Page<BaseMessage> findRoamingByStartIdAndType(String id, String uid, String purposeId, String messageType, int page, int size) {
         long total = map.values()
                 .stream()
                 .filter(baseMessage -> Objects.equals(baseMessage.getType(), messageType))
                 .filter(message -> Objects.equals(message.getPurpose(), purposeId) && purposeType().equals(message.getPurposeType()) && Objects.equals(message.getUid(), uid))
                 .sorted(Comparator.comparing(Message::getId))
-                .dropWhile(message -> message.getId() >= id)
+                .dropWhile(message -> Long.parseLong(message.getId()) >= Long.parseLong(id))
                 .count();
 
         List<BaseMessage> list = map.values()
@@ -212,7 +212,7 @@ public class MemoryGroupCenterMessageRepository implements CenterMessageReposito
                 .filter(baseMessage -> Objects.equals(baseMessage.getType(), messageType))
                 .filter(message -> Objects.equals(message.getPurpose(), purposeId) && purposeType().equals(message.getPurposeType()) && Objects.equals(message.getUid(), uid))
                 .sorted(Comparator.comparing(Message::getId))
-                .dropWhile(message -> message.getId() >= id)
+                .dropWhile(message -> Long.parseLong(message.getId()) >= Long.parseLong(id))
                 .skip((long) (page - 1) * size)
                 .limit(size)
                 .toList();

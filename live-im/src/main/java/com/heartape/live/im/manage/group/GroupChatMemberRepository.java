@@ -20,7 +20,7 @@ public interface GroupChatMemberRepository {
     /**
      * 根据id查询
      */
-    GroupChatMember findById(Long id);
+    GroupChatMember findById(String id);
 
     /**
      * 根据uid查询
@@ -35,26 +35,26 @@ public interface GroupChatMemberRepository {
     /**
      * 根据groupId查询
      */
-    List<GroupChatMember> findByGroupId(Long groupId);
+    List<GroupChatMember> findByGroupId(String groupId);
 
     /**
      * 根据uid 和 groupId查询
      */
-    GroupChatMember findByUidAndGroupId(String uid, Long groupId);
+    GroupChatMember findByUidAndGroupId(String uid, String groupId);
 
     /**
      * 更新角色
      */
-    void changeRole(Long id, Integer role);
+    void changeRole(String id, Integer role);
 
     /**
      * 更新类型
      */
-    void changeType(Long id, Integer type);
+    void changeType(String id, Integer type);
 
     /**
      * 删除
      */
-    void remove(Long id);
+    void remove(String id);
 
 }

@@ -17,7 +17,7 @@ public class MemoryGroupChatMemberRepository implements GroupChatMemberRepositor
     /**
      * 内存存储
      */
-    private final Map<Long, GroupChatMember> groupChatMemberMap;
+    private final Map<String, GroupChatMember> groupChatMemberMap;
 
     // 角色
     private final static Integer MASTER = 1;
@@ -34,7 +34,7 @@ public class MemoryGroupChatMemberRepository implements GroupChatMemberRepositor
 
     @Override
     public void save(GroupChatMember groupChatMember) {
-        Long id = this.identifierGenerator.nextId();
+        String id = this.identifierGenerator.nextId().toString();
         groupChatMember.setId(id);
         groupChatMember.setRole(MEMBER);
         groupChatMember.setType(NORMAL);
@@ -43,7 +43,7 @@ public class MemoryGroupChatMemberRepository implements GroupChatMemberRepositor
 
     @Override
     public void saveMaster(GroupChatMember groupChatMember) {
-        Long id = this.identifierGenerator.nextId();
+        String id = this.identifierGenerator.nextId().toString();
         groupChatMember.setId(id);
         groupChatMember.setRole(MASTER);
         groupChatMember.setType(NORMAL);
@@ -51,7 +51,7 @@ public class MemoryGroupChatMemberRepository implements GroupChatMemberRepositor
     }
 
     @Override
-    public GroupChatMember findById(Long id) {
+    public GroupChatMember findById(String id) {
         return this.groupChatMemberMap.get(id);
     }
 
@@ -72,7 +72,7 @@ public class MemoryGroupChatMemberRepository implements GroupChatMemberRepositor
     }
 
     @Override
-    public List<GroupChatMember> findByGroupId(Long groupId) {
+    public List<GroupChatMember> findByGroupId(String groupId) {
         return this.groupChatMemberMap.values()
                 .stream()
                 .filter(groupChatMember -> groupChatMember.getGroupId().equals(groupId))
@@ -80,7 +80,7 @@ public class MemoryGroupChatMemberRepository implements GroupChatMemberRepositor
     }
 
     @Override
-    public GroupChatMember findByUidAndGroupId(String uid, Long groupId) {
+    public GroupChatMember findByUidAndGroupId(String uid, String groupId) {
         return this.groupChatMemberMap.values()
                 .stream()
                 .filter(groupChatMember -> groupChatMember.getUid().equals(uid) && groupChatMember.getGroupId().equals(groupId))
@@ -89,19 +89,19 @@ public class MemoryGroupChatMemberRepository implements GroupChatMemberRepositor
     }
 
     @Override
-    public void changeRole(Long id, Integer role) {
+    public void changeRole(String id, Integer role) {
         GroupChatMember groupChatMember = this.groupChatMemberMap.get(id);
         groupChatMember.setRole(role);
     }
 
     @Override
-    public void changeType(Long id, Integer type) {
+    public void changeType(String id, Integer type) {
         GroupChatMember groupChatMember = this.groupChatMemberMap.get(id);
         groupChatMember.setType(type);
     }
 
     @Override
-    public void remove(Long id) {
+    public void remove(String id) {
         this.groupChatMemberMap.remove(id);
     }
 }

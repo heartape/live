@@ -27,7 +27,7 @@ public class MemoryFileCenterRepository extends AbstractCenterBaseRepository<Fil
     }
 
     @Override
-    public FileMessage findById(Long id, String uid) {
+    public FileMessage findById(String id, String uid) {
         BaseMessage baseMessage = this.centerMessageRepository.findById(id, uid);
         if (baseMessage != null){
             if (baseMessage instanceof FileMessage fileMessage){
@@ -43,7 +43,7 @@ public class MemoryFileCenterRepository extends AbstractCenterBaseRepository<Fil
     }
 
     @Override
-    public Page<FileMessage> findByStartId(Long id, String uid, String purposeId, int page, int size) {
+    public Page<FileMessage> findByStartId(String id, String uid, String purposeId, int page, int size) {
         return super.findByStartId(id, uid, purposeId, MessageType.FILE, page, size);
     }
 
@@ -53,7 +53,7 @@ public class MemoryFileCenterRepository extends AbstractCenterBaseRepository<Fil
     }
 
     @Override
-    public Page<FileMessage> findRoamingByStartId(Long id, String uid, String purposeId, int page, int size) {
+    public Page<FileMessage> findRoamingByStartId(String id, String uid, String purposeId, int page, int size) {
         return super.findRoamingByStartId(id, uid, purposeId, MessageType.FILE, page, size);
     }
 

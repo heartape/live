@@ -17,7 +17,7 @@ public class GroupChatApply {
     /**
      * id
      */
-    private Long id;
+    private String id;
 
     /**
      * uid
@@ -27,7 +27,7 @@ public class GroupChatApply {
     /**
      * 群聊id
      */
-    private Long groupId;
+    private String groupId;
 
     /**
      * 申请时间

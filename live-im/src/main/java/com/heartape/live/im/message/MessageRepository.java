@@ -21,7 +21,7 @@ public interface MessageRepository<T extends Message> {
      * @param uid 用户id
      * @return 消息
      */
-    T findById(Long id, String uid);
+    T findById(String id, String uid);
 
     /**
      * 根据消息发送对象拉取（全量）
@@ -41,7 +41,7 @@ public interface MessageRepository<T extends Message> {
      * @param size 分页宽度
      * @return 消息
      */
-    Page<T> findByStartId(Long id, String uid, String purposeId, int page, int size);
+    Page<T> findByStartId(String id, String uid, String purposeId, int page, int size);
 
     /**
      * 根据消息发送对象拉取用户发送的消息（全量）（消息漫游）
@@ -61,27 +61,27 @@ public interface MessageRepository<T extends Message> {
      * @param size 分页宽度
      * @return 消息
      */
-    Page<T> findRoamingByStartId(Long id, String uid, String purposeId, int page, int size);
+    Page<T> findRoamingByStartId(String id, String uid, String purposeId, int page, int size);
 
     /**
      * 已读回执
      * @param id 消息id
      * @param uid 用户id
      */
-    void receipt(Long id, String uid);
+    void receipt(String id, String uid);
 
     /**
      * 撤回
      * @param id 消息id
      * @param uid 用户id
      */
-    void recall(Long id, String uid);
+    void recall(String id, String uid);
 
     /**
      * 删除
      * @param id 消息id
      * @param uid 用户id
      */
-    void remove(Long id, String uid);
+    void remove(String id, String uid);
 
 }

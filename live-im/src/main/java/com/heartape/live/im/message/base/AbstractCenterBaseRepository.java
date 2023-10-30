@@ -25,7 +25,7 @@ public abstract class AbstractCenterBaseRepository<T extends Message> implements
     @Override
     public void save(T message) {
         if (message instanceof BaseMessage baseMessage){
-            Long id = this.identifierGenerator.nextId();
+            String id = this.identifierGenerator.nextId().toString();
             baseMessage.setId(id);
             this.centerMessageRepository.save(baseMessage);
         }
@@ -36,7 +36,7 @@ public abstract class AbstractCenterBaseRepository<T extends Message> implements
         return convert(baseMessagePage);
     }
 
-    protected Page<T> findByStartId(Long id, String uid, String purposeId, String messageType, int page, int size) {
+    protected Page<T> findByStartId(String id, String uid, String purposeId, String messageType, int page, int size) {
         Page<BaseMessage> baseMessagePage = this.centerMessageRepository.findByStartIdAndType(id, uid, purposeId, messageType, page, size);
         return convert(baseMessagePage);
     }
@@ -46,7 +46,7 @@ public abstract class AbstractCenterBaseRepository<T extends Message> implements
         return convert(baseMessagePage);
     }
 
-    protected Page<T> findRoamingByStartId(Long id, String uid, String purposeId, String messageType, int page, int size) {
+    protected Page<T> findRoamingByStartId(String id, String uid, String purposeId, String messageType, int page, int size) {
         Page<BaseMessage> baseMessagePage = this.centerMessageRepository.findRoamingByStartIdAndType(id, uid, purposeId, messageType, page, size);
         return convert(baseMessagePage);
     }
@@ -60,17 +60,17 @@ public abstract class AbstractCenterBaseRepository<T extends Message> implements
 
 
     @Override
-    public void receipt(Long id, String uid) {
+    public void receipt(String id, String uid) {
 
     }
 
     @Override
-    public void recall(Long id, String uid) {
+    public void recall(String id, String uid) {
 
     }
 
     @Override
-    public void remove(Long id, String uid) {
+    public void remove(String id, String uid) {
 
     }
 }

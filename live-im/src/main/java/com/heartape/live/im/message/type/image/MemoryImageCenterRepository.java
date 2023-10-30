@@ -28,7 +28,7 @@ public class MemoryImageCenterRepository extends AbstractCenterBaseRepository<Im
     }
 
     @Override
-    public ImageMessage findById(Long id, String uid) {
+    public ImageMessage findById(String id, String uid) {
         BaseMessage baseMessage = this.centerMessageRepository.findById(id, uid);
         if (baseMessage != null){
             if (baseMessage instanceof ImageMessage imageMessage){
@@ -44,7 +44,7 @@ public class MemoryImageCenterRepository extends AbstractCenterBaseRepository<Im
     }
 
     @Override
-    public Page<ImageMessage> findByStartId(Long id, String uid, String purposeId, int page, int size) {
+    public Page<ImageMessage> findByStartId(String id, String uid, String purposeId, int page, int size) {
         return super.findByStartId(id, uid, purposeId, MessageType.IMAGE, page, size);
     }
 
@@ -54,7 +54,7 @@ public class MemoryImageCenterRepository extends AbstractCenterBaseRepository<Im
     }
 
     @Override
-    public Page<ImageMessage> findRoamingByStartId(Long id, String uid, String purposeId, int page, int size) {
+    public Page<ImageMessage> findRoamingByStartId(String id, String uid, String purposeId, int page, int size) {
         return super.findRoamingByStartId(id, uid, purposeId, MessageType.IMAGE, page, size);
     }
 

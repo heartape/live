@@ -18,7 +18,7 @@ public class GroupChat {
     /**
      * id
      */
-    private Long id;
+    private String id;
 
     /**
      * 群聊名称

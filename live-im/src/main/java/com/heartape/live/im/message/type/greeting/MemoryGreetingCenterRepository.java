@@ -27,7 +27,7 @@ public class MemoryGreetingCenterRepository extends AbstractCenterBaseRepository
     }
 
     @Override
-    public GreetingMessage findById(Long id, String uid) {
+    public GreetingMessage findById(String id, String uid) {
         BaseMessage baseMessage = this.centerMessageRepository.findById(id, uid);
         if (baseMessage != null){
             if (baseMessage instanceof GreetingMessage greetingMessage){
@@ -55,7 +55,7 @@ public class MemoryGreetingCenterRepository extends AbstractCenterBaseRepository
     }
 
     @Override
-    public Page<GreetingMessage> findByStartId(Long id, String uid, String purposeId, int page, int size) {
+    public Page<GreetingMessage> findByStartId(String id, String uid, String purposeId, int page, int size) {
         return super.findByStartId(id, uid, purposeId, MessageType.GREETING, page, size);
     }
 
@@ -65,7 +65,7 @@ public class MemoryGreetingCenterRepository extends AbstractCenterBaseRepository
     }
 
     @Override
-    public Page<GreetingMessage> findRoamingByStartId(Long id, String uid, String purposeId, int page, int size) {
+    public Page<GreetingMessage> findRoamingByStartId(String id, String uid, String purposeId, int page, int size) {
         return super.findRoamingByStartId(id, uid, purposeId, MessageType.GREETING, page, size);
     }
 

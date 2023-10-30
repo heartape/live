@@ -1,16 +1,21 @@
 package com.heartape.live.im.handler;
 
+import com.heartape.exception.PermissionDeniedException;
 import com.heartape.exception.SystemInnerException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.util.StringUtils;
+import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.security.Principal;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.*;
@@ -19,21 +24,19 @@ import java.util.concurrent.*;
  * 集群 websocket session管理
  * todo: 单用户多连接处理；集群弹性扩容；集群内通信保活
  */
+@SuppressWarnings("NullableProblems")
 @Slf4j
-public class ClusterWebSocketSessionManager implements WebSocketSessionManager {
+public class ClusterWebSocketSessionManager extends TextWebSocketHandler implements WebSocketSessionManager {
 
     private final RedisOperations<String, String> redisOperations;
 
-    private final WebSocketHandler webSocketHandler;
-
-    private final WebSocketSessionManager standalone;
+    private final WebSocketSessionManager standaloneSessionManager;
 
     private final Set<String> clusters;
 
-    public ClusterWebSocketSessionManager(RedisOperations<String, String> redisOperations, WebSocketHandler webSocketHandler, WebSocketSessionManager standalone, Set<String> clusters) {
+    public ClusterWebSocketSessionManager(RedisOperations<String, String> redisOperations, WebSocketSessionManager standaloneSessionManager, Set<String> clusters) {
         this.redisOperations = redisOperations;
-        this.webSocketHandler = webSocketHandler;
-        this.standalone = standalone;
+        this.standaloneSessionManager = standaloneSessionManager;
         this.clusters = clusters;
         init();
     }
@@ -59,7 +62,7 @@ public class ClusterWebSocketSessionManager implements WebSocketSessionManager {
             return;
         }
         StandardWebSocketClient standardWebSocketClient = new StandardWebSocketClient();
-        CompletableFuture<WebSocketSession> future = standardWebSocketClient.execute(webSocketHandler, "ws://" + cluster + "/ws/cluster");
+        CompletableFuture<WebSocketSession> future = standardWebSocketClient.execute(this, "ws://" + cluster + "/ws/cluster");
         try {
             WebSocketSession webSocketSession = future.get(5, TimeUnit.SECONDS);
             sessionMap.put(cluster, webSocketSession);
@@ -70,8 +73,35 @@ public class ClusterWebSocketSessionManager implements WebSocketSessionManager {
     }
 
     @Override
+    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+        Map<String, Object> attributes = session.getAttributes();
+    }
+
+    @Override
+    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+        String id = getId(session);
+        register(id, session);
+        session.sendMessage(new TextMessage("hello world!"));
+    }
+
+    @Override
+    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
+        String id = getId(session);
+        remove(id);
+    }
+
+    private String getId(WebSocketSession session) throws IOException {
+        Principal principal = session.getPrincipal();
+        if (principal == null){
+            session.close();
+            throw new PermissionDeniedException();
+        }
+        return principal.getName();
+    }
+
+    @Override
     public void register(String uid, WebSocketSession session) {
-        standalone.register(uid, session);
+        standaloneSessionManager.register(uid, session);
         String host;
         try {
             host = InetAddress.getLocalHost().getHostAddress();
@@ -82,14 +112,18 @@ public class ClusterWebSocketSessionManager implements WebSocketSessionManager {
     }
 
     @Override
-    public boolean push(String uid, String data) throws Exception {
-        boolean finish = standalone.push(uid, data);
+    public boolean push(String uid, String data) {
+        boolean finish = standaloneSessionManager.push(uid, data);
         if (finish) {
             return true; // 如果单机session推送成功，则直接返回，不再进行集群session推送
         }
         String host = redisOperations.opsForValue().get(WEBSOCKET_USER_PREFIX + uid);
         if (StringUtils.hasText(host)) {
-            sessionMap.get(host).sendMessage(new TextMessage(data));
+            try {
+                sessionMap.get(host).sendMessage(new TextMessage(data));
+            } catch (IOException e) {
+                throw new SystemInnerException();
+            }
             return true;
         }
         return false;
@@ -98,6 +132,6 @@ public class ClusterWebSocketSessionManager implements WebSocketSessionManager {
     @Override
     public void remove(String uid) {
         redisOperations.delete(WEBSOCKET_USER_PREFIX + uid);
-        standalone.remove(uid);
+        standaloneSessionManager.remove(uid);
     }
 }

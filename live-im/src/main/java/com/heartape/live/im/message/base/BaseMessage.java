@@ -1,8 +1,8 @@
 package com.heartape.live.im.message.base;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.heartape.live.im.message.Message;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,7 +24,7 @@ public class BaseMessage implements Message {
     /** 消息id */
     @Setter
     @JsonSerialize(using = ToStringSerializer.class)
-    protected Long id;
+    protected String id;
 
     /** 发送人id */
     @Setter
@@ -40,7 +40,7 @@ public class BaseMessage implements Message {
     protected String type;
 
     /** 发送时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     protected LocalDateTime timestamp;
 
     @Override
