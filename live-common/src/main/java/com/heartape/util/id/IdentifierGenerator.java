@@ -1,4 +1,4 @@
-package com.heartape.live.im.util;
+package com.heartape.util.id;
 
 /**
  * id生成器

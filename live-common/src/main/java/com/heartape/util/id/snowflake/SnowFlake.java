@@ -1,6 +1,6 @@
-package com.heartape.live.im.util.snowflake;
+package com.heartape.util.id.snowflake;
 
-import com.heartape.live.im.util.LongIdentifierGenerator;
+import com.heartape.util.id.LongIdentifierGenerator;
 
 /**
  * SnowFlake

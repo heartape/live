@@ -8,8 +8,6 @@ import lombok.Setter;
 public class PersonRequest {
 
     private String personId;
-    private String uid;
     private String message;
-    private String token;
 
 }

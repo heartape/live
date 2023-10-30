@@ -43,12 +43,10 @@ import com.heartape.live.im.message.type.video.VideoFilterManager;
 import com.heartape.live.im.message.type.video.VideoMessageConverter;
 import com.heartape.live.im.message.type.video.VideoMessageProvider;
 import com.heartape.live.im.prompt.PromptProvider;
-import com.heartape.live.im.prompt.PromptType;
-import com.heartape.live.im.prompt.apply.ApplyPromptProvider;
-import com.heartape.live.im.util.IdentifierGenerator;
-import com.heartape.live.im.util.snowflake.IpSnowflakeHolder;
-import com.heartape.live.im.util.snowflake.SnowFlake;
-import com.heartape.live.im.util.snowflake.SnowflakeHolder;
+import com.heartape.util.id.IdentifierGenerator;
+import com.heartape.util.id.snowflake.IpSnowflakeHolder;
+import com.heartape.util.id.snowflake.SnowFlake;
+import com.heartape.util.id.snowflake.SnowflakeHolder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -198,8 +196,8 @@ public class LiveImAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean
         public GatewayProxyFactory messageGatewayProxyFactory(MessageInterceptorRegister messageInterceptorRegister,
-                                                              PromptInterceptorRegister systemInterceptorRegister) {
-            return new InterceptorGatewayStaticProxyFactory(messageInterceptorRegister, systemInterceptorRegister);
+                                                              PromptInterceptorRegister promptInterceptorRegister) {
+            return new InterceptorGatewayStaticProxyFactory(messageInterceptorRegister, promptInterceptorRegister);
         }
 
         @Bean
@@ -231,12 +229,8 @@ public class LiveImAutoConfiguration {
                     MessageType.VIDEO, videoMessageProvider
             );
 
-            // PromptProvider
-            ApplyPromptProvider applyPromptProvider = new ApplyPromptProvider();
-
-            Map<String, PromptProvider> promptProviderStrategyMap = Map.of(
-                    PromptType.APPLY, applyPromptProvider
-            );
+            // 定义需要的系统消息类型
+            Map<String, PromptProvider> promptProviderStrategyMap = Map.of();
 
             return new StrategyGateway(messageProviderStrategyMap, promptProviderStrategyMap);
         }

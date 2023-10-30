@@ -1,7 +1,7 @@
 package com.heartape.live.im.message.center;
 
 import com.heartape.live.im.gateway.PurposeType;
-import com.heartape.live.im.util.Page;
+import com.heartape.util.Page;
 import com.heartape.live.im.message.base.BaseMessage;
 
 /**

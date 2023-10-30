@@ -4,8 +4,8 @@ import com.heartape.live.im.message.*;
 import com.heartape.live.im.message.base.AbstractCenterBaseRepository;
 import com.heartape.live.im.message.base.BaseMessage;
 import com.heartape.live.im.message.center.CenterMessageRepository;
-import com.heartape.live.im.util.IdentifierGenerator;
-import com.heartape.live.im.util.Page;
+import com.heartape.util.id.IdentifierGenerator;
+import com.heartape.util.Page;
 
 import java.util.ArrayList;
 import java.util.List;

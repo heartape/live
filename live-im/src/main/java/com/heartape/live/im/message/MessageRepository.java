@@ -1,6 +1,6 @@
 package com.heartape.live.im.message;
 
-import com.heartape.live.im.util.Page;
+import com.heartape.util.Page;
 
 /**
  * 消息存储，建议采用写扩散，并且分离消息写入数据和读取数据

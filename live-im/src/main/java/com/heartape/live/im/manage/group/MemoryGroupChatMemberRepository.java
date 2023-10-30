@@ -1,6 +1,6 @@
 package com.heartape.live.im.manage.group;
 
-import com.heartape.live.im.util.IdentifierGenerator;
+import com.heartape.util.id.IdentifierGenerator;
 
 import java.util.List;
 import java.util.Map;

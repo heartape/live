@@ -1,11 +1,11 @@
 package com.heartape.live.im.config;
 
 import com.heartape.live.im.gateway.Gateway;
-import com.heartape.live.im.handler.PersonTextWebSocketHandler;
-import com.heartape.live.im.handler.GroupTextWebSocketHandler;
+import com.heartape.live.im.handler.*;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
@@ -22,6 +22,8 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
 
     private final Gateway gateway;
 
+    private final RedisOperations<String, String> redisOperations;
+
     @Bean
     public ServletServerContainerFactoryBean createWebSocketContainer() {
         ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
@@ -32,8 +34,9 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
+        WebSocketSessionManager webSocketSessionManager = new ClusterWebSocketSessionManager(redisOperations, new ClusterWebSocketHandler());
         registry.addHandler(new GroupTextWebSocketHandler(gateway), "/ws/group")
-                .addHandler(new PersonTextWebSocketHandler(gateway), "/ws/person")
+                .addHandler(new PersonTextWebSocketHandler(gateway, webSocketSessionManager), "/ws/person")
                 .addInterceptors(new HttpSessionHandshakeInterceptor())
                 .setHandshakeHandler(new AuthenticationToSessionHandshakeHandler())
                 .setAllowedOriginPatterns("*");

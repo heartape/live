@@ -22,16 +22,13 @@ import java.security.Principal;
 @SuppressWarnings("NullableProblems")
 @Slf4j
 @AllArgsConstructor
-public class PersonTextWebSocketHandler extends TextWebSocketHandler {
-
-    private final Gateway gateway;
-
-    private final WebSocketSessionManager webSocketSessionManager;
+public class ClusterWebSocketHandler extends TextWebSocketHandler implements WebSocketSessionManager {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+
         PersonRequest personRequest = objectMapper.convertValue(message.getPayload(), PersonRequest.class);
         String id = getId(session);
         String personId = personRequest.getPersonId();
@@ -44,20 +41,20 @@ public class PersonTextWebSocketHandler extends TextWebSocketHandler {
         Send send = this.gateway.message(messageContext);
         String data = objectMapper.writeValueAsString(send);
         session.sendMessage(new TextMessage(data));
-        webSocketSessionManager.push(personId, data);
+        push(personId, data);
     }
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
         String id = getId(session);
-        webSocketSessionManager.register(id, session);
+        register(id, session);
         session.sendMessage(new TextMessage("hello world!"));
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         String id = getId(session);
-        webSocketSessionManager.remove(id);
+        remove(id);
     }
 
     private String getId(WebSocketSession session) throws IOException {
@@ -67,5 +64,20 @@ public class PersonTextWebSocketHandler extends TextWebSocketHandler {
             throw new PermissionDeniedException();
         }
         return principal.getName();
+    }
+
+    @Override
+    public void register(String uid, WebSocketSession session) {
+
+    }
+
+    @Override
+    public boolean push(String uid, String data) throws Exception {
+        return false;
+    }
+
+    @Override
+    public void remove(String uid) {
+
     }
 }

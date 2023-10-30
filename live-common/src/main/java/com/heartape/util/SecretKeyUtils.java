@@ -1,6 +1,5 @@
 package com.heartape.util;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
@@ -10,8 +9,10 @@ import java.io.IOException;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
@@ -48,24 +49,30 @@ public class SecretKeyUtils {
      * 获取私匙
      * @return RSAPrivateKey 私钥
      */
-    @SneakyThrows
     public static RSAPrivateKey getPrivateKeyFromPem(String privateKeyPem) {
         byte[] bytes = readKeyFile(privateKeyPem);
-        KeyFactory kf = KeyFactory.getInstance("RSA");
-        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(bytes);
-        return (RSAPrivateKey)kf.generatePrivate(keySpec);
+        try {
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(bytes);
+            return (RSAPrivateKey)kf.generatePrivate(keySpec);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
      * 获取公钥
      * @return RSAPublicKey 公钥
      */
-    @SneakyThrows
     public static RSAPublicKey getPublicKeyFromPem(String publicKeyPem) {
         byte[] bytes = readKeyFile(publicKeyPem);
-        KeyFactory kf = KeyFactory.getInstance("RSA");
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(bytes);
-        return (RSAPublicKey)kf.generatePublic(keySpec);
+        try {
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(bytes);
+            return (RSAPublicKey)kf.generatePublic(keySpec);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @SuppressWarnings("UnusedAssignment")

@@ -43,14 +43,11 @@ public class GroupTextWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        session.sendMessage(new TextMessage("hello world!"));
-        Principal principal = session.getPrincipal();
-        // sessionMap.put("uid", session);
+
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        session.sendMessage(new TextMessage("good bye!"));
-        // sessionMap.put("uid", session);
+
     }
 }

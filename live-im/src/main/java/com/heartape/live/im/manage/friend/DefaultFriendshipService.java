@@ -1,6 +1,6 @@
 package com.heartape.live.im.manage.friend;
 
-import com.heartape.live.im.util.IdentifierGenerator;
+import com.heartape.util.id.IdentifierGenerator;
 import lombok.AllArgsConstructor;
 
 /**

@@ -1,6 +1,6 @@
 package com.heartape.live.im.manage.group;
 
-import com.heartape.live.im.exception.PermissionDeniedException;
+import com.heartape.exception.PermissionDeniedException;
 import com.heartape.live.im.manage.group.apply.GroupChatApply;
 import com.heartape.live.im.manage.group.apply.GroupChatApplyRepository;
 import com.heartape.live.im.manage.group.info.GroupChatMemberInfo;

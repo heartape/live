@@ -1,4 +1,4 @@
-package com.heartape.live.im.util.snowflake;
+package com.heartape.util.id.snowflake;
 
 import java.util.Random;
 

@@ -14,3 +14,8 @@ spring:
       discovery:
         server-addr: http://192.168.31.100:8848
         namespace: 72f9a09a-7b6b-46c7-81fa-20db037e98ff
+  data:
+    redis:
+      host: 192.168.31.100
+      port: 6379
+      database: 0

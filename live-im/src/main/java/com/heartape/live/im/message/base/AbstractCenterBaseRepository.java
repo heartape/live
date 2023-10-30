@@ -2,8 +2,8 @@ package com.heartape.live.im.message.base;
 
 import com.heartape.live.im.message.*;
 import com.heartape.live.im.message.center.CenterMessageRepository;
-import com.heartape.live.im.util.IdentifierGenerator;
-import com.heartape.live.im.util.Page;
+import com.heartape.util.id.IdentifierGenerator;
+import com.heartape.util.Page;
 
 /**
  * 中央仓库实现

@@ -3,7 +3,7 @@ package com.heartape.live.im.controller;
 import com.heartape.live.im.config.LiveImAutoConfiguration;
 import com.heartape.live.im.message.base.BaseMessage;
 import com.heartape.live.im.message.center.CenterMessageRepository;
-import com.heartape.live.im.util.Page;
+import com.heartape.util.Page;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;

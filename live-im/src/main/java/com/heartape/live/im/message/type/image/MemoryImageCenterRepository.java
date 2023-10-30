@@ -2,11 +2,11 @@ package com.heartape.live.im.message.type.image;
 
 import com.heartape.live.im.message.MessageRepository;
 import com.heartape.live.im.message.MessageType;
-import com.heartape.live.im.util.Page;
+import com.heartape.util.Page;
 import com.heartape.live.im.message.base.AbstractCenterBaseRepository;
 import com.heartape.live.im.message.base.BaseMessage;
 import com.heartape.live.im.message.center.CenterMessageRepository;
-import com.heartape.live.im.util.IdentifierGenerator;
+import com.heartape.util.id.IdentifierGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
