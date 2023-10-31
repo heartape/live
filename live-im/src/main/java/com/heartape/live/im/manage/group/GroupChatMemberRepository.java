@@ -43,6 +43,14 @@ public interface GroupChatMemberRepository {
     GroupChatMember findByUidAndGroupId(String uid, String groupId);
 
     /**
+     * 是否存在
+     * @param groupId 群聊
+     * @param uid 用户
+     * @return 是否存在
+     */
+    boolean exist(String groupId, String uid);
+
+    /**
      * 更新角色
      */
     void changeRole(String id, Integer role);

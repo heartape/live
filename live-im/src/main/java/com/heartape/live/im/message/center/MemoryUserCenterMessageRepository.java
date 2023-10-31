@@ -27,7 +27,7 @@ public class MemoryUserCenterMessageRepository implements CenterMessageRepositor
 
     @Override
     public String purposeType() {
-        return PurposeType.USER;
+        return PurposeType.PERSON;
     }
 
     @Override

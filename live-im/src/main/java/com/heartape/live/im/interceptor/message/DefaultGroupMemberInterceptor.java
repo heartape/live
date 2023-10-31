@@ -3,7 +3,7 @@ package com.heartape.live.im.interceptor.message;
 import com.heartape.live.im.context.MessageContext;
 import com.heartape.live.im.gateway.PurposeType;
 import com.heartape.live.im.interceptor.Interceptor;
-import com.heartape.live.im.manage.group.GroupChatService;
+import com.heartape.live.im.manage.group.GroupChatMemberRepository;
 import com.heartape.live.im.send.ErrorSend;
 import com.heartape.live.im.send.Send;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
  * @author heartape
  */
 @AllArgsConstructor
-public class MemoryGroupMemberInterceptor implements Interceptor<MessageContext> {
+public class DefaultGroupMemberInterceptor implements Interceptor<MessageContext> {
 
     /**
      * JOIN_ERROR
@@ -24,7 +24,7 @@ public class MemoryGroupMemberInterceptor implements Interceptor<MessageContext>
     /**
      * key 拉黑 value
      */
-    private final GroupChatService groupChatService;
+    private final GroupChatMemberRepository groupChatMemberRepository;
 
     @Override
     public Send preSend(MessageContext messageContext) {
@@ -32,7 +32,7 @@ public class MemoryGroupMemberInterceptor implements Interceptor<MessageContext>
         if (PurposeType.GROUP.equals(purposeType)){
             String groupId = messageContext.getPurpose();
             String uid = messageContext.getUid();
-            boolean member = groupChatService.isMember(uid, groupId);
+            boolean member = groupChatMemberRepository.exist(groupId, uid);
             if (!member){
                 return new ErrorSend(JOIN_ERROR);
             }

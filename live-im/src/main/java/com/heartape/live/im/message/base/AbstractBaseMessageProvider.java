@@ -72,7 +72,7 @@ public abstract class AbstractBaseMessageProvider<T extends Message> implements 
     private MessageRepository<T> messageRepository(String purposeType){
         if (PurposeType.GROUP.equals(purposeType)){
             return this.groupRepository;
-        } else if (PurposeType.USER.equals(purposeType)){
+        } else if (PurposeType.PERSON.equals(purposeType)){
             return this.userRepository;
         }
         throw new IllegalArgumentException("purposeType not support");

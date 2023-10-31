@@ -76,11 +76,6 @@ public class MemoryGroupChatRepository implements GroupChatRepository {
     }
 
     @Override
-    public void changeAuthMode(String id, String uid, int authMode) {
-        this.groupChats.get(id).setAuthMode(authMode);
-    }
-
-    @Override
     public void remove(String id, String uid) {
         this.groupChats.remove(id);
     }

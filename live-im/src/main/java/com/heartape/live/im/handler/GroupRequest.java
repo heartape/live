@@ -8,7 +8,6 @@ import lombok.Setter;
 public class GroupRequest {
 
     private String groupId;
-    private String uid;
     private String message;
     private String token;
 

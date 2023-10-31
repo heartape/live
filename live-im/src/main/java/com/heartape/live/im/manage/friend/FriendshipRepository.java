@@ -3,7 +3,7 @@ package com.heartape.live.im.manage.friend;
 import java.util.List;
 
 /**
- * 表情包存储
+ * 好友存储
  */
 public interface FriendshipRepository {
 

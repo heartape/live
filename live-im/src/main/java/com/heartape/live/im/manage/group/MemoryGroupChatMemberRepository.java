@@ -89,6 +89,16 @@ public class MemoryGroupChatMemberRepository implements GroupChatMemberRepositor
     }
 
     @Override
+    public boolean exist(String groupId, String uid) {
+        for (GroupChatMember groupChatMember : this.groupChatMemberMap.values()) {
+            if (groupChatMember.getGroupId().equals(groupId) && groupChatMember.getUid().equals(uid)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
     public void changeRole(String id, Integer role) {
         GroupChatMember groupChatMember = this.groupChatMemberMap.get(id);
         groupChatMember.setRole(role);

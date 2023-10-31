@@ -29,7 +29,7 @@ public class MemoryFriendshipInterceptor implements Interceptor<MessageContext> 
     @Override
     public Send preSend(MessageContext messageContext) {
         String purposeType = messageContext.getPurposeType();
-        if (PurposeType.USER.equals(purposeType)){
+        if (PurposeType.PERSON.equals(purposeType)){
             boolean friend = this.friendshipService.isFriend(messageContext.getUid(), messageContext.getPurpose());
             if (!friend){
                 return new ErrorSend(DEFAULT_ERROR);

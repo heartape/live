@@ -1,22 +1,24 @@
 package com.heartape.live.im.handler;
 
-import com.heartape.exception.PermissionDeniedException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.heartape.exception.SystemInnerException;
+import com.heartape.live.im.gateway.PurposeType;
+import com.heartape.live.im.manage.group.GroupChatMember;
+import com.heartape.live.im.manage.group.GroupChatMemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.util.StringUtils;
-import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
-import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.security.Principal;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.*;
 
@@ -24,20 +26,28 @@ import java.util.concurrent.*;
  * 集群 websocket session管理
  * todo: 单用户多连接处理；集群弹性扩容；集群内通信保活
  */
-@SuppressWarnings("NullableProblems")
 @Slf4j
-public class ClusterWebSocketSessionManager extends TextWebSocketHandler implements WebSocketSessionManager {
+public class ClusterWebSocketSessionManager implements WebSocketSessionManager {
 
     private final RedisOperations<String, String> redisOperations;
 
     private final WebSocketSessionManager standaloneSessionManager;
 
-    private final Set<String> clusters;
+    private final WebSocketHandler webSocketHandler;
 
-    public ClusterWebSocketSessionManager(RedisOperations<String, String> redisOperations, WebSocketSessionManager standaloneSessionManager, Set<String> clusters) {
+    private final GroupChatMemberRepository groupChatMemberRepository;
+
+    private final Set<String> servers;
+
+    private final String host;
+
+    public ClusterWebSocketSessionManager(RedisOperations<String, String> redisOperations, WebSocketSessionManager standaloneSessionManager, WebSocketHandler webSocketHandler, GroupChatMemberRepository groupChatMemberRepository, Set<String> servers, String host) {
         this.redisOperations = redisOperations;
         this.standaloneSessionManager = standaloneSessionManager;
-        this.clusters = clusters;
+        this.webSocketHandler = webSocketHandler;
+        this.groupChatMemberRepository = groupChatMemberRepository;
+        this.servers = servers;
+        this.host = host;
         init();
     }
 
@@ -46,57 +56,32 @@ public class ClusterWebSocketSessionManager extends TextWebSocketHandler impleme
      */
     private final static Map<String, WebSocketSession> sessionMap = new ConcurrentHashMap<>();
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     private final static String WEBSOCKET_USER_PREFIX = "live:ws:u:";
 
     private void init() {
         log.debug("websocket cluster connecting...");
-        clusters.forEach(this::initClusterSession);
+        servers.forEach(this::initClusterSession);
     }
 
     /**
      * 与集群内其他服务建立连接
-     * @param cluster 集群host
+     * @param server 集群host
      */
-    private void initClusterSession(String cluster) {
-        if (sessionMap.containsKey(cluster)) {
+    private void initClusterSession(String server) {
+        if (sessionMap.containsKey(server) || Objects.equals(server, host)) {
             return;
         }
         StandardWebSocketClient standardWebSocketClient = new StandardWebSocketClient();
-        CompletableFuture<WebSocketSession> future = standardWebSocketClient.execute(this, "ws://" + cluster + "/ws/cluster");
+        CompletableFuture<WebSocketSession> future = standardWebSocketClient.execute(webSocketHandler, "ws://" + server + "/cluster");
         try {
             WebSocketSession webSocketSession = future.get(5, TimeUnit.SECONDS);
-            sessionMap.put(cluster, webSocketSession);
-            log.info("cluster member: {} connect success", cluster);
+            sessionMap.put(server, webSocketSession);
+            log.info("cluster server: {} connect success", server);
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            log.warn("cluster member: {} connect failed", cluster);
+            log.warn("cluster server: {} connect failed", server);
         }
-    }
-
-    @Override
-    protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        Map<String, Object> attributes = session.getAttributes();
-    }
-
-    @Override
-    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        String id = getId(session);
-        register(id, session);
-        session.sendMessage(new TextMessage("hello world!"));
-    }
-
-    @Override
-    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        String id = getId(session);
-        remove(id);
-    }
-
-    private String getId(WebSocketSession session) throws IOException {
-        Principal principal = session.getPrincipal();
-        if (principal == null){
-            session.close();
-            throw new PermissionDeniedException();
-        }
-        return principal.getName();
     }
 
     @Override
@@ -112,21 +97,59 @@ public class ClusterWebSocketSessionManager extends TextWebSocketHandler impleme
     }
 
     @Override
-    public boolean push(String uid, String data) {
-        boolean finish = standaloneSessionManager.push(uid, data);
-        if (finish) {
-            return true; // 如果单机session推送成功，则直接返回，不再进行集群session推送
+    public boolean registered(String uid) {
+        boolean registered = standaloneSessionManager.registered(uid);
+        if (registered) {
+            return true;
         }
-        String host = redisOperations.opsForValue().get(WEBSOCKET_USER_PREFIX + uid);
+        Boolean hasKey = redisOperations.hasKey(WEBSOCKET_USER_PREFIX + uid);
+        return hasKey != null && hasKey;
+    }
+
+    @Override
+    public StoredMessage store(String uid, String payload) {
+        return standaloneSessionManager.store(uid, payload);
+    }
+
+    @Override
+    public void callback(WebSocketSession session, StoredMessage storedMessage) {
+        standaloneSessionManager.callback(session, storedMessage);
+    }
+
+    @Override
+    public void push(StoredMessage storedMessage) {
+        String purposeType = storedMessage.getPurposeType();
+        String storedMessageStr;
+        try {
+            storedMessageStr = objectMapper.writeValueAsString(storedMessage);
+        } catch (JsonProcessingException e) {
+            throw new SystemInnerException();
+        }
+        if (PurposeType.PERSON.equals(purposeType)){
+            doPush(storedMessage.getPurposeId(), storedMessage, storedMessageStr);
+        } else if (PurposeType.GROUP.equals(purposeType)) {
+            groupChatMemberRepository.findByGroupId(storedMessage.getPurposeId())
+                    .stream()
+                    .map(GroupChatMember::getUid)
+                    .forEach(item -> doPush(item, storedMessage, storedMessageStr));
+        }
+    }
+
+    private void doPush(String purposeId, StoredMessage storedMessage, String storedMessageStr) {
+        boolean registered = standaloneSessionManager.registered(purposeId);
+        if (registered) {
+            standaloneSessionManager.push(storedMessage);
+            return;
+        }
+        String host = redisOperations.opsForValue().get(WEBSOCKET_USER_PREFIX + purposeId);
         if (StringUtils.hasText(host)) {
             try {
-                sessionMap.get(host).sendMessage(new TextMessage(data));
+                // todo:断线重连
+                sessionMap.get(host).sendMessage(new TextMessage(storedMessageStr));
             } catch (IOException e) {
                 throw new SystemInnerException();
             }
-            return true;
         }
-        return false;
     }
 
     @Override

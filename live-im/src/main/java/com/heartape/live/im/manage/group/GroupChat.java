@@ -41,15 +41,6 @@ public class GroupChat {
     private Integer level;
 
     /**
-     * 认证方式
-     * 0：不需要认证信息
-     * 1：需要认证信息（对加群动机的一段描述）
-     * 2：需要回答问题（系统判断是否合法）
-     * 3：需要回答问题（由群管理员判断是否合法）
-     */
-    private Integer authMode;
-
-    /**
      * 标签
      */
     private List<String> tags;

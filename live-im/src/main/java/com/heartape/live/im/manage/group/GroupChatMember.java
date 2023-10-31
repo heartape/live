@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 /**
  * 群聊
  */
@@ -42,5 +44,7 @@ public class GroupChatMember {
      * 1:正常
      */
     private Integer type;
+
+    private LocalDateTime createTime;
 
 }

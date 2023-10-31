@@ -3,13 +3,12 @@ package com.heartape.live.im.config;
 import com.heartape.live.im.gateway.*;
 import com.heartape.live.im.gateway.proxy.InterceptorGatewayStaticProxyFactory;
 import com.heartape.live.im.gateway.proxy.GatewayProxyFactory;
+import com.heartape.live.im.handler.*;
 import com.heartape.live.im.interceptor.message.*;
 import com.heartape.live.im.interceptor.prompt.ListPromptInterceptorRegister;
 import com.heartape.live.im.interceptor.prompt.PromptInterceptorRegister;
 import com.heartape.live.im.manage.friend.*;
 import com.heartape.live.im.manage.group.*;
-import com.heartape.live.im.manage.group.apply.GroupChatApplyRepository;
-import com.heartape.live.im.manage.group.apply.MemoryGroupChatApplyRepository;
 import com.heartape.live.im.message.*;
 import com.heartape.live.im.message.center.CenterMessageRepository;
 import com.heartape.live.im.message.center.MemoryGroupCenterMessageRepository;
@@ -34,10 +33,7 @@ import com.heartape.live.im.message.type.sound.MemorySoundCenterRepository;
 import com.heartape.live.im.message.type.sound.SoundFilterManager;
 import com.heartape.live.im.message.type.sound.SoundMessageConverter;
 import com.heartape.live.im.message.type.sound.SoundMessageProvider;
-import com.heartape.live.im.message.type.text.MemoryTextCenterRepository;
-import com.heartape.live.im.message.type.text.TextFilterManager;
-import com.heartape.live.im.message.type.text.TextMessageConverter;
-import com.heartape.live.im.message.type.text.TextMessageProvider;
+import com.heartape.live.im.message.type.text.*;
 import com.heartape.live.im.message.type.video.MemoryVideoCenterRepository;
 import com.heartape.live.im.message.type.video.VideoFilterManager;
 import com.heartape.live.im.message.type.video.VideoMessageConverter;
@@ -48,14 +44,20 @@ import com.heartape.util.id.snowflake.IpSnowflakeHolder;
 import com.heartape.util.id.snowflake.SnowFlake;
 import com.heartape.util.id.snowflake.SnowflakeHolder;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.web.socket.WebSocketHandler;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 配置im服务器自动配置
@@ -84,6 +86,8 @@ public class LiveImAutoConfiguration {
             // TEXT
             TextMessageConverter textMessageConverter = new TextMessageConverter();
             TextFilterManager textFilterManager = new TextFilterManager();
+            textFilterManager.register(new TextBaseFilter());
+            textFilterManager.register(new MemoryTextKeywordShieldFilter(Set.of("卧槽", "握草")));
             MemoryTextCenterRepository groupMemoryTextCenterRepository = new MemoryTextCenterRepository(identifierGenerator, groupCenterMessageRepository);
             MemoryTextCenterRepository userMemoryTextCenterRepository = new MemoryTextCenterRepository(identifierGenerator, userCenterMessageRepository);
 
@@ -178,12 +182,11 @@ public class LiveImAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public MessageInterceptorRegister messageInterceptorRegister(FriendshipService friendshipService,
-                                                                     GroupChatService groupChatService){
+        public MessageInterceptorRegister messageInterceptorRegister(FriendshipService friendshipService, GroupChatMemberRepository groupChatMemberRepository){
             ListMessageInterceptorRegister listMessageInterceptorRegister = new ListMessageInterceptorRegister();
             listMessageInterceptorRegister
                     .register(new MemoryFriendshipInterceptor(friendshipService))
-                    .register(new MemoryGroupMemberInterceptor(groupChatService));
+                    .register(new DefaultGroupMemberInterceptor(groupChatMemberRepository));
             return listMessageInterceptorRegister;
         }
 
@@ -273,6 +276,34 @@ public class LiveImAutoConfiguration {
         public CenterMessageRepository userBaseMessageRepository(){
             return new MemoryUserCenterMessageRepository();
         }
+
+        @Bean("standaloneWebSocketSessionManager")
+        public WebSocketSessionManager standaloneWebSocketSessionManager(Gateway gateway,
+                                                                         GroupChatMemberRepository groupChatMemberRepository) {
+            return new StandaloneWebSocketSessionManager(gateway, groupChatMemberRepository);
+        }
+
+        @Bean("clusterWebSocketSessionManager")
+        public WebSocketSessionManager clusterWebSocketSessionManager(WebSocketSessionManager standaloneWebSocketSessionManager,
+                                                                      RedisOperations<String, String> redisOperations,
+                                                                      WebSocketHandler clusterWebSocketHandler,
+                                                                      GroupChatMemberRepository groupChatMemberRepository,
+                                                                      LiveImProperties liveImProperties,
+                                                                      @Value("${server.port}") int port) throws UnknownHostException {
+            String local = InetAddress.getLocalHost().getHostAddress();
+            Set<String> servers = liveImProperties.getCluster().getServers();
+            return new ClusterWebSocketSessionManager(redisOperations, standaloneWebSocketSessionManager, clusterWebSocketHandler, groupChatMemberRepository, servers, local + ":" + port);
+        }
+
+        @Bean("imWebSocketHandler")
+        public WebSocketHandler imWebSocketHandler(WebSocketSessionManager clusterWebSocketSessionManager){
+            return new ImTextWebSocketHandler(clusterWebSocketSessionManager);
+        }
+
+        @Bean("clusterWebSocketHandler")
+        public WebSocketHandler clusterWebSocketHandler(WebSocketSessionManager standaloneWebSocketSessionManager){
+            return new ClusterWebSocketHandler(standaloneWebSocketSessionManager);
+        }
     }
 
     /**
@@ -318,22 +349,6 @@ public class LiveImAutoConfiguration {
             public GroupChatMemberRepository groupChatMemberRepository(IdentifierGenerator<Long> identifierGenerator){
                 return new MemoryGroupChatMemberRepository(identifierGenerator);
             }
-
-            @Bean
-            @ConditionalOnMissingBean
-            public GroupChatApplyRepository groupChatApplyRepository(IdentifierGenerator<Long> identifierGenerator){
-                return new MemoryGroupChatApplyRepository(identifierGenerator);
-            }
-
-            @Bean
-            @ConditionalOnMissingBean
-            public GroupChatService groupChatService(GroupChatRepository groupChatRepository,
-                                                     GroupChatMemberRepository groupChatMemberRepository,
-                                                     GroupChatApplyRepository groupChatApplyRepository) {
-                return new DefaultGroupChatService(groupChatRepository, groupChatMemberRepository, groupChatApplyRepository);
-            }
-
-
         }
     }
 }

@@ -55,7 +55,7 @@
             }
         }
         const req = {
-            type: 'person',
+            type: 'PERSON',
             data : {
                 personId: personId.value,
                 message: JSON.stringify(message)
@@ -72,7 +72,7 @@
             }
         }
         const req = {
-            type: 'group',
+            type: 'GROUP',
             data : {
                 groupId: groupId.value,
                 message: JSON.stringify(message)
@@ -89,7 +89,7 @@
         if (type === 'MESSAGE'){
             const message = data.message;
             let purposeType = message.purposeType;
-            if (purposeType === 'USER'){
+            if (purposeType === 'PERSON'){
                 setMessageInnerHTML(message.uid + ': ' + message.content.text, personMessage)
             } else if (purposeType === 'GROUP'){
                 setMessageInnerHTML(message.uid + ': ' + message.content.text, groupMessage)

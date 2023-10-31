@@ -1,19 +1,14 @@
 package com.heartape.live.im.config;
 
-import com.heartape.live.im.gateway.Gateway;
-import com.heartape.live.im.handler.*;
-import com.heartape.live.im.manage.group.GroupChatService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
-
-import java.util.HashSet;
 
 /**
  * @see <a href="https://docs.spring.io/spring-framework/reference/web/websocket.html">docs.spring.io</a>
@@ -23,11 +18,9 @@ import java.util.HashSet;
 @EnableWebSocket
 public class WebSocketConfiguration implements WebSocketConfigurer {
 
-    private final Gateway gateway;
+    private final WebSocketHandler imWebSocketHandler;
 
-    private final GroupChatService groupChatService;
-
-    private final RedisOperations<String, String> redisOperations;
+    private final WebSocketHandler clusterWebSocketHandler;
 
     @Bean
     public ServletServerContainerFactoryBean createWebSocketContainer() {
@@ -39,9 +32,8 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        ClusterWebSocketSessionManager clusterWebSocketSessionManager = new ClusterWebSocketSessionManager(
-                redisOperations, new StandaloneWebSocketSessionManager(), new HashSet<>());
-        registry.addHandler(new ImTextWebSocketHandler(gateway, clusterWebSocketSessionManager, groupChatService), "/im")
+        registry.addHandler(imWebSocketHandler, "/im")
+                .addHandler(clusterWebSocketHandler, "/cluster")
                 .addInterceptors(new HttpSessionHandshakeInterceptor())
                 .setHandshakeHandler(new AuthenticationToSessionHandshakeHandler())
                 .setAllowedOriginPatterns("*");

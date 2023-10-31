@@ -48,11 +48,6 @@ public interface GroupChatRepository {
     void changeLevel(String id, String uid, int level);
 
     /**
-     * 更新群聊认证方式
-     */
-    void changeAuthMode(String id, String uid, int authMode);
-
-    /**
      * 删除
      */
     void remove(String id, String uid);

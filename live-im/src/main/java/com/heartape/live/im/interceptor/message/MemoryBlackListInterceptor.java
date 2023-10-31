@@ -33,7 +33,7 @@ public class MemoryBlackListInterceptor implements Interceptor<MessageContext> {
     @Override
     public Send preSend(MessageContext messageContext) {
         String purposeType = messageContext.getPurposeType();
-        if (PurposeType.USER.equals(purposeType)){
+        if (PurposeType.PERSON.equals(purposeType)){
             String uid = messageContext.getUid();
             String purpose = messageContext.getPurpose();
             Set<String> idSet = this.blackSetMap.get(purpose);
