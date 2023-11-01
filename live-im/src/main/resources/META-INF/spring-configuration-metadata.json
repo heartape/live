@@ -1,0 +1,38 @@
+{
+  "groups": [
+    {
+      "name": "live.im",
+      "type": "com.heartape.live.im.config.LiveImProperties",
+      "sourceType": "com.heartape.live.im.config.LiveImProperties"
+    },
+    {
+      "name": "live.im.cluster",
+      "type": "com.heartape.live.im.config.LiveImProperties$Cluster",
+      "sourceType": "com.heartape.live.im.config.LiveImProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "live.im.cluster.enabled",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.heartape.live.im.config.LiveImProperties$Cluster",
+      "defaultValue": false
+    },
+    {
+      "name": "live.im.cluster.network-interface-name",
+      "type": "java.lang.String",
+      "sourceType": "com.heartape.live.im.config.LiveImProperties$Cluster"
+    },
+    {
+      "name": "live.im.cluster.servers",
+      "type": "java.util.Set<java.lang.String>",
+      "sourceType": "com.heartape.live.im.config.LiveImProperties$Cluster"
+    },
+    {
+      "name": "live.im.network-interface-name",
+      "type": "java.lang.String",
+      "sourceType": "com.heartape.live.im.config.LiveImProperties"
+    }
+  ],
+  "hints": []
+}

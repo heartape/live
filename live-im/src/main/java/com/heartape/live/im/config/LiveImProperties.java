@@ -20,10 +20,13 @@ import java.util.Set;
 @ConfigurationProperties(prefix = "live.im")
 public class LiveImProperties {
 
+    @Setter
+    private String networkInterfaceName;
     private final Cluster cluster;
 
     @ConstructorBinding
-    public LiveImProperties(Cluster cluster) {
+    public LiveImProperties(String networkInterfaceName, Cluster cluster) {
+        this.networkInterfaceName = networkInterfaceName;
         this.cluster = Objects.requireNonNullElseGet(cluster, () -> new Cluster(false, null));
     }
 

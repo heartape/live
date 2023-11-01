@@ -1,13 +1,10 @@
 package com.heartape.util.id.snowflake;
 
 import com.heartape.exception.SystemInnerException;
+import com.heartape.util.IpUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.Enumeration;
 
 /**
  * @see SnowflakeHolder
@@ -17,7 +14,13 @@ public class IpSnowflakeHolder implements SnowflakeHolder {
 
     private Long workerId;
 
-    public IpSnowflakeHolder() {
+    /**
+     * 需要时可以指定网卡名称
+     */
+    private final String networkInterfaceName;
+
+    public IpSnowflakeHolder(String networkInterfaceName) {
+        this.networkInterfaceName = networkInterfaceName;
         Long workerId = getWorkerId();
         if (workerId == null){
             throw new SystemInnerException();
@@ -30,31 +33,14 @@ public class IpSnowflakeHolder implements SnowflakeHolder {
      */
     @Override
     public Long getWorkerId() {
-        try {
-            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
-            while (networkInterfaces.hasMoreElements()) {
-                NetworkInterface networkInterface = networkInterfaces.nextElement();
-                if (networkInterface.isLoopback() || networkInterface.isVirtual() || !networkInterface.isUp()) {
-                    continue;
-                }
-                Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
-                while (inetAddresses.hasMoreElements()) {
-                    InetAddress inetAddress = inetAddresses.nextElement();
-                    log.debug("获取到ip:{}", inetAddress.getHostAddress());
-                    if (inetAddress.isLoopbackAddress() || inetAddress.isLinkLocalAddress() || inetAddress.isMulticastAddress() || !inetAddress.isSiteLocalAddress()) {
-                        continue;
-                    }
-                    byte[] address = inetAddress.getAddress();
-                    if (address.length == 4) {
-                        Long id = (0x000000FF & (long) address[address.length - 2] | (0x0000FF00 & (((long) address[address.length - 1]) << 8))) >> 6;
-                        log.debug("获取到workerId:{}", id);
-                        return this.workerId = id;
-                    }
-                }
-            }
-        } catch (SocketException | NullPointerException e) {
-            log.error("无法正确获取本机ip");
+        InetAddress inetAddress = IpUtils.localAddressV4(networkInterfaceName);
+        if (inetAddress == null){
+            return this.workerId;
         }
-        return this.workerId;
+        log.debug("获取到ip:{}", inetAddress);
+        byte[] address = inetAddress.getAddress();
+        Long id = (0x000000FF & (long) address[address.length - 2] | (0x0000FF00 & (((long) address[address.length - 1]) << 8))) >> 6;
+        log.debug("获取到workerId:{}", id);
+        return this.workerId = id;
     }
 }

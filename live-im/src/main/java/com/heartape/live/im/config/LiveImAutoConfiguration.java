@@ -54,8 +54,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.web.socket.WebSocketHandler;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 
@@ -255,8 +253,8 @@ public class LiveImAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public SnowflakeHolder ipSnowflakeHolder(){
-            return new IpSnowflakeHolder();
+        public SnowflakeHolder ipSnowflakeHolder(LiveImProperties liveImProperties){
+            return new IpSnowflakeHolder(liveImProperties.getNetworkInterfaceName());
         }
 
         @Bean
@@ -284,25 +282,26 @@ public class LiveImAutoConfiguration {
         }
 
         @Bean("clusterWebSocketSessionManager")
-        public WebSocketSessionManager clusterWebSocketSessionManager(WebSocketSessionManager standaloneWebSocketSessionManager,
+        // @ConditionalOnProperty(name = "live.im.cluster.enable", havingValue = "true")
+        public WebSocketSessionManager clusterWebSocketSessionManager(@Qualifier("standaloneWebSocketSessionManager") WebSocketSessionManager webSocketSessionManager,
                                                                       RedisOperations<String, String> redisOperations,
                                                                       WebSocketHandler clusterWebSocketHandler,
                                                                       GroupChatMemberRepository groupChatMemberRepository,
                                                                       LiveImProperties liveImProperties,
-                                                                      @Value("${server.port}") int port) throws UnknownHostException {
-            String local = InetAddress.getLocalHost().getHostAddress();
-            Set<String> servers = liveImProperties.getCluster().getServers();
-            return new ClusterWebSocketSessionManager(redisOperations, standaloneWebSocketSessionManager, clusterWebSocketHandler, groupChatMemberRepository, servers, local + ":" + port);
+                                                                      @Value("${server.port}") int port) {
+            LiveImProperties.Cluster cluster = liveImProperties.getCluster();
+            return new ClusterWebSocketSessionManager(redisOperations, webSocketSessionManager, clusterWebSocketHandler, groupChatMemberRepository, cluster.getServers(), port, liveImProperties.getNetworkInterfaceName());
         }
 
         @Bean("imWebSocketHandler")
-        public WebSocketHandler imWebSocketHandler(WebSocketSessionManager clusterWebSocketSessionManager){
-            return new ImTextWebSocketHandler(clusterWebSocketSessionManager);
+        public WebSocketHandler imWebSocketHandler(@Qualifier("clusterWebSocketSessionManager") WebSocketSessionManager webSocketSessionManager){
+            return new ImTextWebSocketHandler(webSocketSessionManager);
         }
 
         @Bean("clusterWebSocketHandler")
-        public WebSocketHandler clusterWebSocketHandler(WebSocketSessionManager standaloneWebSocketSessionManager){
-            return new ClusterWebSocketHandler(standaloneWebSocketSessionManager);
+        // @ConditionalOnProperty(name = "live.im.cluster.enable", havingValue = "true")
+        public WebSocketHandler clusterWebSocketHandler(@Qualifier("standaloneWebSocketSessionManager") WebSocketSessionManager webSocketSessionManager){
+            return new ClusterWebSocketHandler(webSocketSessionManager);
         }
     }
 
