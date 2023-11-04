@@ -290,7 +290,7 @@ public class LiveImAutoConfiguration {
                                                                       LiveImProperties liveImProperties,
                                                                       @Value("${server.port}") int port) {
             LiveImProperties.Cluster cluster = liveImProperties.getCluster();
-            return new ClusterWebSocketSessionManager(redisOperations, webSocketSessionManager, clusterWebSocketHandler, groupChatMemberRepository, cluster.getServers(), port, liveImProperties.getNetworkInterfaceName());
+            return new RedisRegisterClusterWebSocketSessionManager(redisOperations, webSocketSessionManager, clusterWebSocketHandler, groupChatMemberRepository, cluster.getServers(), port, liveImProperties.getNetworkInterfaceName());
         }
 
         @Bean("imWebSocketHandler")

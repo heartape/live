@@ -29,7 +29,7 @@ import java.util.concurrent.*;
  * todo: 单用户多连接处理；集群弹性扩容；集群内通信保活
  */
 @Slf4j
-public class ClusterWebSocketSessionManager implements WebSocketSessionManager {
+public class RedisRegisterClusterWebSocketSessionManager implements WebSocketSessionManager {
 
     private final RedisOperations<String, String> redisOperations;
 
@@ -48,7 +48,7 @@ public class ClusterWebSocketSessionManager implements WebSocketSessionManager {
 
     private String host;
 
-    public ClusterWebSocketSessionManager(RedisOperations<String, String> redisOperations, WebSocketSessionManager standaloneSessionManager, WebSocketHandler webSocketHandler, GroupChatMemberRepository groupChatMemberRepository, Set<String> servers, int port, String networkInterfaceName) {
+    public RedisRegisterClusterWebSocketSessionManager(RedisOperations<String, String> redisOperations, WebSocketSessionManager standaloneSessionManager, WebSocketHandler webSocketHandler, GroupChatMemberRepository groupChatMemberRepository, Set<String> servers, int port, String networkInterfaceName) {
         this.redisOperations = redisOperations;
         this.standaloneSessionManager = standaloneSessionManager;
         this.webSocketHandler = webSocketHandler;
