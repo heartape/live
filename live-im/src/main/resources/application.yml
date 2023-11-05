@@ -3,6 +3,12 @@ server:
 spring:
   application:
     name: live-im-service
+  datasource:
+    username: root
+    password: root
+    url: jdbc:mysql://192.168.31.100:3306/live-im?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+  jpa:
+    show-sql: true
   security:
     oauth2:
       resourceserver:

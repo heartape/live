@@ -1,6 +1,6 @@
 package com.heartape.live.im.message.type.sound;
 
-import com.heartape.live.im.message.base.Content;
+import com.heartape.live.im.message.Content;
 
 /**
  * 音频
@@ -8,9 +8,6 @@ import com.heartape.live.im.message.base.Content;
  * @author heartape
  */
 public class Sound implements Content {
-
-    /** id */
-    private String id;
 
     /** 下载路径 */
     private String url;

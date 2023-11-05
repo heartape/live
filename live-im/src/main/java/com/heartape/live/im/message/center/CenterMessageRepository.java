@@ -22,7 +22,7 @@ public interface CenterMessageRepository {
      * 保存
      * @param message 消息
      */
-    void save(BaseMessage message);
+    void save(BaseMessage<?> message);
 
     /**
      * 查询
@@ -30,7 +30,7 @@ public interface CenterMessageRepository {
      * @param uid 用户id
      * @return 消息
      */
-    BaseMessage findById(String id, String uid);
+    BaseMessage<?> findById(String id, String uid);
 
     /**
      * 根据消息发送对象拉取（全量）
@@ -38,7 +38,7 @@ public interface CenterMessageRepository {
      * @param purposeId 消息发送对象
      * @return 消息
      */
-    Page<BaseMessage> findByPurposeId(String uid, String purposeId, int page, int size);
+    Page<BaseMessage<?>> findByPurposeId(String uid, String purposeId, int page, int size);
 
     /**
      * 根据消息发送对象和起始id拉取（增量）
@@ -48,7 +48,7 @@ public interface CenterMessageRepository {
      * @param size 分页宽度
      * @return 消息
      */
-    Page<BaseMessage> findByStartId(String id, String uid, String purposeId, int page, int size);
+    Page<BaseMessage<?>> findByStartId(String id, String uid, String purposeId, int page, int size);
 
     /**
      * 根据消息发送对象拉取用户发送的消息（全量）（消息漫游）
@@ -56,7 +56,7 @@ public interface CenterMessageRepository {
      * @param purposeId 消息发送对象
      * @return 消息
      */
-    Page<BaseMessage> findRoamingByPurposeId(String uid, String purposeId, int page, int size);
+    Page<BaseMessage<?>> findRoamingByPurposeId(String uid, String purposeId, int page, int size);
 
     /**
      * 根据消息发送对象和起始id拉取用户发送的消息（增量）（消息漫游）
@@ -66,7 +66,7 @@ public interface CenterMessageRepository {
      * @param size 分页宽度
      * @return 消息
      */
-    Page<BaseMessage> findRoamingByStartId(String id, String uid, String purposeId, int page, int size);
+    Page<BaseMessage<?>> findRoamingByStartId(String id, String uid, String purposeId, int page, int size);
 
     /**
      * 根据消息发送对象拉取某一类型的消息（全量）
@@ -75,7 +75,7 @@ public interface CenterMessageRepository {
      * @param size 分页宽度
      * @return 消息
      */
-    Page<BaseMessage> findByPurposeIdAndType(String uid, String purposeId, String messageType, int page, int size);
+    Page<BaseMessage<?>> findByPurposeIdAndType(String uid, String purposeId, String messageType, int page, int size);
 
     /**
      * 根据消息发送对象和起始id拉取某一类型的消息（增量）
@@ -85,7 +85,7 @@ public interface CenterMessageRepository {
      * @param size 分页宽度
      * @return 消息
      */
-    Page<BaseMessage> findByStartIdAndType(String id, String uid, String purposeId, String messageType, int page, int size);
+    Page<BaseMessage<?>> findByStartIdAndType(String id, String uid, String purposeId, String messageType, int page, int size);
 
     /**
      * 根据消息发送对象拉取用户发送的消息（全量）（消息漫游）
@@ -93,7 +93,7 @@ public interface CenterMessageRepository {
      * @param purposeId 消息发送对象
      * @return 消息
      */
-    Page<BaseMessage> findRoamingByPurposeIdAndType(String uid, String purposeId, String messageType, int page, int size);
+    Page<BaseMessage<?>> findRoamingByPurposeIdAndType(String uid, String purposeId, String messageType, int page, int size);
 
     /**
      * 根据消息发送对象和起始id拉取用户发送的消息（增量）（消息漫游）
@@ -103,7 +103,7 @@ public interface CenterMessageRepository {
      * @param size 分页宽度
      * @return 消息
      */
-    Page<BaseMessage> findRoamingByStartIdAndType(String id, String uid, String purposeId, String messageType, int page, int size);
+    Page<BaseMessage<?>> findRoamingByStartIdAndType(String id, String uid, String purposeId, String messageType, int page, int size);
 
     /**
      * 已读回执

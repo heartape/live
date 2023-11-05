@@ -23,7 +23,6 @@ public class GreetingMessageConverter implements MessageConverter<GreetingMessag
     public GreetingMessage convert(MessageContext messageContext) throws JsonProcessingException {
         JsonNode jsonNode = this.objectMapper.readTree(messageContext.getMessageStr()).get("content");
         Greeting greeting = this.objectMapper.treeToValue(jsonNode, Greeting.class);
-        BaseMessage baseMessage = new BaseMessage(null, messageContext.getUid(), messageContext.getPurpose(), messageContext.getPurposeType(), messageContext.getMessageType(), LocalDateTime.now());
-        return new GreetingMessage(baseMessage, greeting);
+        return new GreetingMessage(null, messageContext.getUid(), messageContext.getPurpose(), messageContext.getPurposeType(), messageContext.getMessageType(), LocalDateTime.now(), greeting);
     }
 }

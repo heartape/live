@@ -46,9 +46,17 @@ public class RedisRegisterClusterWebSocketSessionManager implements WebSocketSes
     @Setter
     private String networkInterfaceName;
 
+    /**
+     * ip:port
+     */
     private String host;
 
-    public RedisRegisterClusterWebSocketSessionManager(RedisOperations<String, String> redisOperations, WebSocketSessionManager standaloneSessionManager, WebSocketHandler webSocketHandler, GroupChatMemberRepository groupChatMemberRepository, Set<String> servers, int port, String networkInterfaceName) {
+    /**
+     * 是否预设ip
+     */
+    private final boolean presets;
+
+    public RedisRegisterClusterWebSocketSessionManager(RedisOperations<String, String> redisOperations, WebSocketSessionManager standaloneSessionManager, WebSocketHandler webSocketHandler, GroupChatMemberRepository groupChatMemberRepository, Set<String> servers, int port, String host, String networkInterfaceName) {
         this.redisOperations = redisOperations;
         this.standaloneSessionManager = standaloneSessionManager;
         this.webSocketHandler = webSocketHandler;
@@ -56,10 +64,15 @@ public class RedisRegisterClusterWebSocketSessionManager implements WebSocketSes
         this.servers = servers;
         this.port = port;
         this.networkInterfaceName = networkInterfaceName;
-        this.host = host();
-        if (host == null) {
-            log.error("ip地址获取异常");
-            throw new CanNotFindHostException();
+        this.presets = StringUtils.hasText(host);
+        if (this.presets){
+            this.host = host + ":" + port;
+        } else {
+            this.host = host();
+            if (this.host == null) {
+                log.error("ip地址获取异常");
+                throw new CanNotFindHostException();
+            }
         }
         init();
     }
@@ -74,11 +87,20 @@ public class RedisRegisterClusterWebSocketSessionManager implements WebSocketSes
     private final static String WEBSOCKET_USER_PREFIX = "live:ws:u:";
 
     private String host() {
-        InetAddress inetAddress = IpUtils.localAddressV4(networkInterfaceName);
-        if (inetAddress == null) {
-            return null;
+        if (presets){
+            return host;
+        } else {
+            InetAddress inetAddress;
+            if (StringUtils.hasText(networkInterfaceName)){
+                inetAddress = IpUtils.localAddressV4(networkInterfaceName);
+            } else {
+                inetAddress = IpUtils.localAddressV4();
+            }
+            if (inetAddress == null) {
+                return null;
+            }
+            return inetAddress.getHostAddress() + ":" + port;
         }
-        return inetAddress.getHostAddress() + ":" + port;
     }
 
     private void init() {
@@ -110,11 +132,16 @@ public class RedisRegisterClusterWebSocketSessionManager implements WebSocketSes
     @Override
     public void register(String uid, WebSocketSession session) {
         standaloneSessionManager.register(uid, session);
-        String host = host();
-        if (host != null) {
-            this.host = host;
+        String host;
+        if (presets){
+            host = this.host;
+        } else {
+            host = host();
+            if (host != null) {
+                this.host = host;
+            }
         }
-        if (this.host == null) {
+        if (host == null) {
             log.error("ip地址获取异常,无法向ws集群注册");
             return;
         }

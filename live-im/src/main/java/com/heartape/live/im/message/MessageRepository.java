@@ -3,7 +3,7 @@ package com.heartape.live.im.message;
 import com.heartape.util.Page;
 
 /**
- * 消息存储，建议采用写扩散，并且分离消息写入数据和读取数据
+ * 消息存储
  * @since 0.0.1
  * @author heartape
  */

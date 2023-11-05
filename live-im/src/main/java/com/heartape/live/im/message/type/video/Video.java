@@ -1,6 +1,6 @@
 package com.heartape.live.im.message.type.video;
 
-import com.heartape.live.im.message.base.Content;
+import com.heartape.live.im.message.Content;
 
 /**
  * 视频
@@ -9,7 +9,6 @@ import com.heartape.live.im.message.base.Content;
  */
 public class Video implements Content {
 
-    private String id;
     /** 下载路径 */
     private String url;
     /** 视频格式 */

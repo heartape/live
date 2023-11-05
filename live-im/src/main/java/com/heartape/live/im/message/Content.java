@@ -1,4 +1,4 @@
-package com.heartape.live.im.message.base;
+package com.heartape.live.im.message;
 
 /**
  * 消息内容基类

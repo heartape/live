@@ -27,19 +27,24 @@ public class LiveImProperties {
     @ConstructorBinding
     public LiveImProperties(String networkInterfaceName, Cluster cluster) {
         this.networkInterfaceName = networkInterfaceName;
-        this.cluster = Objects.requireNonNullElseGet(cluster, () -> new Cluster(false, null));
+        this.cluster = Objects.requireNonNullElseGet(cluster, () -> new Cluster(false, null, null));
     }
 
     @Getter
     public static class Cluster {
 
         private final boolean enabled;
+
+        @Setter
+        private String host;
+
         @Setter
         private Set<String> servers;
 
         @ConstructorBinding
-        public Cluster(@DefaultValue("false") boolean enabled, Set<String> servers) {
+        public Cluster(@DefaultValue("false") boolean enabled, String host, Set<String> servers) {
             this.enabled = enabled;
+            this.host = host;
             this.servers = Objects.requireNonNullElseGet(servers, Set::of);
         }
     }

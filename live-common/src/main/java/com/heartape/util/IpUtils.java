@@ -12,6 +12,14 @@ import java.util.Iterator;
 public class IpUtils {
 
     /**
+     * 获取本地IPv4地址
+     * @return 本地IPv4地址
+     */
+    public static InetAddress localAddressV4(){
+        return localAddressV4(null);
+    }
+
+    /**
      * 通过网卡名称，获取本地IPv4地址
      * @param networkInterfaceName 网卡名称
      * @return 本地IPv4地址

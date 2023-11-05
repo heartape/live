@@ -23,7 +23,6 @@ public class SoundMessageConverter implements MessageConverter<SoundMessage> {
     public SoundMessage convert(MessageContext messageContext) throws JsonProcessingException {
         JsonNode jsonNode = this.objectMapper.readTree(messageContext.getMessageStr()).get("content");
         Sound sound = this.objectMapper.treeToValue(jsonNode, Sound.class);
-        BaseMessage baseMessage = new BaseMessage(null, messageContext.getUid(), messageContext.getPurpose(), messageContext.getPurposeType(), messageContext.getMessageType(), LocalDateTime.now());
-        return new SoundMessage(baseMessage, sound);
+        return new SoundMessage(null, messageContext.getUid(), messageContext.getPurpose(), messageContext.getPurposeType(), messageContext.getMessageType(), LocalDateTime.now(), sound);
     }
 }

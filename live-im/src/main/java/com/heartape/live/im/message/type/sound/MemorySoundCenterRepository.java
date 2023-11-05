@@ -29,7 +29,7 @@ public class MemorySoundCenterRepository extends AbstractCenterBaseRepository<So
 
     @Override
     public SoundMessage findById(String id, String uid) {
-        BaseMessage baseMessage = this.centerMessageRepository.findById(id, uid);
+        BaseMessage<?> baseMessage = this.centerMessageRepository.findById(id, uid);
         if (baseMessage != null){
             if (baseMessage instanceof SoundMessage soundMessage){
                 return soundMessage;
@@ -58,7 +58,7 @@ public class MemorySoundCenterRepository extends AbstractCenterBaseRepository<So
         return super.findRoamingByStartId(id, uid, purposeId, MessageType.SOUND, page, size);
     }
 
-    protected Page<SoundMessage> convert(Page<BaseMessage> baseMessagePage){
+    protected Page<SoundMessage> convert(Page<BaseMessage<?>> baseMessagePage){
         if (baseMessagePage.getList().size() == 0){
             return new Page<>(baseMessagePage.getPage(), baseMessagePage.getSize(), baseMessagePage.getTotal(), new ArrayList<>());
         }

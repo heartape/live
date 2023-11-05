@@ -1,6 +1,6 @@
 package com.heartape.live.im.message.type.text;
 
-import com.heartape.live.im.message.base.Content;
+import com.heartape.live.im.message.Content;
 import lombok.Getter;
 
 /**

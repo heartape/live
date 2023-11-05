@@ -23,7 +23,6 @@ public class TextMessageConverter implements MessageConverter<TextMessage> {
     public TextMessage convert(MessageContext messageContext) throws JsonProcessingException {
         JsonNode jsonNode = this.objectMapper.readTree(messageContext.getMessageStr()).get("content");
         Text text = this.objectMapper.treeToValue(jsonNode, Text.class);
-        BaseMessage baseMessage = new BaseMessage(null, messageContext.getUid(), messageContext.getPurpose(), messageContext.getPurposeType(), messageContext.getMessageType(), LocalDateTime.now());
-        return new TextMessage(baseMessage, text);
+        return new TextMessage(null, messageContext.getUid(), messageContext.getPurpose(), messageContext.getPurposeType(), messageContext.getMessageType(), LocalDateTime.now(), text);
     }
 }

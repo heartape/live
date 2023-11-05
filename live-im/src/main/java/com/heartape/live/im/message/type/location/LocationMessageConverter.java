@@ -23,7 +23,6 @@ public class LocationMessageConverter implements MessageConverter<LocationMessag
     public LocationMessage convert(MessageContext messageContext) throws JsonProcessingException {
         JsonNode jsonNode = this.objectMapper.readTree(messageContext.getMessageStr()).get("content");
         Location location = this.objectMapper.treeToValue(jsonNode, Location.class);
-        BaseMessage baseMessage = new BaseMessage(null, messageContext.getUid(), messageContext.getPurpose(), messageContext.getPurposeType(), messageContext.getMessageType(), LocalDateTime.now());
-        return new LocationMessage(baseMessage, location);
+        return new LocationMessage(null, messageContext.getUid(), messageContext.getPurpose(), messageContext.getPurposeType(), messageContext.getMessageType(), LocalDateTime.now(), location);
     }
 }

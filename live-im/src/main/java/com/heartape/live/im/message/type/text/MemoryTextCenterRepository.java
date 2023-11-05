@@ -27,7 +27,7 @@ public class MemoryTextCenterRepository extends AbstractCenterBaseRepository<Tex
     }
 
     @Override
-    protected Page<TextMessage> convert(Page<BaseMessage> baseMessagePage){
+    protected Page<TextMessage> convert(Page<BaseMessage<?>> baseMessagePage){
         if (baseMessagePage.getList().size() == 0){
             return new Page<>(baseMessagePage.getPage(), baseMessagePage.getSize(), baseMessagePage.getTotal(), new ArrayList<>());
         }
@@ -41,7 +41,7 @@ public class MemoryTextCenterRepository extends AbstractCenterBaseRepository<Tex
 
     @Override
     public TextMessage findById(String id, String uid) {
-        BaseMessage baseMessage = this.centerMessageRepository.findById(id, uid);
+        BaseMessage<?> baseMessage = this.centerMessageRepository.findById(id, uid);
         if (baseMessage != null){
             if (baseMessage instanceof TextMessage textMessage){
                 return textMessage;

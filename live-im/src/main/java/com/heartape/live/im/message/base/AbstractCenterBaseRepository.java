@@ -24,7 +24,7 @@ public abstract class AbstractCenterBaseRepository<T extends Message> implements
 
     @Override
     public void save(T message) {
-        if (message instanceof BaseMessage baseMessage){
+        if (message instanceof BaseMessage<?> baseMessage){
             String id = this.identifierGenerator.nextId().toString();
             baseMessage.setId(id);
             this.centerMessageRepository.save(baseMessage);
@@ -32,22 +32,22 @@ public abstract class AbstractCenterBaseRepository<T extends Message> implements
     }
 
     protected Page<T> findByPurposeId(String uid, String purposeId, String messageType, int page, int size) {
-        Page<BaseMessage> baseMessagePage = this.centerMessageRepository.findByPurposeIdAndType(uid, purposeId, messageType, page, size);
+        Page<BaseMessage<?>> baseMessagePage = this.centerMessageRepository.findByPurposeIdAndType(uid, purposeId, messageType, page, size);
         return convert(baseMessagePage);
     }
 
     protected Page<T> findByStartId(String id, String uid, String purposeId, String messageType, int page, int size) {
-        Page<BaseMessage> baseMessagePage = this.centerMessageRepository.findByStartIdAndType(id, uid, purposeId, messageType, page, size);
+        Page<BaseMessage<?>> baseMessagePage = this.centerMessageRepository.findByStartIdAndType(id, uid, purposeId, messageType, page, size);
         return convert(baseMessagePage);
     }
 
     protected Page<T> findRoamingByPurposeId(String uid, String purposeId, String messageType, int page, int size) {
-        Page<BaseMessage> baseMessagePage = this.centerMessageRepository.findRoamingByPurposeIdAndType(uid, purposeId, messageType, page, size);
+        Page<BaseMessage<?>> baseMessagePage = this.centerMessageRepository.findRoamingByPurposeIdAndType(uid, purposeId, messageType, page, size);
         return convert(baseMessagePage);
     }
 
     protected Page<T> findRoamingByStartId(String id, String uid, String purposeId, String messageType, int page, int size) {
-        Page<BaseMessage> baseMessagePage = this.centerMessageRepository.findRoamingByStartIdAndType(id, uid, purposeId, messageType, page, size);
+        Page<BaseMessage<?>> baseMessagePage = this.centerMessageRepository.findRoamingByStartIdAndType(id, uid, purposeId, messageType, page, size);
         return convert(baseMessagePage);
     }
 
@@ -56,7 +56,7 @@ public abstract class AbstractCenterBaseRepository<T extends Message> implements
      * @param baseMessagePage Page<BaseMessage>
      * @return 对应的具体类型
      */
-    abstract protected Page<T> convert(Page<BaseMessage> baseMessagePage);
+    abstract protected Page<T> convert(Page<BaseMessage<?>> baseMessagePage);
 
 
     @Override

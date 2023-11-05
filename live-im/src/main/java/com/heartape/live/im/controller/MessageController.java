@@ -1,6 +1,7 @@
 package com.heartape.live.im.controller;
 
 import com.heartape.live.im.config.LiveImAutoConfiguration;
+import com.heartape.live.im.message.Message;
 import com.heartape.live.im.message.base.BaseMessage;
 import com.heartape.live.im.message.center.CenterMessageRepository;
 import com.heartape.util.Page;
@@ -37,10 +38,10 @@ public class MessageController {
     }
 
     @GetMapping("/sync/user")
-    public Page<BaseMessage> syncUser(@RequestParam(required = false) String id,
-                                      @RequestParam String uid,
-                                      @RequestParam String userId,
-                                      @RequestParam Integer page){
+    public Page<BaseMessage<?>> syncUser(@RequestParam(required = false) String id,
+                                  @RequestParam String uid,
+                                  @RequestParam String userId,
+                                  @RequestParam Integer page){
         if (id == null){
             return this.userCenterMessageRepository.findByPurposeId(uid, userId, page, 100);
         }
@@ -48,7 +49,7 @@ public class MessageController {
     }
 
     @GetMapping("/sync/group")
-    public Page<BaseMessage> syncGroup(@RequestParam(required = false) String id,
+    public Page<BaseMessage<?>> syncGroup(@RequestParam(required = false) String id,
                                        @RequestParam String uid,
                                        @RequestParam String groupId,
                                        @RequestParam Integer page){

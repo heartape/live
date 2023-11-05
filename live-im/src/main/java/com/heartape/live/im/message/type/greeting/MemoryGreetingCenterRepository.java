@@ -28,7 +28,7 @@ public class MemoryGreetingCenterRepository extends AbstractCenterBaseRepository
 
     @Override
     public GreetingMessage findById(String id, String uid) {
-        BaseMessage baseMessage = this.centerMessageRepository.findById(id, uid);
+        BaseMessage<?> baseMessage = this.centerMessageRepository.findById(id, uid);
         if (baseMessage != null){
             if (baseMessage instanceof GreetingMessage greetingMessage){
                 return greetingMessage;
@@ -37,7 +37,7 @@ public class MemoryGreetingCenterRepository extends AbstractCenterBaseRepository
         return null;
     }
 
-    protected Page<GreetingMessage> convert(Page<BaseMessage> baseMessagePage){
+    protected Page<GreetingMessage> convert(Page<BaseMessage<?>> baseMessagePage){
         if (baseMessagePage.getList().size() == 0){
             return new Page<>(baseMessagePage.getPage(), baseMessagePage.getSize(), baseMessagePage.getTotal(), new ArrayList<>());
         }

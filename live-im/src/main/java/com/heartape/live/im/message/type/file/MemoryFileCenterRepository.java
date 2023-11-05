@@ -28,7 +28,7 @@ public class MemoryFileCenterRepository extends AbstractCenterBaseRepository<Fil
 
     @Override
     public FileMessage findById(String id, String uid) {
-        BaseMessage baseMessage = this.centerMessageRepository.findById(id, uid);
+        BaseMessage<?> baseMessage = this.centerMessageRepository.findById(id, uid);
         if (baseMessage != null){
             if (baseMessage instanceof FileMessage fileMessage){
                 return fileMessage;
@@ -57,7 +57,7 @@ public class MemoryFileCenterRepository extends AbstractCenterBaseRepository<Fil
         return super.findRoamingByStartId(id, uid, purposeId, MessageType.FILE, page, size);
     }
 
-    protected Page<FileMessage> convert(Page<BaseMessage> baseMessagePage){
+    protected Page<FileMessage> convert(Page<BaseMessage<?>> baseMessagePage){
         if (baseMessagePage.getList().size() == 0){
             return new Page<>(baseMessagePage.getPage(), baseMessagePage.getSize(), baseMessagePage.getTotal(), new ArrayList<>());
         }

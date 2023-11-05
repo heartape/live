@@ -23,7 +23,6 @@ public class VideoMessageConverter implements MessageConverter<VideoMessage> {
     public VideoMessage convert(MessageContext messageContext) throws JsonProcessingException {
         JsonNode jsonNode = this.objectMapper.readTree(messageContext.getMessageStr()).get("content");
         Video video = this.objectMapper.treeToValue(jsonNode, Video.class);
-        BaseMessage baseMessage = new BaseMessage(null, messageContext.getUid(), messageContext.getPurpose(), messageContext.getPurposeType(), messageContext.getMessageType(), LocalDateTime.now());
-        return new VideoMessage(baseMessage, video);
+        return new VideoMessage(null, messageContext.getUid(), messageContext.getPurpose(), messageContext.getPurposeType(), messageContext.getMessageType(), LocalDateTime.now(), video);
     }
 }
