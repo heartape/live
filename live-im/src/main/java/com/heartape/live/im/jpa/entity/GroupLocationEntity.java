@@ -17,7 +17,7 @@ import java.awt.geom.Point2D;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "live_message_location")
+@Table(name = "live_message_group_location")
 public class GroupLocationEntity {
 
     /** id */

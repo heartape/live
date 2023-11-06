@@ -15,7 +15,7 @@ import org.hibernate.id.uuid.UuidGenerator;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "live_message_image")
+@Table(name = "live_message_group_image")
 public class GroupImageEntity {
 
     /** id */

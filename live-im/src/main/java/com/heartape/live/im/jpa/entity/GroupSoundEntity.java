@@ -15,7 +15,7 @@ import org.hibernate.id.uuid.UuidGenerator;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "live_message_sound")
+@Table(name = "live_message_group_sound")
 public class GroupSoundEntity {
 
     /** id */

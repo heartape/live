@@ -18,7 +18,7 @@ import org.hibernate.id.uuid.UuidGenerator;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "live_message_image_copy")
+@Table(name = "live_message_group_image_copy")
 public class GroupImageCopyEntity {
 
     /** id */

@@ -1,12 +1,14 @@
 package com.heartape.live.im.message.type.video;
 
 import com.heartape.live.im.message.Content;
+import lombok.Getter;
 
 /**
  * 视频
  * @since 0.0.1
  * @author heartape
  */
+@Getter
 public class Video implements Content {
 
     /** 下载路径 */

@@ -4,7 +4,6 @@ import com.heartape.live.im.jpa.JpaGroupBaseRepository;
 import com.heartape.live.im.jpa.JpaGroupFileRepository;
 import com.heartape.live.im.jpa.entity.GroupFileEntity;
 import com.heartape.live.im.jpa.entity.GroupEntity;
-import com.heartape.live.im.jpa.entity.QFile;
 import com.heartape.live.im.message.MessageRepository;
 import com.heartape.live.im.message.base.BaseMessage;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -53,11 +52,11 @@ public class JdbcGroupFileRepository implements MessageRepository<FileMessage> {
 
     @Override
     public void remove(String id) {
-        groupBaseRepository.deleteById(id);
-        QFile file = QFile.file;
-        queryFactory.delete(file)
-                .where(file.messageId.eq(id))
-                .execute();
+        // groupBaseRepository.deleteById(id);
+        // QFile file = QFile.file;
+        // queryFactory.delete(file)
+        //         .where(file.messageId.eq(id))
+        //         .execute();
     }
 
 }

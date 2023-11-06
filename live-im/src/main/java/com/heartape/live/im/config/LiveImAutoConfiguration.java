@@ -63,10 +63,6 @@ import java.util.Set;
 @EnableConfigurationProperties({LiveImProperties.class})
 public class LiveImAutoConfiguration {
 
-    public static final String GROUP_CENTER_MESSAGE_REPOSITORY_BEAN_NAME = "groupCenterMessageRepository";
-
-    public static final String USER_CENTER_MESSAGE_REPOSITORY_BEAN_NAME = "userCenterMessageRepository";
-
     /**
      * 消息配置
      */
@@ -81,8 +77,8 @@ public class LiveImAutoConfiguration {
             TextFilterManager textFilterManager = new TextFilterManager();
             textFilterManager.register(new TextBaseFilter());
             textFilterManager.register(new MemoryTextKeywordShieldFilter(Set.of("卧槽", "握草")));
-            MemoryTextCenterRepository groupMemoryTextCenterRepository = new MemoryTextCenterRepository(identifierGenerator, groupCenterMessageRepository);
-            MemoryTextCenterRepository userMemoryTextCenterRepository = new MemoryTextCenterRepository(identifierGenerator, userCenterMessageRepository);
+            MemoryTextCenterRepository groupMemoryTextCenterRepository = new MemoryTextCenterRepository();
+            MemoryTextCenterRepository userMemoryTextCenterRepository = new MemoryTextCenterRepository();
 
             messageConfigurer.text()
                     .converter(textMessageConverter)
@@ -93,8 +89,8 @@ public class LiveImAutoConfiguration {
             // GREETING
             GreetingMessageConverter greetingMessageConverter = new GreetingMessageConverter();
             GreetingFilterManager greetingFilterManager = new GreetingFilterManager();
-            MemoryGreetingCenterRepository groupMemoryGreetingCenterRepository = new MemoryGreetingCenterRepository(identifierGenerator, groupCenterMessageRepository);
-            MemoryGreetingCenterRepository userMemoryGreetingCenterRepository = new MemoryGreetingCenterRepository(identifierGenerator, userCenterMessageRepository);
+            MemoryGreetingCenterRepository groupMemoryGreetingCenterRepository = new MemoryGreetingCenterRepository();
+            MemoryGreetingCenterRepository userMemoryGreetingCenterRepository = new MemoryGreetingCenterRepository();
 
             messageConfigurer.greeting()
                     .converter(greetingMessageConverter)
@@ -105,8 +101,8 @@ public class LiveImAutoConfiguration {
             // IMAGE
             ImageMessageConverter imageMessageConverter = new ImageMessageConverter();
             ImageFilterManager imageFilterManager = new ImageFilterManager();
-            MemoryImageCenterRepository groupMemoryImageCenterRepository = new MemoryImageCenterRepository(identifierGenerator, groupCenterMessageRepository);
-            MemoryImageCenterRepository userMemoryImageCenterRepository = new MemoryImageCenterRepository(identifierGenerator, userCenterMessageRepository);
+            MemoryImageCenterRepository groupMemoryImageCenterRepository = new MemoryImageCenterRepository();
+            MemoryImageCenterRepository userMemoryImageCenterRepository = new MemoryImageCenterRepository();
 
             messageConfigurer.image()
                     .converter(imageMessageConverter)
@@ -117,8 +113,8 @@ public class LiveImAutoConfiguration {
             // FILE
             FileMessageConverter fileMessageConverter = new FileMessageConverter();
             FileFilterManager fileFilterManager = new FileFilterManager();
-            MemoryFileCenterRepository groupMemoryFileCenterRepository = new MemoryFileCenterRepository(identifierGenerator, groupCenterMessageRepository);
-            MemoryFileCenterRepository userMemoryFileCenterRepository = new MemoryFileCenterRepository(identifierGenerator, userCenterMessageRepository);
+            MemoryFileCenterRepository groupMemoryFileCenterRepository = new MemoryFileCenterRepository();
+            MemoryFileCenterRepository userMemoryFileCenterRepository = new MemoryFileCenterRepository();
 
             messageConfigurer.file()
                     .converter(fileMessageConverter)
@@ -129,8 +125,8 @@ public class LiveImAutoConfiguration {
             // VIDEO
             VideoMessageConverter videoMessageConverter = new VideoMessageConverter();
             VideoFilterManager videoFilterManager = new VideoFilterManager();
-            MemoryVideoCenterRepository groupMemoryVideoCenterRepository = new MemoryVideoCenterRepository(identifierGenerator, groupCenterMessageRepository);
-            MemoryVideoCenterRepository userMemoryVideoCenterRepository = new MemoryVideoCenterRepository(identifierGenerator, userCenterMessageRepository);
+            MemoryVideoCenterRepository groupMemoryVideoCenterRepository = new MemoryVideoCenterRepository();
+            MemoryVideoCenterRepository userMemoryVideoCenterRepository = new MemoryVideoCenterRepository();
 
             messageConfigurer.video()
                     .converter(videoMessageConverter)
@@ -142,8 +138,8 @@ public class LiveImAutoConfiguration {
             // LOCATION
             LocationMessageConverter locationMessageConverter = new LocationMessageConverter();
             LocationFilterManager locationFilterManager = new LocationFilterManager();
-            MemoryLocationCenterRepository groupMemoryLocationCenterRepository = new MemoryLocationCenterRepository(identifierGenerator, groupCenterMessageRepository);
-            MemoryLocationCenterRepository userMemoryLocationCenterRepository = new MemoryLocationCenterRepository(identifierGenerator, userCenterMessageRepository);
+            MemoryLocationCenterRepository groupMemoryLocationCenterRepository = new MemoryLocationCenterRepository();
+            MemoryLocationCenterRepository userMemoryLocationCenterRepository = new MemoryLocationCenterRepository();
 
             messageConfigurer.location()
                     .converter(locationMessageConverter)
@@ -154,8 +150,8 @@ public class LiveImAutoConfiguration {
             // SOUND
             SoundMessageConverter soundMessageConverter = new SoundMessageConverter();
             SoundFilterManager soundFilterManager = new SoundFilterManager();
-            MemorySoundCenterRepository groupMemorySoundCenterRepository = new MemorySoundCenterRepository(identifierGenerator, groupCenterMessageRepository);
-            MemorySoundCenterRepository userMemorySoundCenterRepository = new MemorySoundCenterRepository(identifierGenerator, userCenterMessageRepository);
+            MemorySoundCenterRepository groupMemorySoundCenterRepository = new MemorySoundCenterRepository();
+            MemorySoundCenterRepository userMemorySoundCenterRepository = new MemorySoundCenterRepository();
 
             messageConfigurer.sound()
                     .converter(soundMessageConverter)

@@ -8,9 +8,9 @@ import lombok.Getter;
  * @since 0.0.1
  * @author heartape
  */
+@Getter
 public class Text implements Content {
 
-    @Getter
     private String text;
 
 }
