@@ -10,15 +10,13 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.id.uuid.UuidGenerator;
 
-import java.awt.geom.Point2D;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "live_message_location")
-public class Location {
+@Table(name = "live_message_file")
+public class GroupFileEntity {
 
     /** id */
     @Id
@@ -28,8 +26,13 @@ public class Location {
     /** messageId */
     private String messageId;
 
-    private Point2D.Double point;
+    /** 下载路径 */
+    private String url;
 
-    private String desc;
+    /** 下载路径 */
+    private String filename;
+
+    /** 文件大小 */
+    private Integer size;
 
 }

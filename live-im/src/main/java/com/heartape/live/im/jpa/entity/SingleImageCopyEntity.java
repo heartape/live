@@ -10,30 +10,36 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.id.uuid.UuidGenerator;
 
-import java.time.LocalDateTime;
-
+/**
+ * 图片副本，包含各种规格的图片
+ */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "live_message_group")
-public class Group {
+@Table(name = "live_message_image_copy")
+public class SingleImageCopyEntity {
 
+    /** id */
     @Id
     @GenericGenerator(name = "idGenerator", type = UuidGenerator.class)
     private String id;
 
-    /** 发送者id */
-    protected String uid;
+    /** imageId */
+    private String imageId;
 
-    /** 消息对象id */
-    protected String groupId;
+    /**
+     * 图片类型: 原图，大图，缩略图
+     */
+    private Integer type;
 
-    /** 消息类型 */
-    protected String type;
+    private Integer size;
 
-    /** 发送时间 */
-    protected LocalDateTime timestamp;
+    private Integer width;
+
+    private Integer height;
+
+    private String url;
 
 }

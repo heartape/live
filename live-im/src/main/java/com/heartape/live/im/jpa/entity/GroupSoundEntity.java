@@ -15,8 +15,8 @@ import org.hibernate.id.uuid.UuidGenerator;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "live_message_text")
-public class Text {
+@Table(name = "live_message_sound")
+public class GroupSoundEntity {
 
     /** id */
     @Id
@@ -26,6 +26,13 @@ public class Text {
     /** messageId */
     private String messageId;
 
-    private String text;
+    /** 下载路径 */
+    private String url;
+
+    /** 文件大小 */
+    private Integer size;
+
+    /** 时长 */
+    private Integer second;
 
 }

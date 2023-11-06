@@ -10,9 +10,6 @@ import com.heartape.live.im.interceptor.prompt.PromptInterceptorRegister;
 import com.heartape.live.im.manage.friend.*;
 import com.heartape.live.im.manage.group.*;
 import com.heartape.live.im.message.*;
-import com.heartape.live.im.message.center.CenterMessageRepository;
-import com.heartape.live.im.message.center.MemoryGroupCenterMessageRepository;
-import com.heartape.live.im.message.center.MemoryUserCenterMessageRepository;
 import com.heartape.live.im.message.type.file.FileFilterManager;
 import com.heartape.live.im.message.type.file.FileMessageConverter;
 import com.heartape.live.im.message.type.file.FileMessageProvider;
@@ -76,9 +73,7 @@ public class LiveImAutoConfiguration {
     @Configuration
     public static class MessageConfiguration {
         @Bean
-        public MessageConfigurer messageConfigurer(IdentifierGenerator<Long> identifierGenerator,
-                                                   @Qualifier(GROUP_CENTER_MESSAGE_REPOSITORY_BEAN_NAME) CenterMessageRepository groupCenterMessageRepository,
-                                                   @Qualifier(USER_CENTER_MESSAGE_REPOSITORY_BEAN_NAME) CenterMessageRepository userCenterMessageRepository){
+        public MessageConfigurer messageConfigurer(IdentifierGenerator<Long> identifierGenerator){
             MessageConfigurer messageConfigurer = MessageConfigurer.init();
 
             // TEXT
@@ -261,18 +256,6 @@ public class LiveImAutoConfiguration {
         @ConditionalOnMissingBean
         public IdentifierGenerator<Long> identifierGenerator(SnowflakeHolder snowflakeHolder){
             return new SnowFlake(snowflakeHolder);
-        }
-
-        @Bean(GROUP_CENTER_MESSAGE_REPOSITORY_BEAN_NAME)
-        @ConditionalOnMissingBean(name = GROUP_CENTER_MESSAGE_REPOSITORY_BEAN_NAME)
-        public CenterMessageRepository groupBaseMessageRepository(){
-            return new MemoryGroupCenterMessageRepository();
-        }
-
-        @Bean(USER_CENTER_MESSAGE_REPOSITORY_BEAN_NAME)
-        @ConditionalOnMissingBean(name = USER_CENTER_MESSAGE_REPOSITORY_BEAN_NAME)
-        public CenterMessageRepository userBaseMessageRepository(){
-            return new MemoryUserCenterMessageRepository();
         }
 
         @Bean("standaloneWebSocketSessionManager")

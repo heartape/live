@@ -15,10 +15,9 @@ import org.hibernate.id.uuid.UuidGenerator;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "live_message_file")
-public class File {
+@Table(name = "live_message_greeting")
+public class SingleGreetingEntity {
 
-    /** id */
     @Id
     @GenericGenerator(name = "idGenerator", type = UuidGenerator.class)
     private String id;
@@ -26,13 +25,7 @@ public class File {
     /** messageId */
     private String messageId;
 
-    /** 下载路径 */
-    private String url;
-
-    /** 下载路径 */
-    private String filename;
-
-    /** 文件大小 */
-    private Integer size;
+    @Getter
+    private String greetings;
 
 }

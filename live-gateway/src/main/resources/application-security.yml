@@ -1,6 +1,8 @@
 spring:
   security:
     oauth2:
+      server:
+        host: 192.168.31.100:8888
       client:
         registration:
           oauth2-server:
@@ -10,14 +12,14 @@ spring:
             client-secret: 111
             client-authentication-method: client_secret_post
             authorization-grant-type: authorization_code
-            redirect-uri: http://127.0.0.1/login/oauth2/code/{registrationId}
+            redirect-uri: http://192.168.31.2/login/oauth2/code/{registrationId}
             scope: openid, profile, phone, email
         provider:
           oauth2:
-            authorization-uri: http://localhost:8888/oauth2/authorize
-            token-uri: http://localhost:8888/oauth2/token
-            jwk-set-uri: http://localhost:8888/oauth2/jwks
-            user-info-uri: http://localhost:8888/userinfo
-            issuer-uri: http://localhost:8888
+            authorization-uri: http://${spring.security.oauth2.server.host}/oauth2/authorize
+            token-uri: http://${spring.security.oauth2.server.host}/oauth2/token
+            jwk-set-uri: http://${spring.security.oauth2.server.host}/oauth2/jwks
+            user-info-uri: http://${spring.security.oauth2.server.host}/userinfo
+            issuer-uri: http://${spring.security.oauth2.server.host}
             user-name-attribute: sub
             user-info-authentication-method: header

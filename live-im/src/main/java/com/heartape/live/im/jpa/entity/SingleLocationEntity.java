@@ -10,30 +10,26 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.id.uuid.UuidGenerator;
 
-import java.time.LocalDateTime;
+import java.awt.geom.Point2D;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "live_message_single")
-public class Single {
+@Table(name = "live_message_location")
+public class SingleLocationEntity {
 
+    /** id */
     @Id
     @GenericGenerator(name = "idGenerator", type = UuidGenerator.class)
     private String id;
 
-    /** 发送者id */
-    protected String uid;
+    /** messageId */
+    private String messageId;
 
-    /** 消息对象id */
-    protected String receiverId;
+    private Point2D.Double point;
 
-    /** 消息类型 */
-    protected String type;
-
-    /** 发送时间 */
-    protected LocalDateTime timestamp;
+    private String desc;
 
 }

@@ -46,6 +46,10 @@ public class Page<T> implements Serializable {
         this.list = list;
     }
 
+    public static <T> Page<T> of(int page, int size, long total, List<T> list){
+        return new Page<>(page, size, total, list);
+    }
+
     public static <T> Page<T> empty(int page, int size){
         return new Page<>(page, size);
     }

@@ -13,8 +13,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8888
-          jwk-set-uri: http://localhost:8888/oauth2/jwks
+          issuer-uri: http://192.168.31.100:8888
+          jwk-set-uri: http://192.168.31.100:8888/oauth2/jwks
   cloud:
     nacos:
       discovery:
@@ -28,7 +28,6 @@ spring:
 
 live:
   im:
-    network-interface-name: ens33
     cluster:
       enabled: true
       servers: 192.168.31.101:8003, 192.168.31.102:8003, 192.168.31.103:8003

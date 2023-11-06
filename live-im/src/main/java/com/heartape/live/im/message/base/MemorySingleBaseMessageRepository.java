@@ -1,17 +1,17 @@
-package com.heartape.live.im.message.type.location;
+package com.heartape.live.im.message.base;
 
 import com.heartape.live.im.message.MessageRepository;
 
 /**
- * 基于中央仓库的实现
+ * 私聊存储内存实现，仅用于开发测试
+ * @see MessageRepository
  * @since 0.0.1
  * @author heartape
- * @see MessageRepository
  */
-public class MemoryLocationCenterRepository implements MessageRepository<LocationMessage> {
+public class MemorySingleBaseMessageRepository implements MessageRepository<BaseMessage<?>> {
 
     @Override
-    public void save(LocationMessage message) {
+    public void save(BaseMessage<?> message) {
 
     }
 

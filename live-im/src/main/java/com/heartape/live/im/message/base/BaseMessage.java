@@ -19,6 +19,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BaseMessage<T> implements Message {
+    public BaseMessage(String id, String uid, String purpose, String purposeType, String type, Integer receipt, LocalDateTime timestamp) {
+        this.id = id;
+        this.uid = uid;
+        this.purpose = purpose;
+        this.purposeType = purposeType;
+        this.type = type;
+        this.receipt = receipt;
+        this.timestamp = timestamp;
+    }
 
     /** 消息id */
     @Setter

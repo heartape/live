@@ -10,29 +10,33 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.id.uuid.UuidGenerator;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "live_message_sound")
-public class Sound {
+@Table(name = "live_message_single")
+public class SingleEntity {
 
-    /** id */
     @Id
     @GenericGenerator(name = "idGenerator", type = UuidGenerator.class)
     private String id;
 
-    /** messageId */
-    private String messageId;
+    /** 发送者id */
+    protected String uid;
 
-    /** 下载路径 */
-    private String url;
+    /** 消息对象id */
+    protected String receiverId;
 
-    /** 文件大小 */
-    private Integer size;
+    /** 消息类型 */
+    protected String type;
 
-    /** 时长 */
-    private Integer second;
+    /** 消息是否已读 */
+    protected Boolean read;
+
+    /** 发送时间 */
+    protected LocalDateTime timestamp;
 
 }

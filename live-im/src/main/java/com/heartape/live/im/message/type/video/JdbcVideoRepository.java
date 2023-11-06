@@ -4,7 +4,6 @@ import com.heartape.live.im.jpa.JpaGroupBaseRepository;
 import com.heartape.live.im.jpa.JpaSingleBaseRepository;
 import com.heartape.live.im.jpa.JpaVideoRepository;
 import com.heartape.live.im.message.MessageRepository;
-import com.heartape.live.im.message.base.AbstractCenterBaseRepository;
 import com.heartape.util.Page;
 import lombok.AllArgsConstructor;
 
@@ -13,7 +12,6 @@ import lombok.AllArgsConstructor;
  * @since 0.0.1
  * @author heartape
  * @see MessageRepository
- * @see AbstractCenterBaseRepository
  */
 @AllArgsConstructor
 public class JdbcVideoRepository implements MessageRepository<VideoMessage> {
@@ -30,42 +28,18 @@ public class JdbcVideoRepository implements MessageRepository<VideoMessage> {
     }
 
     @Override
-    public VideoMessage findById(String id, String uid) {
-        return null;
-    }
-
-    @Override
-    public Page<VideoMessage> findByPurposeId(String uid, String purposeId, int page, int size) {
-        return null;
-    }
-
-    @Override
-    public Page<VideoMessage> findByStartId(String id, String uid, String purposeId, int page, int size) {
-        return null;
-    }
-
-    @Override
-    public Page<VideoMessage> findRoamingByPurposeId(String uid, String purposeId, int page, int size) {
-        return null;
-    }
-
-    @Override
-    public Page<VideoMessage> findRoamingByStartId(String id, String uid, String purposeId, int page, int size) {
-        return null;
-    }
-
-    @Override
-    public void receipt(String id, String uid) {
+    public void receipt(String id) {
 
     }
 
     @Override
-    public void recall(String id, String uid) {
+    public void recall(String id) {
 
     }
 
     @Override
-    public void remove(String id, String uid) {
+    public void remove(String id) {
 
     }
+
 }
