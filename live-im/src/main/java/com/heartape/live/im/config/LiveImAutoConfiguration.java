@@ -10,31 +10,13 @@ import com.heartape.live.im.interceptor.prompt.PromptInterceptorRegister;
 import com.heartape.live.im.manage.friend.*;
 import com.heartape.live.im.manage.group.*;
 import com.heartape.live.im.message.*;
-import com.heartape.live.im.message.type.file.FileFilterManager;
-import com.heartape.live.im.message.type.file.FileMessageConverter;
-import com.heartape.live.im.message.type.file.FileMessageProvider;
-import com.heartape.live.im.message.type.file.MemoryFileCenterRepository;
-import com.heartape.live.im.message.type.greeting.MemoryGreetingCenterRepository;
-import com.heartape.live.im.message.type.greeting.GreetingFilterManager;
-import com.heartape.live.im.message.type.greeting.GreetingMessageConverter;
-import com.heartape.live.im.message.type.greeting.GreetingMessageProvider;
-import com.heartape.live.im.message.type.image.MemoryImageCenterRepository;
-import com.heartape.live.im.message.type.image.ImageFilterManager;
-import com.heartape.live.im.message.type.image.ImageMessageConverter;
-import com.heartape.live.im.message.type.image.ImageMessageProvider;
-import com.heartape.live.im.message.type.location.LocationFilterManager;
-import com.heartape.live.im.message.type.location.LocationMessageConverter;
-import com.heartape.live.im.message.type.location.LocationMessageProvider;
-import com.heartape.live.im.message.type.location.MemoryLocationCenterRepository;
-import com.heartape.live.im.message.type.sound.MemorySoundCenterRepository;
-import com.heartape.live.im.message.type.sound.SoundFilterManager;
-import com.heartape.live.im.message.type.sound.SoundMessageConverter;
-import com.heartape.live.im.message.type.sound.SoundMessageProvider;
+import com.heartape.live.im.message.type.file.*;
+import com.heartape.live.im.message.type.greeting.*;
+import com.heartape.live.im.message.type.image.*;
+import com.heartape.live.im.message.type.location.*;
+import com.heartape.live.im.message.type.sound.*;
 import com.heartape.live.im.message.type.text.*;
-import com.heartape.live.im.message.type.video.MemoryVideoCenterRepository;
-import com.heartape.live.im.message.type.video.VideoFilterManager;
-import com.heartape.live.im.message.type.video.VideoMessageConverter;
-import com.heartape.live.im.message.type.video.VideoMessageProvider;
+import com.heartape.live.im.message.type.video.*;
 import com.heartape.live.im.prompt.PromptProvider;
 import com.heartape.util.id.IdentifierGenerator;
 import com.heartape.util.id.snowflake.IpSnowflakeHolder;
@@ -77,87 +59,87 @@ public class LiveImAutoConfiguration {
             TextFilterManager textFilterManager = new TextFilterManager();
             textFilterManager.register(new TextBaseFilter());
             textFilterManager.register(new MemoryTextKeywordShieldFilter(Set.of("卧槽", "握草")));
-            MemoryTextCenterRepository groupMemoryTextCenterRepository = new MemoryTextCenterRepository();
-            MemoryTextCenterRepository userMemoryTextCenterRepository = new MemoryTextCenterRepository();
+            MessageRepository<TextMessage> groupTextRepository = new MemoryTextCenterRepository();
+            MessageRepository<TextMessage> singleTextRepository = new MemoryTextCenterRepository();
 
             messageConfigurer.text()
                     .converter(textMessageConverter)
                     .filterManager(textFilterManager)
-                    .group(groupMemoryTextCenterRepository)
-                    .user(userMemoryTextCenterRepository);
+                    .group(groupTextRepository)
+                    .user(singleTextRepository);
 
             // GREETING
             GreetingMessageConverter greetingMessageConverter = new GreetingMessageConverter();
             GreetingFilterManager greetingFilterManager = new GreetingFilterManager();
-            MemoryGreetingCenterRepository groupMemoryGreetingCenterRepository = new MemoryGreetingCenterRepository();
-            MemoryGreetingCenterRepository userMemoryGreetingCenterRepository = new MemoryGreetingCenterRepository();
+            MessageRepository<GreetingMessage> groupGreetingRepository = new MemoryGreetingCenterRepository();
+            MessageRepository<GreetingMessage> singleGreetingRepository = new MemoryGreetingCenterRepository();
 
             messageConfigurer.greeting()
                     .converter(greetingMessageConverter)
                     .filterManager(greetingFilterManager)
-                    .group(groupMemoryGreetingCenterRepository)
-                    .user(userMemoryGreetingCenterRepository);
+                    .group(groupGreetingRepository)
+                    .user(singleGreetingRepository);
 
             // IMAGE
             ImageMessageConverter imageMessageConverter = new ImageMessageConverter();
             ImageFilterManager imageFilterManager = new ImageFilterManager();
-            MemoryImageCenterRepository groupMemoryImageCenterRepository = new MemoryImageCenterRepository();
-            MemoryImageCenterRepository userMemoryImageCenterRepository = new MemoryImageCenterRepository();
+            MessageRepository<ImageMessage> groupImageRepository = new MemoryImageCenterRepository();
+            MessageRepository<ImageMessage> singleImageRepository = new MemoryImageCenterRepository();
 
             messageConfigurer.image()
                     .converter(imageMessageConverter)
                     .filterManager(imageFilterManager)
-                    .group(groupMemoryImageCenterRepository)
-                    .user(userMemoryImageCenterRepository);
+                    .group(groupImageRepository)
+                    .user(singleImageRepository);
 
             // FILE
             FileMessageConverter fileMessageConverter = new FileMessageConverter();
             FileFilterManager fileFilterManager = new FileFilterManager();
-            MemoryFileCenterRepository groupMemoryFileCenterRepository = new MemoryFileCenterRepository();
-            MemoryFileCenterRepository userMemoryFileCenterRepository = new MemoryFileCenterRepository();
+            MessageRepository<FileMessage> groupFileRepository = new MemoryFileCenterRepository();
+            MessageRepository<FileMessage> singleFileRepository = new MemoryFileCenterRepository();
 
             messageConfigurer.file()
                     .converter(fileMessageConverter)
                     .filterManager(fileFilterManager)
-                    .group(groupMemoryFileCenterRepository)
-                    .user(userMemoryFileCenterRepository);
+                    .group(groupFileRepository)
+                    .user(singleFileRepository);
 
             // VIDEO
             VideoMessageConverter videoMessageConverter = new VideoMessageConverter();
             VideoFilterManager videoFilterManager = new VideoFilterManager();
-            MemoryVideoCenterRepository groupMemoryVideoCenterRepository = new MemoryVideoCenterRepository();
-            MemoryVideoCenterRepository userMemoryVideoCenterRepository = new MemoryVideoCenterRepository();
+            MessageRepository<VideoMessage> groupVideoRepository = new MemoryVideoCenterRepository();
+            MessageRepository<VideoMessage> singleVideoRepository = new MemoryVideoCenterRepository();
 
             messageConfigurer.video()
                     .converter(videoMessageConverter)
                     .filterManager(videoFilterManager)
-                    .group(groupMemoryVideoCenterRepository)
-                    .user(userMemoryVideoCenterRepository);
+                    .group(groupVideoRepository)
+                    .user(singleVideoRepository);
 
 
             // LOCATION
             LocationMessageConverter locationMessageConverter = new LocationMessageConverter();
             LocationFilterManager locationFilterManager = new LocationFilterManager();
-            MemoryLocationCenterRepository groupMemoryLocationCenterRepository = new MemoryLocationCenterRepository();
-            MemoryLocationCenterRepository userMemoryLocationCenterRepository = new MemoryLocationCenterRepository();
+            MessageRepository<LocationMessage> groupLocationRepository = new MemoryLocationCenterRepository();
+            MessageRepository<LocationMessage> singleLocationRepository = new MemoryLocationCenterRepository();
 
             messageConfigurer.location()
                     .converter(locationMessageConverter)
                     .filterManager(locationFilterManager)
-                    .group(groupMemoryLocationCenterRepository)
-                    .user(userMemoryLocationCenterRepository);
+                    .group(groupLocationRepository)
+                    .user(singleLocationRepository);
 
             // SOUND
             SoundMessageConverter soundMessageConverter = new SoundMessageConverter();
             SoundFilterManager soundFilterManager = new SoundFilterManager();
-            MemorySoundCenterRepository groupMemorySoundCenterRepository = new MemorySoundCenterRepository();
-            MemorySoundCenterRepository userMemorySoundCenterRepository = new MemorySoundCenterRepository();
+            MessageRepository<SoundMessage> groupSoundRepository = new MemorySoundCenterRepository();
+            MessageRepository<SoundMessage> singleSoundRepository = new MemorySoundCenterRepository();
 
             messageConfigurer.sound()
                     .converter(soundMessageConverter)
                     .filterManager(soundFilterManager)
-                    .group(groupMemorySoundCenterRepository)
-                    .user(userMemorySoundCenterRepository);
+                    .group(groupSoundRepository)
+                    .user(singleSoundRepository);
 
             return messageConfigurer;
         }

@@ -117,6 +117,8 @@ public class RedisRegisterClusterWebSocketSessionManager implements WebSocketSes
             return sessionMap.get(server);
         }
         StandardWebSocketClient standardWebSocketClient = new StandardWebSocketClient();
+        Map<String, Object> config = Map.of("host", host);
+        standardWebSocketClient.setUserProperties(config);
         CompletableFuture<WebSocketSession> future = standardWebSocketClient.execute(webSocketHandler, "ws://" + server + "/cluster");
         try {
             WebSocketSession webSocketSession = future.get(2, TimeUnit.SECONDS);
