@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.*;
 
 /**
@@ -39,8 +38,6 @@ public class RedisRegisterClusterWebSocketSessionManager implements WebSocketSes
 
     private final GroupChatMemberRepository groupChatMemberRepository;
 
-    private final Set<String> servers;
-
     private final int port;
 
     @Setter
@@ -56,12 +53,11 @@ public class RedisRegisterClusterWebSocketSessionManager implements WebSocketSes
      */
     private final boolean presets;
 
-    public RedisRegisterClusterWebSocketSessionManager(RedisOperations<String, String> redisOperations, WebSocketSessionManager standaloneSessionManager, WebSocketHandler webSocketHandler, GroupChatMemberRepository groupChatMemberRepository, Set<String> servers, int port, String host, String networkInterfaceName) {
+    public RedisRegisterClusterWebSocketSessionManager(RedisOperations<String, String> redisOperations, WebSocketSessionManager standaloneSessionManager, WebSocketHandler webSocketHandler, GroupChatMemberRepository groupChatMemberRepository, int port, String host, String networkInterfaceName) {
         this.redisOperations = redisOperations;
         this.standaloneSessionManager = standaloneSessionManager;
         this.webSocketHandler = webSocketHandler;
         this.groupChatMemberRepository = groupChatMemberRepository;
-        this.servers = servers;
         this.port = port;
         this.networkInterfaceName = networkInterfaceName;
         this.presets = StringUtils.hasText(host);
@@ -74,7 +70,6 @@ public class RedisRegisterClusterWebSocketSessionManager implements WebSocketSes
                 throw new CanNotFindHostException();
             }
         }
-        init();
     }
 
     /**
@@ -103,16 +98,11 @@ public class RedisRegisterClusterWebSocketSessionManager implements WebSocketSes
         }
     }
 
-    private void init() {
-        log.debug("websocket cluster connecting...");
-        servers.forEach(this::initClusterSession);
-    }
-
     /**
      * 与集群内其他服务建立连接
      * @param server 集群host
      */
-    private WebSocketSession initClusterSession(String server) {
+    private WebSocketSession connect(String server) {
         if (sessionMap.containsKey(server) || Objects.equals(server, host)) {
             return sessionMap.get(server);
         }
@@ -126,7 +116,7 @@ public class RedisRegisterClusterWebSocketSessionManager implements WebSocketSes
             log.info("cluster server: {} connect success", server);
             return webSocketSession;
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
-            log.warn("cluster server: {} connect failed", server);
+            log.warn("cluster server: {} connect failed", server, e);
             return null;
         }
     }
@@ -148,7 +138,7 @@ public class RedisRegisterClusterWebSocketSessionManager implements WebSocketSes
             return;
         }
         log.info("register uid: {}, host: {}", uid, this.host);
-        redisOperations.opsForValue().set(WEBSOCKET_USER_PREFIX + uid, this.host);
+        redisOperations.opsForValue().set(WEBSOCKET_USER_PREFIX + uid, this.host, 5, TimeUnit.HOURS);
     }
 
     @Override
@@ -201,7 +191,7 @@ public class RedisRegisterClusterWebSocketSessionManager implements WebSocketSes
             // 断线重连
             WebSocketSession webSocketSession = sessionMap.get(host);
             if (webSocketSession == null || !webSocketSession.isOpen()) {
-                WebSocketSession webSocketSessionNew = initClusterSession(host);
+                WebSocketSession webSocketSessionNew = connect(host);
                 if (webSocketSessionNew == null || !webSocketSessionNew.isOpen()) {
                     return; // 断线重连失败
                 }

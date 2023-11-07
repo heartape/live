@@ -11,6 +11,7 @@ import com.heartape.live.im.manage.group.GroupChatMember;
 import com.heartape.live.im.manage.group.GroupChatMemberRepository;
 import com.heartape.live.im.send.Send;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -21,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 本地 websocket session管理
  */
+@Slf4j
 @AllArgsConstructor
 public class StandaloneWebSocketSessionManager implements WebSocketSessionManager {
 

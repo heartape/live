@@ -29,6 +29,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.web.socket.WebSocketHandler;
@@ -246,12 +247,11 @@ public class LiveImAutoConfiguration {
         // @ConditionalOnProperty(name = "live.im.cluster.enable", havingValue = "true")
         public WebSocketSessionManager clusterWebSocketSessionManager(@Qualifier("standaloneWebSocketSessionManager") WebSocketSessionManager webSocketSessionManager,
                                                                       RedisOperations<String, String> redisOperations,
-                                                                      WebSocketHandler clusterWebSocketHandler,
+                                                                      @Lazy @Qualifier("clusterWebSocketHandler") WebSocketHandler clusterWebSocketHandler,
                                                                       GroupChatMemberRepository groupChatMemberRepository,
                                                                       LiveImProperties liveImProperties,
                                                                       @Value("${server.port}") int port) {
-            LiveImProperties.Cluster cluster = liveImProperties.getCluster();
-            return new RedisRegisterClusterWebSocketSessionManager(redisOperations, webSocketSessionManager, clusterWebSocketHandler, groupChatMemberRepository, cluster.getServers(), port, liveImProperties.getCluster().getHost(), liveImProperties.getNetworkInterfaceName());
+            return new RedisRegisterClusterWebSocketSessionManager(redisOperations, webSocketSessionManager, clusterWebSocketHandler, groupChatMemberRepository, port, liveImProperties.getCluster().getHost(), liveImProperties.getNetworkInterfaceName());
         }
 
         @Bean("imWebSocketHandler")
@@ -261,8 +261,8 @@ public class LiveImAutoConfiguration {
 
         @Bean("clusterWebSocketHandler")
         // @ConditionalOnProperty(name = "live.im.cluster.enable", havingValue = "true")
-        public WebSocketHandler clusterWebSocketHandler(@Qualifier("standaloneWebSocketSessionManager") WebSocketSessionManager webSocketSessionManager){
-            return new ClusterWebSocketHandler(webSocketSessionManager);
+        public WebSocketHandler clusterWebSocketHandler(@Qualifier("standaloneWebSocketSessionManager") WebSocketSessionManager standaloneWebSocketSessionManager){
+            return new ClusterWebSocketHandler(standaloneWebSocketSessionManager);
         }
     }
 

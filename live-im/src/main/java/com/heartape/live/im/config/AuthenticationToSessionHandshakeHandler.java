@@ -12,6 +12,9 @@ import java.security.Principal;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * websocket认证
+ */
 public class AuthenticationToSessionHandshakeHandler extends DefaultHandshakeHandler {
     @SuppressWarnings("NullableProblems")
     @Override

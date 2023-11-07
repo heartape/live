@@ -2,6 +2,8 @@ package com.heartape.live.im.handler;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.web.socket.WebSocketSession;
 
 /**
@@ -50,6 +52,8 @@ public interface WebSocketSessionManager {
     void remove(String uid);
 
     @Getter
+    @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     class StoredMessage {
         private String purposeType;

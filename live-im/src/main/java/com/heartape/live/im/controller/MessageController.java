@@ -16,7 +16,6 @@ public class MessageController {
      */
     @GetMapping("/cookie")
     public void cookie(HttpSession session, Authentication authentication){
-        System.out.println(authentication.getName());
         session.setAttribute("LIVE_" + HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, authentication);
     }
 
