@@ -6,6 +6,11 @@
 </head>
 <body>
 <div id="app" style="width: 610px; height: 500px; margin: 50px auto">
+    <div id="token-div" style="width: 700px; height: 30px; margin: 50px auto">
+        <label for="token" style="margin-left: 120px"></label>
+        token:<input type="text" id="token" style="width: 300px; margin-bottom: 20px">
+        <button onclick="setToken()">设置token</button>
+    </div>
     <div id="person">
         <label for="person-id-input"></label>
         <span>好友id</span>
@@ -17,7 +22,7 @@
             <button onclick="sendPerson()" style="height: 55px; width: 90px; font-size: 18px">send</button>
         </div>
     </div>
-    <div id="group">
+    <div id="group" style="margin-top: 20px">
         <label for="group-id-input"></label>
         <span>群组id</span>
         <input type="text" id="group-id-input" style="width: 400px; height: 50px; font-size: 20px">
@@ -38,6 +43,20 @@
     const groupMessageInPut = document.getElementById(`group-message-input`);
     const personMessage = document.getElementById(`person-message`);
     const groupMessage = document.getElementById(`group-message`);
+
+    const token = document.getElementById(`token`);
+
+    function setToken() {
+        axios.get('/message/cookie', {
+            headers: {
+                'Authorization': 'Bearer ' + token.value
+            }
+        })
+            .then(function (response) {
+            })
+            .catch(function (error) {
+            });
+    }
 
     //创建一个webSocket实例，执行后，客户端就会与服务端连接
     const ws = new WebSocket('ws://' + host + '/im');
