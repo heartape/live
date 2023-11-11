@@ -4,7 +4,19 @@
 
 ## Getting Started
 
-### simple
+### springboot
+
+```yaml
+live:
+  im:
+    cluster:
+      # 设定当前ip，用于集群注册
+      host: 192.168.31.5
+    # 使用网卡名称来指定当前ip
+    network-interface-name: ens33
+```
+
+### startup-cluster-win
 
 windows安装ssh客户端
 ```shell
@@ -26,3 +38,5 @@ ListenAddress ::
 PermitRootLogin yes
 PasswordAuthentication yes
 ```
+
+执行 `startup-cluster.bat`

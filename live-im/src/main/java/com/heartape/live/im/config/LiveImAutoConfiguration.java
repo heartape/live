@@ -262,7 +262,6 @@ public class LiveImAutoConfiguration {
         }
 
         @Bean("clusterWebSocketSessionManager")
-        // @ConditionalOnProperty(name = "live.im.cluster.enable", havingValue = "true")
         public WebSocketSessionManager clusterWebSocketSessionManager(@Qualifier("standaloneWebSocketSessionManager") WebSocketSessionManager webSocketSessionManager,
                                                                       RedisOperations<String, String> redisOperations,
                                                                       @Lazy @Qualifier("clusterWebSocketHandler") WebSocketHandler clusterWebSocketHandler,
@@ -279,7 +278,6 @@ public class LiveImAutoConfiguration {
         }
 
         @Bean("clusterWebSocketHandler")
-        // @ConditionalOnProperty(name = "live.im.cluster.enable", havingValue = "true")
         public WebSocketHandler clusterWebSocketHandler(@Qualifier("standaloneWebSocketSessionManager") WebSocketSessionManager standaloneWebSocketSessionManager){
             return new ClusterWebSocketHandler(standaloneWebSocketSessionManager);
         }

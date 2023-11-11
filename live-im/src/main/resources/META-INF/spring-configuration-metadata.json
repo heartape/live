@@ -13,12 +13,6 @@
   ],
   "properties": [
     {
-      "name": "live.im.cluster.enabled",
-      "type": "java.lang.Boolean",
-      "sourceType": "com.heartape.live.im.config.LiveImProperties$Cluster",
-      "defaultValue": false
-    },
-    {
       "name": "live.im.cluster.host",
       "type": "java.lang.String",
       "sourceType": "com.heartape.live.im.config.LiveImProperties$Cluster"

@@ -1,10 +1,10 @@
 package com.heartape.live.im.config;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.ConstructorBinding;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Objects;
@@ -26,21 +26,15 @@ public class LiveImProperties {
     @ConstructorBinding
     public LiveImProperties(String networkInterfaceName, Cluster cluster) {
         this.networkInterfaceName = networkInterfaceName;
-        this.cluster = Objects.requireNonNullElseGet(cluster, () -> new Cluster(false, null));
+        this.cluster = Objects.requireNonNullElseGet(cluster, () -> new Cluster(null));
     }
 
     @Getter
+    @AllArgsConstructor
     public static class Cluster {
-
-        private final boolean enabled;
 
         @Setter
         private String host;
 
-        @ConstructorBinding
-        public Cluster(@DefaultValue("false") boolean enabled, String host) {
-            this.enabled = enabled;
-            this.host = host;
-        }
     }
 }
