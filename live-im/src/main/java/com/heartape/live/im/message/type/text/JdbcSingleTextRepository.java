@@ -1,9 +1,9 @@
 package com.heartape.live.im.message.type.text;
 
-import com.heartape.live.im.jpa.JpaSingleBaseRepository;
-import com.heartape.live.im.jpa.JpaSingleTextRepository;
-import com.heartape.live.im.jpa.entity.SingleEntity;
-import com.heartape.live.im.jpa.entity.SingleTextEntity;
+import com.heartape.live.im.mapper.SingleBaseMapper;
+import com.heartape.live.im.mapper.SingleTextMapper;
+import com.heartape.live.im.mapper.entity.SingleEntity;
+import com.heartape.live.im.mapper.entity.SingleTextEntity;
 import com.heartape.live.im.message.MessageRepository;
 import com.heartape.live.im.message.base.BaseMessage;
 import lombok.AllArgsConstructor;
@@ -17,18 +17,18 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class JdbcSingleTextRepository implements MessageRepository<TextMessage> {
 
-    private final JpaSingleTextRepository singleTextRepository;
+    private final SingleTextMapper singleTextRepository;
 
-    private final JpaSingleBaseRepository singleBaseRepository;
+    private final SingleBaseMapper singleBaseRepository;
 
     @Override
     public void save(TextMessage message) {
         SingleEntity singleEntity = entity(message);
-        SingleEntity singleEntitySave = singleBaseRepository.save(singleEntity);
+        singleBaseRepository.insert(singleEntity);
         Text text = message.getContent();
         SingleTextEntity singleTextEntity = entity(text);
-        singleTextEntity.setMessageId(singleEntitySave.getId());
-        singleTextRepository.save(singleTextEntity);
+        singleTextEntity.setMessageId(singleEntity.getId());
+        singleTextRepository.insert(singleTextEntity);
     }
 
     public SingleEntity entity(BaseMessage<?> message) {

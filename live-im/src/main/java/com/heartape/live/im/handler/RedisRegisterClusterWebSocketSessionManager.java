@@ -25,7 +25,7 @@ import java.util.concurrent.*;
 
 /**
  * 集群 websocket session管理
- * todo: 单用户多连接处理；集群弹性扩容；集群内通信保活
+ * todo: 单用户多连接处理
  */
 @Slf4j
 public class RedisRegisterClusterWebSocketSessionManager implements WebSocketSessionManager {

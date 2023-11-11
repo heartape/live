@@ -1,9 +1,9 @@
 package com.heartape.live.im.message.type.video;
 
-import com.heartape.live.im.jpa.JpaSingleBaseRepository;
-import com.heartape.live.im.jpa.JpaSingleVideoRepository;
-import com.heartape.live.im.jpa.entity.SingleEntity;
-import com.heartape.live.im.jpa.entity.SingleVideoEntity;
+import com.heartape.live.im.mapper.SingleBaseMapper;
+import com.heartape.live.im.mapper.SingleVideoMapper;
+import com.heartape.live.im.mapper.entity.SingleEntity;
+import com.heartape.live.im.mapper.entity.SingleVideoEntity;
 import com.heartape.live.im.message.MessageRepository;
 import com.heartape.live.im.message.base.BaseMessage;
 import lombok.AllArgsConstructor;
@@ -17,18 +17,18 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class JdbcSingleVideoRepository implements MessageRepository<VideoMessage> {
 
-    private final JpaSingleVideoRepository singleVideoRepository;
+    private final SingleVideoMapper singleVideoRepository;
 
-    private final JpaSingleBaseRepository singleBaseRepository;
+    private final SingleBaseMapper singleBaseRepository;
 
     @Override
     public void save(VideoMessage message) {
         SingleEntity singleEntity = entity(message);
-        SingleEntity singleEntitySave = singleBaseRepository.save(singleEntity);
+        singleBaseRepository.insert(singleEntity);
         Video video = message.getContent();
         SingleVideoEntity singleVideoEntity = entity(video);
-        singleVideoEntity.setMessageId(singleEntitySave.getId());
-        singleVideoRepository.save(singleVideoEntity);
+        singleVideoEntity.setMessageId(singleEntity.getId());
+        singleVideoRepository.insert(singleVideoEntity);
     }
 
     public SingleEntity entity(BaseMessage<?> message) {

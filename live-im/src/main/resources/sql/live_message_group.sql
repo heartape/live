@@ -4,11 +4,12 @@
 DROP TABLE IF EXISTS `live_message_group`;
 CREATE TABLE `live_message_group`
 (
-    `id`        varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-    `uid`       varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-    `group_id`  varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-    `type`      varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-    `timestamp` datetime                                                     NOT NULL,
+    `id`       varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+    `uid`      varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+    `group_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+    `type`     varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+    `read`     tinyint(1)                                                   NOT NULL,
+    `time`     datetime                                                     NOT NULL,
     PRIMARY KEY (`id`) USING BTREE,
     INDEX `uid_index` (`group_id` ASC, `uid` ASC) USING BTREE
 ) ENGINE = InnoDB

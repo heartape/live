@@ -1,11 +1,11 @@
 package com.heartape.live.im.message.type.image;
 
-import com.heartape.live.im.jpa.JpaGroupBaseRepository;
-import com.heartape.live.im.jpa.JpaGroupImageCopyRepository;
-import com.heartape.live.im.jpa.JpaGroupImageRepository;
-import com.heartape.live.im.jpa.entity.GroupEntity;
-import com.heartape.live.im.jpa.entity.GroupImageCopyEntity;
-import com.heartape.live.im.jpa.entity.GroupImageEntity;
+import com.heartape.live.im.mapper.GroupBaseMapper;
+import com.heartape.live.im.mapper.GroupImageCopyMapper;
+import com.heartape.live.im.mapper.GroupImageMapper;
+import com.heartape.live.im.mapper.entity.GroupEntity;
+import com.heartape.live.im.mapper.entity.GroupImageCopyEntity;
+import com.heartape.live.im.mapper.entity.GroupImageEntity;
 import com.heartape.live.im.message.MessageRepository;
 import com.heartape.live.im.message.base.BaseMessage;
 import lombok.AllArgsConstructor;
@@ -19,25 +19,25 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class JdbcGroupImageRepository implements MessageRepository<ImageMessage> {
 
-    private final JpaGroupImageRepository groupImageRepository;
+    private final GroupImageMapper groupImageRepository;
 
-    private final JpaGroupImageCopyRepository groupImageCopyRepository;
+    private final GroupImageCopyMapper groupImageCopyRepository;
 
-    private final JpaGroupBaseRepository groupBaseRepository;
+    private final GroupBaseMapper groupBaseRepository;
 
     @Override
     public void save(ImageMessage message) {
         GroupEntity groupEntity = entity(message);
-        GroupEntity groupEntitySave = groupBaseRepository.save(groupEntity);
+        groupBaseRepository.insert(groupEntity);
         Image image = message.getContent();
         GroupImageEntity groupImageEntity = entity(image);
-        groupImageEntity.setMessageId(groupEntitySave.getId());
-        GroupImageEntity groupImageEntitySave = groupImageRepository.save(groupImageEntity);
+        groupImageEntity.setMessageId(groupEntity.getId());
+        groupImageRepository.insert(groupImageEntity);
         image.getImageCopyList()
                 .stream()
                 .map(this::entity)
-                .peek(groupImageCopyEntity -> groupImageCopyEntity.setImageId(groupImageEntitySave.getId()))
-                .forEach(groupImageCopyRepository::save);
+                .peek(groupImageCopyEntity -> groupImageCopyEntity.setImageId(groupImageEntity.getId()))
+                .forEach(groupImageCopyRepository::insert);
     }
 
     public GroupEntity entity(BaseMessage<?> message) {

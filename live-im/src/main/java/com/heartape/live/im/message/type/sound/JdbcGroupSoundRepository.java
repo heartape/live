@@ -1,9 +1,9 @@
 package com.heartape.live.im.message.type.sound;
 
-import com.heartape.live.im.jpa.JpaGroupBaseRepository;
-import com.heartape.live.im.jpa.JpaGroupSoundRepository;
-import com.heartape.live.im.jpa.entity.GroupEntity;
-import com.heartape.live.im.jpa.entity.GroupSoundEntity;
+import com.heartape.live.im.mapper.GroupBaseMapper;
+import com.heartape.live.im.mapper.GroupSoundMapper;
+import com.heartape.live.im.mapper.entity.GroupEntity;
+import com.heartape.live.im.mapper.entity.GroupSoundEntity;
 import com.heartape.live.im.message.MessageRepository;
 import com.heartape.live.im.message.base.BaseMessage;
 import lombok.AllArgsConstructor;
@@ -17,18 +17,18 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class JdbcGroupSoundRepository implements MessageRepository<SoundMessage> {
 
-    private final JpaGroupSoundRepository groupSoundRepository;
+    private final GroupSoundMapper groupSoundRepository;
 
-    private final JpaGroupBaseRepository groupBaseRepository;
+    private final GroupBaseMapper groupBaseRepository;
 
     @Override
     public void save(SoundMessage message) {
         GroupEntity groupEntity = entity(message);
-        GroupEntity groupEntitySave = groupBaseRepository.save(groupEntity);
+        groupBaseRepository.insert(groupEntity);
         Sound sound = message.getContent();
         GroupSoundEntity groupSoundEntity = entity(sound);
-        groupSoundEntity.setMessageId(groupEntitySave.getId());
-        groupSoundRepository.save(groupSoundEntity);
+        groupSoundEntity.setMessageId(groupEntity.getId());
+        groupSoundRepository.insert(groupSoundEntity);
     }
 
     public GroupEntity entity(BaseMessage<?> message) {

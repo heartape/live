@@ -8,7 +8,6 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.validation.annotation.Validated;
 
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * 配置
@@ -27,7 +26,7 @@ public class LiveImProperties {
     @ConstructorBinding
     public LiveImProperties(String networkInterfaceName, Cluster cluster) {
         this.networkInterfaceName = networkInterfaceName;
-        this.cluster = Objects.requireNonNullElseGet(cluster, () -> new Cluster(false, null, null));
+        this.cluster = Objects.requireNonNullElseGet(cluster, () -> new Cluster(false, null));
     }
 
     @Getter
@@ -38,14 +37,10 @@ public class LiveImProperties {
         @Setter
         private String host;
 
-        @Setter
-        private Set<String> servers;
-
         @ConstructorBinding
-        public Cluster(@DefaultValue("false") boolean enabled, String host, Set<String> servers) {
+        public Cluster(@DefaultValue("false") boolean enabled, String host) {
             this.enabled = enabled;
             this.host = host;
-            this.servers = Objects.requireNonNullElseGet(servers, Set::of);
         }
     }
 }

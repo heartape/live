@@ -1,7 +1,7 @@
 package com.heartape.live.im.message.base;
 
-import com.heartape.live.im.jpa.JpaGroupBaseRepository;
-import com.heartape.live.im.jpa.entity.GroupEntity;
+import com.heartape.live.im.mapper.GroupBaseMapper;
+import com.heartape.live.im.mapper.entity.GroupEntity;
 import com.heartape.live.im.message.MessageRepository;
 import lombok.AllArgsConstructor;
 
@@ -13,12 +13,12 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class JdbcGroupBaseRepository implements MessageRepository<BaseMessage<?>> {
 
-    private final JpaGroupBaseRepository groupBaseRepository;
+    private final GroupBaseMapper groupBaseRepository;
 
     @Override
     public void save(BaseMessage<?> message) {
         GroupEntity groupEntity = entity(message);
-        groupBaseRepository.save(groupEntity);
+        groupBaseRepository.insert(groupEntity);
     }
 
     public GroupEntity entity(BaseMessage<?> message) {

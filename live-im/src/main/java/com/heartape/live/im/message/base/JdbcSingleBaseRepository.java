@@ -1,7 +1,7 @@
 package com.heartape.live.im.message.base;
 
-import com.heartape.live.im.jpa.JpaSingleBaseRepository;
-import com.heartape.live.im.jpa.entity.SingleEntity;
+import com.heartape.live.im.mapper.SingleBaseMapper;
+import com.heartape.live.im.mapper.entity.SingleEntity;
 import com.heartape.live.im.message.MessageRepository;
 import lombok.AllArgsConstructor;
 
@@ -14,12 +14,12 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class JdbcSingleBaseRepository implements MessageRepository<BaseMessage<?>> {
 
-    private final JpaSingleBaseRepository singleBaseRepository;
+    private final SingleBaseMapper singleBaseRepository;
 
     @Override
     public void save(BaseMessage<?> message) {
         SingleEntity singleEntity = entity(message);
-        singleBaseRepository.save(singleEntity);
+        singleBaseRepository.insert(singleEntity);
     }
 
     public SingleEntity entity(BaseMessage<?> message) {

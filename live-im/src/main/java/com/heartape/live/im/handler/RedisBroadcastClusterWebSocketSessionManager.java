@@ -13,12 +13,11 @@ import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Map;
 
 /**
- * 集群 websocket session管理,利用redis广播
- * todo: 单用户多连接处理；集群弹性扩容；集群内通信保活
+ * 集群 websocket session管理,利用redis广播，需要打开 {@link RedisBroadcastConfiguration}
+ * todo: 单用户多连接处理
  */
 @Slf4j
 @AllArgsConstructor
@@ -109,22 +108,29 @@ public class RedisBroadcastClusterWebSocketSessionManager implements WebSocketSe
 
         @Override
         public void handleMessage(Map message) {
-            System.out.println(message);
+
         }
 
         @Override
         public void handleMessage(byte[] message) {
-            System.out.println(Arrays.toString(message));
+
         }
 
         @Override
         public void handleMessage(Serializable message) {
-            System.out.println(message);
+            try {
+                StoredMessage storedMessage = objectMapper.convertValue(objectMapper.readTree(message.toString()), StoredMessage.class);
+                if (standaloneSessionManager.registered(storedMessage.getPurposeId())){
+                    standaloneSessionManager.push(storedMessage);
+                }
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         @Override
         public void handleMessage(Serializable message, String channel) {
-            System.out.println(message);
+
         }
     }
 }

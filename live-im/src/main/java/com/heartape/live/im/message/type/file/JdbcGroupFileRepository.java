@@ -1,12 +1,11 @@
 package com.heartape.live.im.message.type.file;
 
-import com.heartape.live.im.jpa.JpaGroupBaseRepository;
-import com.heartape.live.im.jpa.JpaGroupFileRepository;
-import com.heartape.live.im.jpa.entity.GroupFileEntity;
-import com.heartape.live.im.jpa.entity.GroupEntity;
+import com.heartape.live.im.mapper.GroupBaseMapper;
+import com.heartape.live.im.mapper.GroupFileMapper;
+import com.heartape.live.im.mapper.entity.GroupFileEntity;
+import com.heartape.live.im.mapper.entity.GroupEntity;
 import com.heartape.live.im.message.MessageRepository;
 import com.heartape.live.im.message.base.BaseMessage;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 
 /**
@@ -18,20 +17,20 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class JdbcGroupFileRepository implements MessageRepository<FileMessage> {
 
-    private final JPAQueryFactory queryFactory;
+    // private final JPAQueryFactory queryFactory;
 
-    private final JpaGroupFileRepository groupFileRepository;
+    private final GroupFileMapper groupFileRepository;
 
-    private final JpaGroupBaseRepository groupBaseRepository;
+    private final GroupBaseMapper groupBaseRepository;
 
     @Override
     public void save(FileMessage message) {
         GroupEntity groupEntity = entity(message);
-        GroupEntity groupEntitySave = groupBaseRepository.save(groupEntity);
+        groupBaseRepository.insert(groupEntity);
         File file = message.getContent();
         GroupFileEntity groupFileEntity = entity(file);
-        groupFileEntity.setMessageId(groupEntitySave.getId());
-        groupFileRepository.save(groupFileEntity);
+        groupFileEntity.setMessageId(groupEntity.getId());
+        groupFileRepository.insert(groupFileEntity);
     }
 
     public GroupEntity entity(BaseMessage<?> message) {
@@ -52,11 +51,7 @@ public class JdbcGroupFileRepository implements MessageRepository<FileMessage> {
 
     @Override
     public void remove(String id) {
-        // groupBaseRepository.deleteById(id);
-        // QFile file = QFile.file;
-        // queryFactory.delete(file)
-        //         .where(file.messageId.eq(id))
-        //         .execute();
+
     }
 
 }

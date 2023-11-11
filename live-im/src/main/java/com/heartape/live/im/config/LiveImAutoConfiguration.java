@@ -7,6 +7,7 @@ import com.heartape.live.im.handler.*;
 import com.heartape.live.im.interceptor.message.*;
 import com.heartape.live.im.interceptor.prompt.ListPromptInterceptorRegister;
 import com.heartape.live.im.interceptor.prompt.PromptInterceptorRegister;
+import com.heartape.live.im.mapper.*;
 import com.heartape.live.im.manage.friend.*;
 import com.heartape.live.im.manage.group.*;
 import com.heartape.live.im.message.*;
@@ -52,7 +53,24 @@ public class LiveImAutoConfiguration {
     @Configuration
     public static class MessageConfiguration {
         @Bean
-        public MessageConfigurer messageConfigurer(IdentifierGenerator<Long> identifierGenerator){
+        public MessageConfigurer messageConfigurer(GroupTextMapper groupTextMapper,
+                                                   SingleTextMapper singleTextMapper,
+                                                   GroupGreetingMapper groupGreetingMapper,
+                                                   SingleGreetingMapper singleGreetingMapper,
+                                                   GroupImageMapper groupImageMapper,
+                                                   SingleImageMapper singleImageMapper,
+                                                   GroupImageCopyMapper groupImageCopyMapper,
+                                                   SingleImageCopyMapper singleImageCopyMapper,
+                                                   GroupFileMapper groupFileMapper,
+                                                   SingleFileMapper singleFileMapper,
+                                                   GroupVideoMapper groupVideoMapper,
+                                                   SingleVideoMapper singleVideoMapper,
+                                                   GroupSoundMapper groupSoundMapper,
+                                                   SingleSoundMapper singleSoundMapper,
+                                                   GroupLocationMapper groupLocationMapper,
+                                                   SingleLocationMapper singleLocationMapper,
+                                                   GroupBaseMapper groupBaseMapper,
+                                                   SingleBaseMapper singleBaseMapper){
             MessageConfigurer messageConfigurer = MessageConfigurer.init();
 
             // TEXT
@@ -60,8 +78,8 @@ public class LiveImAutoConfiguration {
             TextFilterManager textFilterManager = new TextFilterManager();
             textFilterManager.register(new TextBaseFilter());
             textFilterManager.register(new MemoryTextKeywordShieldFilter(Set.of("卧槽", "握草")));
-            MessageRepository<TextMessage> groupTextRepository = new MemoryTextCenterRepository();
-            MessageRepository<TextMessage> singleTextRepository = new MemoryTextCenterRepository();
+            MessageRepository<TextMessage> groupTextRepository = new JdbcGroupTextRepository(groupTextMapper, groupBaseMapper);
+            MessageRepository<TextMessage> singleTextRepository = new JdbcSingleTextRepository(singleTextMapper, singleBaseMapper);
 
             messageConfigurer.text()
                     .converter(textMessageConverter)
@@ -72,8 +90,8 @@ public class LiveImAutoConfiguration {
             // GREETING
             GreetingMessageConverter greetingMessageConverter = new GreetingMessageConverter();
             GreetingFilterManager greetingFilterManager = new GreetingFilterManager();
-            MessageRepository<GreetingMessage> groupGreetingRepository = new MemoryGreetingCenterRepository();
-            MessageRepository<GreetingMessage> singleGreetingRepository = new MemoryGreetingCenterRepository();
+            MessageRepository<GreetingMessage> groupGreetingRepository = new JdbcGroupGreetingRepository(groupGreetingMapper, groupBaseMapper);
+            MessageRepository<GreetingMessage> singleGreetingRepository = new JdbcSingleGreetingRepository(singleGreetingMapper, singleBaseMapper);
 
             messageConfigurer.greeting()
                     .converter(greetingMessageConverter)
@@ -84,8 +102,8 @@ public class LiveImAutoConfiguration {
             // IMAGE
             ImageMessageConverter imageMessageConverter = new ImageMessageConverter();
             ImageFilterManager imageFilterManager = new ImageFilterManager();
-            MessageRepository<ImageMessage> groupImageRepository = new MemoryImageCenterRepository();
-            MessageRepository<ImageMessage> singleImageRepository = new MemoryImageCenterRepository();
+            MessageRepository<ImageMessage> groupImageRepository = new JdbcGroupImageRepository(groupImageMapper, groupImageCopyMapper, groupBaseMapper);
+            MessageRepository<ImageMessage> singleImageRepository = new JdbcSingleImageRepository(singleImageMapper, singleImageCopyMapper, singleBaseMapper);
 
             messageConfigurer.image()
                     .converter(imageMessageConverter)
@@ -96,8 +114,8 @@ public class LiveImAutoConfiguration {
             // FILE
             FileMessageConverter fileMessageConverter = new FileMessageConverter();
             FileFilterManager fileFilterManager = new FileFilterManager();
-            MessageRepository<FileMessage> groupFileRepository = new MemoryFileCenterRepository();
-            MessageRepository<FileMessage> singleFileRepository = new MemoryFileCenterRepository();
+            MessageRepository<FileMessage> groupFileRepository = new JdbcGroupFileRepository(groupFileMapper, groupBaseMapper);
+            MessageRepository<FileMessage> singleFileRepository = new JdbcSingleFileRepository(singleFileMapper, singleBaseMapper);
 
             messageConfigurer.file()
                     .converter(fileMessageConverter)
@@ -108,8 +126,8 @@ public class LiveImAutoConfiguration {
             // VIDEO
             VideoMessageConverter videoMessageConverter = new VideoMessageConverter();
             VideoFilterManager videoFilterManager = new VideoFilterManager();
-            MessageRepository<VideoMessage> groupVideoRepository = new MemoryVideoCenterRepository();
-            MessageRepository<VideoMessage> singleVideoRepository = new MemoryVideoCenterRepository();
+            MessageRepository<VideoMessage> groupVideoRepository = new JdbcGroupVideoRepository(groupVideoMapper, groupBaseMapper);
+            MessageRepository<VideoMessage> singleVideoRepository = new JdbcSingleVideoRepository(singleVideoMapper, singleBaseMapper);
 
             messageConfigurer.video()
                     .converter(videoMessageConverter)
@@ -121,8 +139,8 @@ public class LiveImAutoConfiguration {
             // LOCATION
             LocationMessageConverter locationMessageConverter = new LocationMessageConverter();
             LocationFilterManager locationFilterManager = new LocationFilterManager();
-            MessageRepository<LocationMessage> groupLocationRepository = new MemoryLocationCenterRepository();
-            MessageRepository<LocationMessage> singleLocationRepository = new MemoryLocationCenterRepository();
+            MessageRepository<LocationMessage> groupLocationRepository = new JdbcGroupLocationRepository(groupLocationMapper, groupBaseMapper);
+            MessageRepository<LocationMessage> singleLocationRepository = new JdbcSingleLocationRepository(singleLocationMapper, singleBaseMapper);
 
             messageConfigurer.location()
                     .converter(locationMessageConverter)
@@ -133,8 +151,8 @@ public class LiveImAutoConfiguration {
             // SOUND
             SoundMessageConverter soundMessageConverter = new SoundMessageConverter();
             SoundFilterManager soundFilterManager = new SoundFilterManager();
-            MessageRepository<SoundMessage> groupSoundRepository = new MemorySoundCenterRepository();
-            MessageRepository<SoundMessage> singleSoundRepository = new MemorySoundCenterRepository();
+            MessageRepository<SoundMessage> groupSoundRepository = new JdbcGroupSoundRepository(groupSoundMapper, groupBaseMapper);
+            MessageRepository<SoundMessage> singleSoundRepository = new JdbcSingleSoundRepository(singleSoundMapper, singleBaseMapper);
 
             messageConfigurer.sound()
                     .converter(soundMessageConverter)
@@ -252,6 +270,7 @@ public class LiveImAutoConfiguration {
                                                                       LiveImProperties liveImProperties,
                                                                       @Value("${server.port}") int port) {
             return new RedisRegisterClusterWebSocketSessionManager(redisOperations, webSocketSessionManager, clusterWebSocketHandler, groupChatMemberRepository, port, liveImProperties.getCluster().getHost(), liveImProperties.getNetworkInterfaceName());
+            // return new RedisBroadcastClusterWebSocketSessionManager(redisOperations, webSocketSessionManager, groupChatMemberRepository);
         }
 
         @Bean("imWebSocketHandler")

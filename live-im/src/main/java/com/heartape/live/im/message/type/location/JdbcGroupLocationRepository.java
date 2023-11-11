@@ -1,9 +1,9 @@
 package com.heartape.live.im.message.type.location;
 
-import com.heartape.live.im.jpa.JpaGroupBaseRepository;
-import com.heartape.live.im.jpa.JpaGroupLocationRepository;
-import com.heartape.live.im.jpa.entity.GroupEntity;
-import com.heartape.live.im.jpa.entity.GroupLocationEntity;
+import com.heartape.live.im.mapper.GroupBaseMapper;
+import com.heartape.live.im.mapper.GroupLocationMapper;
+import com.heartape.live.im.mapper.entity.GroupEntity;
+import com.heartape.live.im.mapper.entity.GroupLocationEntity;
 import com.heartape.live.im.message.MessageRepository;
 import com.heartape.live.im.message.base.BaseMessage;
 import lombok.AllArgsConstructor;
@@ -17,18 +17,18 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class JdbcGroupLocationRepository implements MessageRepository<LocationMessage> {
 
-    private final JpaGroupLocationRepository groupLocationRepository;
+    private final GroupLocationMapper groupLocationRepository;
 
-    private final JpaGroupBaseRepository groupBaseRepository;
+    private final GroupBaseMapper groupBaseRepository;
 
     @Override
     public void save(LocationMessage message) {
         GroupEntity groupEntity = entity(message);
-        GroupEntity groupEntitySave = groupBaseRepository.save(groupEntity);
+        groupBaseRepository.insert(groupEntity);
         Location location = message.getContent();
         GroupLocationEntity groupLocationEntity = entity(location);
-        groupLocationEntity.setMessageId(groupEntitySave.getId());
-        groupLocationRepository.save(groupLocationEntity);
+        groupLocationEntity.setMessageId(groupEntity.getId());
+        groupLocationRepository.insert(groupLocationEntity);
     }
 
     public GroupEntity entity(BaseMessage<?> message) {

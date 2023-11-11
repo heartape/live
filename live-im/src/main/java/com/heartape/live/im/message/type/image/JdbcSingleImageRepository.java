@@ -1,11 +1,11 @@
 package com.heartape.live.im.message.type.image;
 
-import com.heartape.live.im.jpa.JpaSingleBaseRepository;
-import com.heartape.live.im.jpa.JpaSingleImageCopyRepository;
-import com.heartape.live.im.jpa.JpaSingleImageRepository;
-import com.heartape.live.im.jpa.entity.SingleEntity;
-import com.heartape.live.im.jpa.entity.SingleImageCopyEntity;
-import com.heartape.live.im.jpa.entity.SingleImageEntity;
+import com.heartape.live.im.mapper.SingleBaseMapper;
+import com.heartape.live.im.mapper.SingleImageCopyMapper;
+import com.heartape.live.im.mapper.SingleImageMapper;
+import com.heartape.live.im.mapper.entity.SingleEntity;
+import com.heartape.live.im.mapper.entity.SingleImageCopyEntity;
+import com.heartape.live.im.mapper.entity.SingleImageEntity;
 import com.heartape.live.im.message.MessageRepository;
 import com.heartape.live.im.message.base.BaseMessage;
 import lombok.AllArgsConstructor;
@@ -19,25 +19,25 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class JdbcSingleImageRepository implements MessageRepository<ImageMessage> {
 
-    private final JpaSingleImageRepository singleImageRepository;
+    private final SingleImageMapper singleImageRepository;
 
-    private final JpaSingleImageCopyRepository singleImageCopyRepository;
+    private final SingleImageCopyMapper singleImageCopyRepository;
 
-    private final JpaSingleBaseRepository singleBaseRepository;
+    private final SingleBaseMapper singleBaseRepository;
 
     @Override
     public void save(ImageMessage message) {
         SingleEntity singleEntity = entity(message);
-        SingleEntity singleEntitySave = singleBaseRepository.save(singleEntity);
+        singleBaseRepository.insert(singleEntity);
         Image image = message.getContent();
         SingleImageEntity singleImageEntity = entity(image);
-        singleImageEntity.setMessageId(singleEntitySave.getId());
-        SingleImageEntity singleImageEntitySave = singleImageRepository.save(singleImageEntity);
+        singleImageEntity.setMessageId(singleEntity.getId());
+        singleImageRepository.insert(singleImageEntity);
         image.getImageCopyList()
                 .stream()
                 .map(this::entity)
-                .peek(singleImageCopyEntity -> singleImageCopyEntity.setImageId(singleImageEntitySave.getId()))
-                .forEach(singleImageCopyRepository::save);
+                .peek(singleImageCopyEntity -> singleImageCopyEntity.setImageId(singleImageEntity.getId()))
+                .forEach(singleImageCopyRepository::insert);
     }
 
     public SingleEntity entity(BaseMessage<?> message) {

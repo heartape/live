@@ -1,9 +1,9 @@
 package com.heartape.live.im.message.type.location;
 
-import com.heartape.live.im.jpa.JpaSingleBaseRepository;
-import com.heartape.live.im.jpa.JpaSingleLocationRepository;
-import com.heartape.live.im.jpa.entity.SingleEntity;
-import com.heartape.live.im.jpa.entity.SingleLocationEntity;
+import com.heartape.live.im.mapper.SingleBaseMapper;
+import com.heartape.live.im.mapper.SingleLocationMapper;
+import com.heartape.live.im.mapper.entity.SingleEntity;
+import com.heartape.live.im.mapper.entity.SingleLocationEntity;
 import com.heartape.live.im.message.MessageRepository;
 import com.heartape.live.im.message.base.BaseMessage;
 import lombok.AllArgsConstructor;
@@ -17,18 +17,18 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class JdbcSingleLocationRepository implements MessageRepository<LocationMessage> {
 
-    private final JpaSingleLocationRepository singleLocationRepository;
+    private final SingleLocationMapper singleLocationRepository;
 
-    private final JpaSingleBaseRepository singleBaseRepository;
+    private final SingleBaseMapper singleBaseRepository;
 
     @Override
     public void save(LocationMessage message) {
         SingleEntity singleEntity = entity(message);
-        SingleEntity singleEntitySave = singleBaseRepository.save(singleEntity);
+        singleBaseRepository.insert(singleEntity);
         Location location = message.getContent();
         SingleLocationEntity singleLocationEntity = entity(location);
-        singleLocationEntity.setMessageId(singleEntitySave.getId());
-        singleLocationRepository.save(singleLocationEntity);
+        singleLocationEntity.setMessageId(singleEntity.getId());
+        singleLocationRepository.insert(singleLocationEntity);
     }
 
     public SingleEntity entity(BaseMessage<?> message) {

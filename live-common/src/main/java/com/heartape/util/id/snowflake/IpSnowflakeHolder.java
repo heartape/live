@@ -2,6 +2,7 @@ package com.heartape.util.id.snowflake;
 
 import com.heartape.exception.SystemInnerException;
 import com.heartape.util.IpUtils;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetAddress;
@@ -10,6 +11,7 @@ import java.net.InetAddress;
  * @see SnowflakeHolder
  */
 @Slf4j
+@NoArgsConstructor
 public class IpSnowflakeHolder implements SnowflakeHolder {
 
     private Long workerId;
@@ -17,7 +19,7 @@ public class IpSnowflakeHolder implements SnowflakeHolder {
     /**
      * 需要时可以指定网卡名称
      */
-    private final String networkInterfaceName;
+    private String networkInterfaceName;
 
     public IpSnowflakeHolder(String networkInterfaceName) {
         this.networkInterfaceName = networkInterfaceName;

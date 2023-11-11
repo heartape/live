@@ -19,13 +19,8 @@
       "defaultValue": false
     },
     {
-      "name": "live.im.cluster.network-interface-name",
+      "name": "live.im.cluster.host",
       "type": "java.lang.String",
-      "sourceType": "com.heartape.live.im.config.LiveImProperties$Cluster"
-    },
-    {
-      "name": "live.im.cluster.servers",
-      "type": "java.util.Set<java.lang.String>",
       "sourceType": "com.heartape.live.im.config.LiveImProperties$Cluster"
     },
     {

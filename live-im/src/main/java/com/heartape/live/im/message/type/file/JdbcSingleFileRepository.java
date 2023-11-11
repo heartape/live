@@ -1,12 +1,11 @@
 package com.heartape.live.im.message.type.file;
 
-import com.heartape.live.im.jpa.JpaSingleBaseRepository;
-import com.heartape.live.im.jpa.JpaSingleFileRepository;
-import com.heartape.live.im.jpa.entity.SingleEntity;
-import com.heartape.live.im.jpa.entity.SingleFileEntity;
+import com.heartape.live.im.mapper.SingleBaseMapper;
+import com.heartape.live.im.mapper.SingleFileMapper;
+import com.heartape.live.im.mapper.entity.SingleEntity;
+import com.heartape.live.im.mapper.entity.SingleFileEntity;
 import com.heartape.live.im.message.MessageRepository;
 import com.heartape.live.im.message.base.BaseMessage;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.AllArgsConstructor;
 
 /**
@@ -18,20 +17,20 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class JdbcSingleFileRepository implements MessageRepository<FileMessage> {
 
-    private final JPAQueryFactory queryFactory;
+    // private final JPAQueryFactory queryFactory;
 
-    private final JpaSingleFileRepository singleFileRepository;
+    private final SingleFileMapper singleFileRepository;
 
-    private final JpaSingleBaseRepository  singleBaseRepository;
+    private final SingleBaseMapper singleBaseRepository;
 
     @Override
     public void save(FileMessage message) {
         SingleEntity singleEntity = entity(message);
-        SingleEntity singleEntitySave = singleBaseRepository.save(singleEntity);
+        singleBaseRepository.insert(singleEntity);
         File file = message.getContent();
         SingleFileEntity singleFileEntity = entity(file);
-        singleFileEntity.setMessageId(singleEntitySave.getId());
-        singleFileRepository.save(singleFileEntity);
+        singleFileEntity.setMessageId(singleEntity.getId());
+        singleFileRepository.insert(singleFileEntity);
     }
 
     public SingleEntity entity(BaseMessage<?> message) {
@@ -54,11 +53,7 @@ public class JdbcSingleFileRepository implements MessageRepository<FileMessage> 
 
     @Override
     public void remove(String id) {
-        // singleBaseRepository.deleteById(id);
-        // QSingleFileEntity file = QSingleFileEntity.file;
-        // queryFactory.delete(file)
-        //         .where(file.messageId.eq(id))
-        //         .execute();
+
     }
 
 }

@@ -8,7 +8,8 @@ CREATE TABLE `live_message_single`
     `uid`         varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
     `receiver_id` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
     `type`        varchar(16) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-    `timestamp`   datetime                                                     NOT NULL,
+    `read`        tinyint(1)                                                   NOT NULL,
+    `time`        datetime                                                     NOT NULL,
     PRIMARY KEY (`id`) USING BTREE,
     INDEX `uid_index` (`uid` ASC) USING BTREE,
     INDEX `receiver_id_index` (`receiver_id` ASC) USING BTREE

@@ -1,9 +1,9 @@
 package com.heartape.live.im.message.type.text;
 
-import com.heartape.live.im.jpa.JpaGroupBaseRepository;
-import com.heartape.live.im.jpa.JpaGroupTextRepository;
-import com.heartape.live.im.jpa.entity.GroupEntity;
-import com.heartape.live.im.jpa.entity.GroupTextEntity;
+import com.heartape.live.im.mapper.GroupBaseMapper;
+import com.heartape.live.im.mapper.GroupTextMapper;
+import com.heartape.live.im.mapper.entity.GroupEntity;
+import com.heartape.live.im.mapper.entity.GroupTextEntity;
 import com.heartape.live.im.message.MessageRepository;
 import com.heartape.live.im.message.base.BaseMessage;
 import lombok.AllArgsConstructor;
@@ -17,18 +17,18 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class JdbcGroupTextRepository implements MessageRepository<TextMessage> {
 
-    private final JpaGroupTextRepository groupTextRepository;
+    private final GroupTextMapper groupTextRepository;
 
-    private final JpaGroupBaseRepository groupBaseRepository;
+    private final GroupBaseMapper groupBaseRepository;
 
     @Override
     public void save(TextMessage message) {
         GroupEntity groupEntity = entity(message);
-        GroupEntity groupEntitySave = groupBaseRepository.save(groupEntity);
+        groupBaseRepository.insert(groupEntity);
         Text text = message.getContent();
         GroupTextEntity groupTextEntity = entity(text);
-        groupTextEntity.setMessageId(groupEntitySave.getId());
-        groupTextRepository.save(groupTextEntity);
+        groupTextEntity.setMessageId(groupEntity.getId());
+        groupTextRepository.insert(groupTextEntity);
     }
 
     public GroupEntity entity(BaseMessage<?> message) {

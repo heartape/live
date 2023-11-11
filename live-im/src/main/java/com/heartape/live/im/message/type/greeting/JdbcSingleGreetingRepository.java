@@ -1,9 +1,9 @@
 package com.heartape.live.im.message.type.greeting;
 
-import com.heartape.live.im.jpa.JpaSingleBaseRepository;
-import com.heartape.live.im.jpa.JpaSingleGreetingRepository;
-import com.heartape.live.im.jpa.entity.SingleEntity;
-import com.heartape.live.im.jpa.entity.SingleGreetingEntity;
+import com.heartape.live.im.mapper.SingleBaseMapper;
+import com.heartape.live.im.mapper.SingleGreetingMapper;
+import com.heartape.live.im.mapper.entity.SingleEntity;
+import com.heartape.live.im.mapper.entity.SingleGreetingEntity;
 import com.heartape.live.im.message.MessageRepository;
 import com.heartape.live.im.message.base.BaseMessage;
 import lombok.AllArgsConstructor;
@@ -17,17 +17,17 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class JdbcSingleGreetingRepository implements MessageRepository<GreetingMessage> {
 
-    private final JpaSingleGreetingRepository singleGreetingRepository;
+    private final SingleGreetingMapper singleGreetingRepository;
 
-    private final JpaSingleBaseRepository singleBaseRepository;
+    private final SingleBaseMapper singleBaseRepository;
     @Override
     public void save(GreetingMessage message) {
         SingleEntity singleEntity = entity(message);
-        SingleEntity singleEntitySave = singleBaseRepository.save(singleEntity);
+        singleBaseRepository.insert(singleEntity);
         Greeting greeting = message.getContent();
         SingleGreetingEntity singleGreetingEntity = entity(greeting);
-        singleGreetingEntity.setMessageId(singleEntitySave.getId());
-        singleGreetingRepository.save(singleGreetingEntity);
+        singleGreetingEntity.setMessageId(singleEntity.getId());
+        singleGreetingRepository.insert(singleGreetingEntity);
     }
 
     public SingleEntity entity(BaseMessage<?> message) {

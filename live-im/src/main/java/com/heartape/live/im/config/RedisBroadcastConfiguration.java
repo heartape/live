@@ -12,6 +12,9 @@ import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
 import java.io.Serializable;
 import java.util.Map;
 
+/**
+ * redis监听
+ */
 // @Configuration
 public class RedisBroadcastConfiguration {
 
