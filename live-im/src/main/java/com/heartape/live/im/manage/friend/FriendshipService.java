@@ -17,7 +17,7 @@ public interface FriendshipService {
      * @param uid 用户id
      * @param groupId 分组id
      */
-    void removeGroup(String uid, Long groupId);
+    void removeGroup(String uid, String groupId);
 
     /**
      * 重命名分组
@@ -25,7 +25,7 @@ public interface FriendshipService {
      * @param uid 用户id
      * @param name 分组名称
      */
-    void renameGroup(Long groupId, String uid, String name);
+    void renameGroup(String groupId, String uid, String name);
 
     /**
      * 添加好友
@@ -33,7 +33,7 @@ public interface FriendshipService {
      * @param friendId 好友id
      * @param groupId 分组id
      */
-    void addFriend(String uid, String friendId, Long groupId, Long friendGroupId);
+    void addFriend(String uid, String friendId, String groupId, String friendGroupId);
 
     /**
      * 是否好友
@@ -48,7 +48,7 @@ public interface FriendshipService {
      * @param friendId 好友id
      * @param groupId 分组id
      */
-    void updateFriendGroup(String uid, String friendId, Long groupId);
+    void updateFriendGroup(String uid, String friendId, String groupId);
 
     /**
      * 删除好友

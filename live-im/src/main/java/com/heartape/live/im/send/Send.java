@@ -10,6 +10,6 @@ public interface Send {
     /**
      * @see SendType
      */
-    String getSendType();
+    String getType();
 
 }

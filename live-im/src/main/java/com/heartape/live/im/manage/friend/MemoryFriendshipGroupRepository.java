@@ -24,7 +24,7 @@ public class MemoryFriendshipGroupRepository implements FriendshipGroupRepositor
     }
 
     @Override
-    public FriendshipGroup selectById(Long id) {
+    public FriendshipGroup selectById(String id) {
         return this.friendshipGroups.stream()
                 .filter(friendshipGroup -> friendshipGroup.getId().equals(id))
                 .findFirst()
@@ -39,7 +39,7 @@ public class MemoryFriendshipGroupRepository implements FriendshipGroupRepositor
     }
 
     @Override
-    public boolean update(Long id, String uid, String name) {
+    public boolean update(String id, String uid, String name) {
         for (FriendshipGroup friendshipGroup : this.friendshipGroups) {
             if (friendshipGroup.getId().equals(id) && friendshipGroup.getUid().equals(uid)) {
                 friendshipGroup.setName(name);
@@ -50,7 +50,7 @@ public class MemoryFriendshipGroupRepository implements FriendshipGroupRepositor
     }
 
     @Override
-    public boolean delete(Long id, String uid) {
+    public boolean delete(String id, String uid) {
         return this.friendshipGroups.removeIf(friendshipGroup -> friendshipGroup.getId().equals(id) && friendshipGroup.getUid().equals(uid));
     }
 }

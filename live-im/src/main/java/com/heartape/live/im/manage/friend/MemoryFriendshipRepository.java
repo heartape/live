@@ -1,6 +1,6 @@
 package com.heartape.live.im.manage.friend;
 
-import com.heartape.live.im.util.IdentifierGenerator;
+import com.heartape.util.id.IdentifierGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,17 +27,17 @@ public class MemoryFriendshipRepository implements FriendshipRepository {
     }
 
     @Override
-    public void insert(String uid, String friendId, Long groupId, Long friendGroupId) {
+    public void insert(String uid, String friendId, String groupId, String friendGroupId) {
         List<Friendship> list1 = map.computeIfAbsent(uid, k -> new ArrayList<>());
         List<Friendship> list2 = map.computeIfAbsent(friendId, k -> new ArrayList<>());
-        Friendship friendship1 = new Friendship(identifierGenerator.nextId(), groupId, uid, friendId, 1);
-        Friendship friendship2 = new Friendship(identifierGenerator.nextId(), friendGroupId, friendId, uid, 1);
+        Friendship friendship1 = new Friendship(identifierGenerator.nextId().toString(), groupId, uid, friendId, 1);
+        Friendship friendship2 = new Friendship(identifierGenerator.nextId().toString(), friendGroupId, friendId, uid, 1);
         list1.add(friendship1);
         list2.add(friendship2);
     }
 
     @Override
-    public Friendship selectById(Long id) {
+    public Friendship selectById(String id) {
         for (List<Friendship> friendshipList : this.map.values()) {
             for (Friendship friendship : friendshipList) {
                 if (friendship.getId().equals(id)) {
@@ -54,7 +54,7 @@ public class MemoryFriendshipRepository implements FriendshipRepository {
     }
 
     @Override
-    public List<Friendship> selectListByGroup(Long groupId) {
+    public List<Friendship> selectListByGroup(String groupId) {
         List<Friendship> result = new ArrayList<>();
         for (List<Friendship> friendshipList : this.map.values()) {
             for (Friendship friendship : friendshipList) {
@@ -81,7 +81,7 @@ public class MemoryFriendshipRepository implements FriendshipRepository {
     }
 
     @Override
-    public void update(String uid, String friendId, Long groupId) {
+    public void update(String uid, String friendId, String groupId) {
         List<Friendship> list = map.get(uid);
         for (Friendship friendship : list) {
             if (Objects.equals(friendship.getFriendId(), friendId)) {

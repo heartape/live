@@ -23,7 +23,6 @@ public class ImageMessageConverter implements MessageConverter<ImageMessage> {
     public ImageMessage convert(MessageContext messageContext) throws JsonProcessingException {
         JsonNode jsonNode = this.objectMapper.readTree(messageContext.getMessageStr()).get("content");
         Image image = this.objectMapper.treeToValue(jsonNode, Image.class);
-        BaseMessage baseMessage = new BaseMessage(null, messageContext.getUid(), messageContext.getPurpose(), messageContext.getPurposeType(), messageContext.getMessageType(), LocalDateTime.now());
-        return new ImageMessage(baseMessage, image);
+        return new ImageMessage(null, messageContext.getUid(), messageContext.getPurpose(), messageContext.getPurposeType(), messageContext.getMessageType(), LocalDateTime.now(), image);
     }
 }

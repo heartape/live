@@ -1,6 +1,7 @@
 package com.heartape.live.im.message.type.location;
 
-import com.heartape.live.im.message.base.Content;
+import com.heartape.live.im.message.Content;
+import lombok.Getter;
 
 import java.awt.geom.Point2D;
 
@@ -9,11 +10,10 @@ import java.awt.geom.Point2D;
  * @since 0.0.1
  * @author heartape
  */
+@Getter
 public class Location implements Content {
 
-    private Point2D.Double longitude;
-
-    private Point2D.Double latitude;
+    private Point2D.Double point;
 
     private String desc;
 

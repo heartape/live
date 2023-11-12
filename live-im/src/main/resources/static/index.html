@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>im</title>
+</head>
+<body>
+<div id="app" style="width: 610px; height: 500px; margin: 50px auto">
+    <div id="token-div" style="width: 700px; height: 30px; margin: 50px auto">
+        <label for="token" style="margin-left: 120px"></label>
+        token:<input type="text" id="token" style="width: 300px; margin-bottom: 20px">
+        <button onclick="setToken()">设置token</button>
+    </div>
+    <div id="person">
+        <label for="person-id-input"></label>
+        <span>好友id</span>
+        <input type="text" id="person-id-input" style="width: 400px; height: 50px; font-size: 20px">
+        <div style="margin-top: 30px">
+            <div id="person-message" style="overflow: scroll; overflow-x: hidden; height: 200px; width: 600px; border: 1px solid dimgray; margin-bottom: 10px"></div>
+            <label for="person-message-input"></label>
+            <input type="text" id="person-message-input" style="width: 500px; height: 50px; font-size: 20px">
+            <button onclick="sendPerson()" style="height: 55px; width: 90px; font-size: 18px">send</button>
+        </div>
+    </div>
+    <div id="group" style="margin-top: 20px">
+        <label for="group-id-input"></label>
+        <span>群组id</span>
+        <input type="text" id="group-id-input" style="width: 400px; height: 50px; font-size: 20px">
+        <div style="margin-top: 30px">
+            <div id="group-message" style="overflow: scroll; overflow-x: hidden; height: 200px; width: 600px; border: 1px solid dimgray; margin-bottom: 10px"></div>
+            <label for="group-message-input"></label>
+            <input type="text" id="group-message-input" style="width: 500px; height: 50px; font-size: 20px">
+            <button onclick="sendGroup()" style="height: 55px; width: 90px; font-size: 18px">send</button>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    const host = window.location.host
+    const personId = document.getElementById(`person-id-input`);
+    const groupId = document.getElementById(`group-id-input`);
+    const personMessageInPut = document.getElementById(`person-message-input`);
+    const groupMessageInPut = document.getElementById(`group-message-input`);
+    const personMessage = document.getElementById(`person-message`);
+    const groupMessage = document.getElementById(`group-message`);
+
+    const token = document.getElementById(`token`);
+
+    function setToken() {
+        axios.get('/message/cookie', {
+            headers: {
+                'Authorization': 'Bearer ' + token.value
+            }
+        })
+            .then(function (response) {
+            })
+            .catch(function (error) {
+            });
+    }
+
+    //创建一个webSocket实例，执行后，客户端就会与服务端连接
+    const ws = new WebSocket('ws://' + host + '/im');
+
+    //当WebSocket创建成功时，触发onopen事件
+    ws.onopen = function(){
+        console.log("open");
+    }
+
+    function sendPerson() {
+        const message = {
+            'type': 'TEXT',
+            'content': {
+                'text': personMessageInPut.value
+            }
+        }
+        const req = {
+            type: 'PERSON',
+            data : {
+                personId: personId.value,
+                message: JSON.stringify(message)
+            }
+        }
+        ws.send(JSON.stringify(req));
+    }
+
+    function sendGroup() {
+        const message = {
+            'type': 'TEXT',
+                'content': {
+                'text': groupMessageInPut.value
+            }
+        }
+        const req = {
+            type: 'GROUP',
+            data : {
+                groupId: groupId.value,
+                message: JSON.stringify(message)
+            }
+        }
+        ws.send(JSON.stringify(req));
+    }
+
+    //当客户端收到服务端发来的消息时，触发onmessage事件
+    ws.onmessage = function(res){
+        const dataStr = res.data;
+        const data = JSON.parse(dataStr);
+        const type = data.type;
+        if (type === 'MESSAGE'){
+            const message = data.message;
+            let purposeType = message.purposeType;
+            if (purposeType === 'PERSON'){
+                setMessageInnerHTML(message.uid + ': ' + message.content.text, personMessage)
+            } else if (purposeType === 'GROUP'){
+                setMessageInnerHTML(message.uid + ': ' + message.content.text, groupMessage)
+            }
+        }
+    }
+
+    //当客户端收到服务端发送的关闭连接请求时，触发onclose事件
+    ws.onclose = function(){
+        console.log("close");
+    }
+
+    //如果出现连接、处理、接收、发送数据失败的时候触发onerror事件
+    ws.onerror = function(e){
+        console.log(e);
+    }
+
+    function setMessageInnerHTML(innerHTML, message) {
+        message.innerHTML += innerHTML + '<br/>';
+    }
+</script>
+</html>

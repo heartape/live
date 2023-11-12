@@ -1,11 +1,9 @@
 package com.heartape.live.im.config;
 
-import com.heartape.live.im.gateway.Gateway;
-import com.heartape.live.im.handler.PersonTextWebSocketHandler;
-import com.heartape.live.im.handler.GroupTextWebSocketHandler;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
@@ -20,7 +18,9 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 @EnableWebSocket
 public class WebSocketConfiguration implements WebSocketConfigurer {
 
-    private final Gateway gateway;
+    private final WebSocketHandler imWebSocketHandler;
+
+    private final WebSocketHandler clusterWebSocketHandler;
 
     @Bean
     public ServletServerContainerFactoryBean createWebSocketContainer() {
@@ -32,9 +32,10 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new GroupTextWebSocketHandler(gateway), "/ws/group")
-                .addHandler(new PersonTextWebSocketHandler(gateway), "/ws/friend")
+        registry.addHandler(imWebSocketHandler, "/im")
+                .addHandler(clusterWebSocketHandler, "/cluster")
                 .addInterceptors(new HttpSessionHandshakeInterceptor())
+                .setHandshakeHandler(new AuthenticationToSessionHandshakeHandler())
                 .setAllowedOriginPatterns("*");
     }
 

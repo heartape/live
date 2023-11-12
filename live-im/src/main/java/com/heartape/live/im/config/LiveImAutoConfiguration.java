@@ -3,61 +3,40 @@ package com.heartape.live.im.config;
 import com.heartape.live.im.gateway.*;
 import com.heartape.live.im.gateway.proxy.InterceptorGatewayStaticProxyFactory;
 import com.heartape.live.im.gateway.proxy.GatewayProxyFactory;
+import com.heartape.live.im.handler.*;
 import com.heartape.live.im.interceptor.message.*;
 import com.heartape.live.im.interceptor.prompt.ListPromptInterceptorRegister;
 import com.heartape.live.im.interceptor.prompt.PromptInterceptorRegister;
+import com.heartape.live.im.mapper.*;
 import com.heartape.live.im.manage.friend.*;
 import com.heartape.live.im.manage.group.*;
-import com.heartape.live.im.manage.group.apply.GroupChatApplyRepository;
-import com.heartape.live.im.manage.group.apply.MemoryGroupChatApplyRepository;
 import com.heartape.live.im.message.*;
-import com.heartape.live.im.message.center.CenterMessageRepository;
-import com.heartape.live.im.message.center.MemoryGroupCenterMessageRepository;
-import com.heartape.live.im.message.center.MemoryUserCenterMessageRepository;
-import com.heartape.live.im.message.type.file.FileFilterManager;
-import com.heartape.live.im.message.type.file.FileMessageConverter;
-import com.heartape.live.im.message.type.file.FileMessageProvider;
-import com.heartape.live.im.message.type.file.MemoryFileCenterRepository;
-import com.heartape.live.im.message.type.greeting.MemoryGreetingCenterRepository;
-import com.heartape.live.im.message.type.greeting.GreetingFilterManager;
-import com.heartape.live.im.message.type.greeting.GreetingMessageConverter;
-import com.heartape.live.im.message.type.greeting.GreetingMessageProvider;
-import com.heartape.live.im.message.type.image.MemoryImageCenterRepository;
-import com.heartape.live.im.message.type.image.ImageFilterManager;
-import com.heartape.live.im.message.type.image.ImageMessageConverter;
-import com.heartape.live.im.message.type.image.ImageMessageProvider;
-import com.heartape.live.im.message.type.location.LocationFilterManager;
-import com.heartape.live.im.message.type.location.LocationMessageConverter;
-import com.heartape.live.im.message.type.location.LocationMessageProvider;
-import com.heartape.live.im.message.type.location.MemoryLocationCenterRepository;
-import com.heartape.live.im.message.type.sound.MemorySoundCenterRepository;
-import com.heartape.live.im.message.type.sound.SoundFilterManager;
-import com.heartape.live.im.message.type.sound.SoundMessageConverter;
-import com.heartape.live.im.message.type.sound.SoundMessageProvider;
-import com.heartape.live.im.message.type.text.MemoryTextCenterRepository;
-import com.heartape.live.im.message.type.text.TextFilterManager;
-import com.heartape.live.im.message.type.text.TextMessageConverter;
-import com.heartape.live.im.message.type.text.TextMessageProvider;
-import com.heartape.live.im.message.type.video.MemoryVideoCenterRepository;
-import com.heartape.live.im.message.type.video.VideoFilterManager;
-import com.heartape.live.im.message.type.video.VideoMessageConverter;
-import com.heartape.live.im.message.type.video.VideoMessageProvider;
+import com.heartape.live.im.message.type.file.*;
+import com.heartape.live.im.message.type.greeting.*;
+import com.heartape.live.im.message.type.image.*;
+import com.heartape.live.im.message.type.location.*;
+import com.heartape.live.im.message.type.sound.*;
+import com.heartape.live.im.message.type.text.*;
+import com.heartape.live.im.message.type.video.*;
 import com.heartape.live.im.prompt.PromptProvider;
-import com.heartape.live.im.prompt.PromptType;
-import com.heartape.live.im.prompt.apply.ApplyPromptProvider;
-import com.heartape.live.im.util.IdentifierGenerator;
-import com.heartape.live.im.util.snowflake.IpSnowflakeHolder;
-import com.heartape.live.im.util.snowflake.SnowFlake;
-import com.heartape.live.im.util.snowflake.SnowflakeHolder;
+import com.heartape.util.id.IdentifierGenerator;
+import com.heartape.util.id.snowflake.IpSnowflakeHolder;
+import com.heartape.util.id.snowflake.SnowFlake;
+import com.heartape.util.id.snowflake.SnowflakeHolder;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.web.socket.WebSocketHandler;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 配置im服务器自动配置
@@ -68,105 +47,118 @@ import java.util.Map;
 @EnableConfigurationProperties({LiveImProperties.class})
 public class LiveImAutoConfiguration {
 
-    public static final String GROUP_CENTER_MESSAGE_REPOSITORY_BEAN_NAME = "groupCenterMessageRepository";
-
-    public static final String USER_CENTER_MESSAGE_REPOSITORY_BEAN_NAME = "userCenterMessageRepository";
-
     /**
      * 消息配置
      */
     @Configuration
     public static class MessageConfiguration {
         @Bean
-        public MessageConfigurer messageConfigurer(IdentifierGenerator<Long> identifierGenerator,
-                                                   @Qualifier(GROUP_CENTER_MESSAGE_REPOSITORY_BEAN_NAME) CenterMessageRepository groupCenterMessageRepository,
-                                                   @Qualifier(USER_CENTER_MESSAGE_REPOSITORY_BEAN_NAME) CenterMessageRepository userCenterMessageRepository){
+        public MessageConfigurer messageConfigurer(GroupTextMapper groupTextMapper,
+                                                   SingleTextMapper singleTextMapper,
+                                                   GroupGreetingMapper groupGreetingMapper,
+                                                   SingleGreetingMapper singleGreetingMapper,
+                                                   GroupImageMapper groupImageMapper,
+                                                   SingleImageMapper singleImageMapper,
+                                                   GroupImageCopyMapper groupImageCopyMapper,
+                                                   SingleImageCopyMapper singleImageCopyMapper,
+                                                   GroupFileMapper groupFileMapper,
+                                                   SingleFileMapper singleFileMapper,
+                                                   GroupVideoMapper groupVideoMapper,
+                                                   SingleVideoMapper singleVideoMapper,
+                                                   GroupSoundMapper groupSoundMapper,
+                                                   SingleSoundMapper singleSoundMapper,
+                                                   GroupLocationMapper groupLocationMapper,
+                                                   SingleLocationMapper singleLocationMapper,
+                                                   GroupBaseMapper groupBaseMapper,
+                                                   SingleBaseMapper singleBaseMapper){
             MessageConfigurer messageConfigurer = MessageConfigurer.init();
 
             // TEXT
             TextMessageConverter textMessageConverter = new TextMessageConverter();
             TextFilterManager textFilterManager = new TextFilterManager();
-            MemoryTextCenterRepository groupMemoryTextCenterRepository = new MemoryTextCenterRepository(identifierGenerator, groupCenterMessageRepository);
-            MemoryTextCenterRepository userMemoryTextCenterRepository = new MemoryTextCenterRepository(identifierGenerator, userCenterMessageRepository);
+            textFilterManager.register(new TextBaseFilter());
+            textFilterManager.register(new MemoryTextKeywordShieldFilter(Set.of("卧槽", "握草")));
+            MessageRepository<TextMessage> groupTextRepository = new JdbcGroupTextRepository(groupTextMapper, groupBaseMapper);
+            MessageRepository<TextMessage> singleTextRepository = new JdbcSingleTextRepository(singleTextMapper, singleBaseMapper);
 
             messageConfigurer.text()
                     .converter(textMessageConverter)
                     .filterManager(textFilterManager)
-                    .group(groupMemoryTextCenterRepository)
-                    .user(userMemoryTextCenterRepository);
+                    .group(groupTextRepository)
+                    .user(singleTextRepository);
 
             // GREETING
             GreetingMessageConverter greetingMessageConverter = new GreetingMessageConverter();
             GreetingFilterManager greetingFilterManager = new GreetingFilterManager();
-            MemoryGreetingCenterRepository groupMemoryGreetingCenterRepository = new MemoryGreetingCenterRepository(identifierGenerator, groupCenterMessageRepository);
-            MemoryGreetingCenterRepository userMemoryGreetingCenterRepository = new MemoryGreetingCenterRepository(identifierGenerator, userCenterMessageRepository);
+            MessageRepository<GreetingMessage> groupGreetingRepository = new JdbcGroupGreetingRepository(groupGreetingMapper, groupBaseMapper);
+            MessageRepository<GreetingMessage> singleGreetingRepository = new JdbcSingleGreetingRepository(singleGreetingMapper, singleBaseMapper);
 
             messageConfigurer.greeting()
                     .converter(greetingMessageConverter)
                     .filterManager(greetingFilterManager)
-                    .group(groupMemoryGreetingCenterRepository)
-                    .user(userMemoryGreetingCenterRepository);
+                    .group(groupGreetingRepository)
+                    .user(singleGreetingRepository);
 
             // IMAGE
             ImageMessageConverter imageMessageConverter = new ImageMessageConverter();
             ImageFilterManager imageFilterManager = new ImageFilterManager();
-            MemoryImageCenterRepository groupMemoryImageCenterRepository = new MemoryImageCenterRepository(identifierGenerator, groupCenterMessageRepository);
-            MemoryImageCenterRepository userMemoryImageCenterRepository = new MemoryImageCenterRepository(identifierGenerator, userCenterMessageRepository);
+            MessageRepository<ImageMessage> groupImageRepository = new JdbcGroupImageRepository(groupImageMapper, groupImageCopyMapper, groupBaseMapper);
+            MessageRepository<ImageMessage> singleImageRepository = new JdbcSingleImageRepository(singleImageMapper, singleImageCopyMapper, singleBaseMapper);
 
             messageConfigurer.image()
                     .converter(imageMessageConverter)
                     .filterManager(imageFilterManager)
-                    .group(groupMemoryImageCenterRepository)
-                    .user(userMemoryImageCenterRepository);
+                    .group(groupImageRepository)
+                    .user(singleImageRepository);
 
             // FILE
             FileMessageConverter fileMessageConverter = new FileMessageConverter();
             FileFilterManager fileFilterManager = new FileFilterManager();
-            MemoryFileCenterRepository groupMemoryFileCenterRepository = new MemoryFileCenterRepository(identifierGenerator, groupCenterMessageRepository);
-            MemoryFileCenterRepository userMemoryFileCenterRepository = new MemoryFileCenterRepository(identifierGenerator, userCenterMessageRepository);
+            MessageRepository<FileMessage> groupFileRepository = new JdbcGroupFileRepository(groupFileMapper, groupBaseMapper);
+            MessageRepository<FileMessage> singleFileRepository = new JdbcSingleFileRepository(singleFileMapper, singleBaseMapper);
 
             messageConfigurer.file()
                     .converter(fileMessageConverter)
                     .filterManager(fileFilterManager)
-                    .group(groupMemoryFileCenterRepository)
-                    .user(userMemoryFileCenterRepository);
+                    .group(groupFileRepository)
+                    .user(singleFileRepository);
 
             // VIDEO
             VideoMessageConverter videoMessageConverter = new VideoMessageConverter();
             VideoFilterManager videoFilterManager = new VideoFilterManager();
-            MemoryVideoCenterRepository groupMemoryVideoCenterRepository = new MemoryVideoCenterRepository(identifierGenerator, groupCenterMessageRepository);
-            MemoryVideoCenterRepository userMemoryVideoCenterRepository = new MemoryVideoCenterRepository(identifierGenerator, userCenterMessageRepository);
+            MessageRepository<VideoMessage> groupVideoRepository = new JdbcGroupVideoRepository(groupVideoMapper, groupBaseMapper);
+            MessageRepository<VideoMessage> singleVideoRepository = new JdbcSingleVideoRepository(singleVideoMapper, singleBaseMapper);
 
             messageConfigurer.video()
                     .converter(videoMessageConverter)
                     .filterManager(videoFilterManager)
-                    .group(groupMemoryVideoCenterRepository)
-                    .user(userMemoryVideoCenterRepository);
+                    .group(groupVideoRepository)
+                    .user(singleVideoRepository);
 
 
             // LOCATION
             LocationMessageConverter locationMessageConverter = new LocationMessageConverter();
             LocationFilterManager locationFilterManager = new LocationFilterManager();
-            MemoryLocationCenterRepository groupMemoryLocationCenterRepository = new MemoryLocationCenterRepository(identifierGenerator, groupCenterMessageRepository);
-            MemoryLocationCenterRepository userMemoryLocationCenterRepository = new MemoryLocationCenterRepository(identifierGenerator, userCenterMessageRepository);
+            MessageRepository<LocationMessage> groupLocationRepository = new JdbcGroupLocationRepository(groupLocationMapper, groupBaseMapper);
+            MessageRepository<LocationMessage> singleLocationRepository = new JdbcSingleLocationRepository(singleLocationMapper, singleBaseMapper);
 
             messageConfigurer.location()
                     .converter(locationMessageConverter)
                     .filterManager(locationFilterManager)
-                    .group(groupMemoryLocationCenterRepository)
-                    .user(userMemoryLocationCenterRepository);
+                    .group(groupLocationRepository)
+                    .user(singleLocationRepository);
 
             // SOUND
             SoundMessageConverter soundMessageConverter = new SoundMessageConverter();
             SoundFilterManager soundFilterManager = new SoundFilterManager();
-            MemorySoundCenterRepository groupMemorySoundCenterRepository = new MemorySoundCenterRepository(identifierGenerator, groupCenterMessageRepository);
-            MemorySoundCenterRepository userMemorySoundCenterRepository = new MemorySoundCenterRepository(identifierGenerator, userCenterMessageRepository);
+            MessageRepository<SoundMessage> groupSoundRepository = new JdbcGroupSoundRepository(groupSoundMapper, groupBaseMapper);
+            MessageRepository<SoundMessage> singleSoundRepository = new JdbcSingleSoundRepository(singleSoundMapper, singleBaseMapper);
 
             messageConfigurer.sound()
                     .converter(soundMessageConverter)
                     .filterManager(soundFilterManager)
-                    .group(groupMemorySoundCenterRepository)
-                    .user(userMemorySoundCenterRepository);
+                    .group(groupSoundRepository)
+                    .user(singleSoundRepository);
 
             return messageConfigurer;
         }
@@ -180,12 +172,11 @@ public class LiveImAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public MessageInterceptorRegister messageInterceptorRegister(FriendshipService friendshipService,
-                                                                     GroupChatService groupChatService){
+        public MessageInterceptorRegister messageInterceptorRegister(FriendshipService friendshipService, GroupChatMemberRepository groupChatMemberRepository){
             ListMessageInterceptorRegister listMessageInterceptorRegister = new ListMessageInterceptorRegister();
             listMessageInterceptorRegister
                     .register(new MemoryFriendshipInterceptor(friendshipService))
-                    .register(new MemoryGroupMemberInterceptor(groupChatService));
+                    .register(new DefaultGroupMemberInterceptor(groupChatMemberRepository));
             return listMessageInterceptorRegister;
         }
 
@@ -198,8 +189,8 @@ public class LiveImAutoConfiguration {
         @Bean
         @ConditionalOnMissingBean
         public GatewayProxyFactory messageGatewayProxyFactory(MessageInterceptorRegister messageInterceptorRegister,
-                                                              PromptInterceptorRegister systemInterceptorRegister) {
-            return new InterceptorGatewayStaticProxyFactory(messageInterceptorRegister, systemInterceptorRegister);
+                                                              PromptInterceptorRegister promptInterceptorRegister) {
+            return new InterceptorGatewayStaticProxyFactory(messageInterceptorRegister, promptInterceptorRegister);
         }
 
         @Bean
@@ -231,12 +222,8 @@ public class LiveImAutoConfiguration {
                     MessageType.VIDEO, videoMessageProvider
             );
 
-            // PromptProvider
-            ApplyPromptProvider applyPromptProvider = new ApplyPromptProvider();
-
-            Map<String, PromptProvider> promptProviderStrategyMap = Map.of(
-                    PromptType.APPLY, applyPromptProvider
-            );
+            // 定义需要的系统消息类型
+            Map<String, PromptProvider> promptProviderStrategyMap = Map.of();
 
             return new StrategyGateway(messageProviderStrategyMap, promptProviderStrategyMap);
         }
@@ -258,8 +245,8 @@ public class LiveImAutoConfiguration {
 
         @Bean
         @ConditionalOnMissingBean
-        public SnowflakeHolder ipSnowflakeHolder(){
-            return new IpSnowflakeHolder();
+        public SnowflakeHolder ipSnowflakeHolder(LiveImProperties liveImProperties){
+            return new IpSnowflakeHolder(liveImProperties.getNetworkInterfaceName());
         }
 
         @Bean
@@ -268,16 +255,31 @@ public class LiveImAutoConfiguration {
             return new SnowFlake(snowflakeHolder);
         }
 
-        @Bean(GROUP_CENTER_MESSAGE_REPOSITORY_BEAN_NAME)
-        @ConditionalOnMissingBean(name = GROUP_CENTER_MESSAGE_REPOSITORY_BEAN_NAME)
-        public CenterMessageRepository groupBaseMessageRepository(){
-            return new MemoryGroupCenterMessageRepository();
+        @Bean("standaloneWebSocketSessionManager")
+        public WebSocketSessionManager standaloneWebSocketSessionManager(Gateway gateway,
+                                                                         GroupChatMemberRepository groupChatMemberRepository) {
+            return new StandaloneWebSocketSessionManager(gateway, groupChatMemberRepository);
         }
 
-        @Bean(USER_CENTER_MESSAGE_REPOSITORY_BEAN_NAME)
-        @ConditionalOnMissingBean(name = USER_CENTER_MESSAGE_REPOSITORY_BEAN_NAME)
-        public CenterMessageRepository userBaseMessageRepository(){
-            return new MemoryUserCenterMessageRepository();
+        @Bean("clusterWebSocketSessionManager")
+        public WebSocketSessionManager clusterWebSocketSessionManager(@Qualifier("standaloneWebSocketSessionManager") WebSocketSessionManager webSocketSessionManager,
+                                                                      RedisOperations<String, String> redisOperations,
+                                                                      @Lazy @Qualifier("clusterWebSocketHandler") WebSocketHandler clusterWebSocketHandler,
+                                                                      GroupChatMemberRepository groupChatMemberRepository,
+                                                                      LiveImProperties liveImProperties,
+                                                                      @Value("${server.port}") int port) {
+            return new RedisRegisterClusterWebSocketSessionManager(redisOperations, webSocketSessionManager, clusterWebSocketHandler, groupChatMemberRepository, port, liveImProperties.getCluster().getHost(), liveImProperties.getNetworkInterfaceName());
+            // return new RedisBroadcastClusterWebSocketSessionManager(redisOperations, webSocketSessionManager, groupChatMemberRepository);
+        }
+
+        @Bean("imWebSocketHandler")
+        public WebSocketHandler imWebSocketHandler(@Qualifier("clusterWebSocketSessionManager") WebSocketSessionManager webSocketSessionManager){
+            return new ImTextWebSocketHandler(webSocketSessionManager);
+        }
+
+        @Bean("clusterWebSocketHandler")
+        public WebSocketHandler clusterWebSocketHandler(@Qualifier("standaloneWebSocketSessionManager") WebSocketSessionManager standaloneWebSocketSessionManager){
+            return new ClusterWebSocketHandler(standaloneWebSocketSessionManager);
         }
     }
 
@@ -324,22 +326,6 @@ public class LiveImAutoConfiguration {
             public GroupChatMemberRepository groupChatMemberRepository(IdentifierGenerator<Long> identifierGenerator){
                 return new MemoryGroupChatMemberRepository(identifierGenerator);
             }
-
-            @Bean
-            @ConditionalOnMissingBean
-            public GroupChatApplyRepository groupChatApplyRepository(IdentifierGenerator<Long> identifierGenerator){
-                return new MemoryGroupChatApplyRepository(identifierGenerator);
-            }
-
-            @Bean
-            @ConditionalOnMissingBean
-            public GroupChatService groupChatService(GroupChatRepository groupChatRepository,
-                                                     GroupChatMemberRepository groupChatMemberRepository,
-                                                     GroupChatApplyRepository groupChatApplyRepository) {
-                return new DefaultGroupChatService(groupChatRepository, groupChatMemberRepository, groupChatApplyRepository);
-            }
-
-
         }
     }
 }

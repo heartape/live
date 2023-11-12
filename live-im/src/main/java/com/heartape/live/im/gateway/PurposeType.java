@@ -8,6 +8,6 @@ package com.heartape.live.im.gateway;
 public class PurposeType {
 
     public final static String GROUP = "GROUP";
-    public final static String USER = "USER";
+    public final static String PERSON = "PERSON";
 
 }

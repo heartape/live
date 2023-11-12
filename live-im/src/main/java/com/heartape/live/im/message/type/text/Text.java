@@ -1,6 +1,6 @@
 package com.heartape.live.im.message.type.text;
 
-import com.heartape.live.im.message.base.Content;
+import com.heartape.live.im.message.Content;
 import lombok.Getter;
 
 /**
@@ -8,9 +8,9 @@ import lombok.Getter;
  * @since 0.0.1
  * @author heartape
  */
+@Getter
 public class Text implements Content {
 
-    @Getter
     private String text;
 
 }

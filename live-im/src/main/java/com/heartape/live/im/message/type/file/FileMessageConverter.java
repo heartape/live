@@ -23,7 +23,6 @@ public class FileMessageConverter implements MessageConverter<FileMessage> {
     public FileMessage convert(MessageContext messageContext) throws JsonProcessingException {
         JsonNode jsonNode = this.objectMapper.readTree(messageContext.getMessageStr()).get("content");
         File file = this.objectMapper.treeToValue(jsonNode, File.class);
-        BaseMessage baseMessage = new BaseMessage(null, messageContext.getUid(), messageContext.getPurpose(), messageContext.getPurposeType(), messageContext.getMessageType(), LocalDateTime.now());
-        return new FileMessage(baseMessage, file);
+        return new FileMessage(null, messageContext.getUid(), messageContext.getPurpose(), messageContext.getPurposeType(), messageContext.getMessageType(), LocalDateTime.now(), file);
     }
 }

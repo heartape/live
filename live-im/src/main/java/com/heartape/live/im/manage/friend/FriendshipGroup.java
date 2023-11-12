@@ -14,7 +14,7 @@ public class FriendshipGroup {
     /**
      * id
      */
-    private Long id;
+    private String id;
     /**
      * 用户id
      */

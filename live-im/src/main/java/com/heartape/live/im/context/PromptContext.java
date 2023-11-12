@@ -1,7 +1,6 @@
 package com.heartape.live.im.context;
 
 import com.heartape.live.im.prompt.Prompt;
-import com.heartape.live.im.prompt.PromptType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,7 +27,7 @@ public class PromptContext implements Context {
 
     /**
      * 系统提示类型
-     * @see PromptType
+     * @see com.heartape.live.im.prompt.PromptType
      */
     @Setter
     private String promptType;

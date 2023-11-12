@@ -1,6 +1,6 @@
 package com.heartape.live.im.manage.group;
 
-import com.heartape.live.im.util.IdentifierGenerator;
+import com.heartape.util.id.IdentifierGenerator;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +17,7 @@ public class MemoryGroupChatRepository implements GroupChatRepository {
     /**
      * 内存存储
      */
-    private final Map<Long, GroupChat> groupChats;
+    private final Map<String, GroupChat> groupChats;
 
     public MemoryGroupChatRepository(IdentifierGenerator<Long> identifierGenerator) {
         this.identifierGenerator = identifierGenerator;
@@ -26,18 +26,18 @@ public class MemoryGroupChatRepository implements GroupChatRepository {
 
     @Override
     public void save(GroupChat groupChat) {
-        Long id = this.identifierGenerator.nextId();
+        String id = this.identifierGenerator.nextId().toString();
         groupChat.setId(id);
         this.groupChats.put(id, groupChat);
     }
 
     @Override
-    public GroupChat findById(Long id) {
+    public GroupChat findById(String id) {
         return this.groupChats.get(id);
     }
 
     @Override
-    public List<GroupChat> findByIds(List<Long> groupIds) {
+    public List<GroupChat> findByIds(List<String> groupIds) {
         return this.groupChats.values()
                 .stream()
                 .filter(groupChat -> groupIds.contains(groupChat.getId()))
@@ -61,27 +61,22 @@ public class MemoryGroupChatRepository implements GroupChatRepository {
     }
 
     @Override
-    public void changeName(Long id, String uid, String name) {
+    public void changeName(String id, String uid, String name) {
         this.groupChats.get(id).setName(name);
     }
 
     @Override
-    public void changeAvatar(Long id, String uid, String avatar) {
+    public void changeAvatar(String id, String uid, String avatar) {
         this.groupChats.get(id).setAvatar(avatar);
     }
 
     @Override
-    public void changeLevel(Long id, String uid, int level) {
+    public void changeLevel(String id, String uid, int level) {
         this.groupChats.get(id).setLevel(level);
     }
 
     @Override
-    public void changeAuthMode(Long id, String uid, int authMode) {
-        this.groupChats.get(id).setAuthMode(authMode);
-    }
-
-    @Override
-    public void remove(Long id, String uid) {
+    public void remove(String id, String uid) {
         this.groupChats.remove(id);
     }
 }

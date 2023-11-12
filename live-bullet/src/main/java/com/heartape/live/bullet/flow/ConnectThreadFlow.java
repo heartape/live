@@ -1,5 +1,6 @@
 package com.heartape.live.bullet.flow;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -16,10 +17,13 @@ public class ConnectThreadFlow extends ThreadFlow {
     /**
      * 推送周期，用于推送数据较少的目标
      */
-    private static final int PUSH_PERIOD = 100;
+    private static final int PUSH_PERIOD = 1000;
 
-    public ConnectThreadFlow(BiConsumer<String, Object> callback) {
-        super(callback);
+    protected final BiConsumer<String, Collection<FlowElement>> callback;
+
+    public ConnectThreadFlow(BiConsumer<String, Collection<FlowElement>> callback) {
+        super();
+        this.callback = callback;
     }
 
     @Override
